@@ -11,8 +11,6 @@ import '../modules/onboarding/bindings/onboarding_binding.dart';
 import '../modules/onboarding/views/onboarding_view.dart';
 import '../modules/parent_home/bindings/parent_home_binding.dart';
 import '../modules/parent_home/views/parent_home_view.dart';
-import '../modules/settings/bindings/settings_binding.dart';
-import '../modules/settings/views/settings_view.dart';
 
 part 'app_routes.dart';
 
@@ -47,11 +45,7 @@ class AppPages {
       page: () => const HistoryView(),
       binding: HistoryBinding(),
     ),
-    GetPage(
-      name: _Paths.SETTINGS,
-      page: () => const SettingsView(),
-      binding: SettingsBinding(),
-    ),
+
     GetPage(
       name: _Paths.NOTIFICATION,
       page: () => const NotificationsView(),

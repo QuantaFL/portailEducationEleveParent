@@ -246,11 +246,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
                     ),
                   ),
                   child: isSelected
-                      ? const Icon(
-                          Icons.check,
-                          size: 16,
-                          color: Colors.white,
-                        )
+                      ? const Icon(Icons.check, size: 16, color: Colors.white)
                       : null,
                 ),
               ],
@@ -275,9 +271,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
   void _showChildProfile(dynamic child) {
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
           width: Get.width * 0.9,
           padding: const EdgeInsets.all(24),
@@ -331,12 +325,21 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
               ),
               const SizedBox(height: 24),
               // Profile Information
-              _buildProfileInfo('Numéro étudiant', child.studentIdNumber ?? 'N/A'),
+              _buildProfileInfo(
+                'Numéro étudiant',
+                child.studentIdNumber ?? 'N/A',
+              ),
               _buildProfileInfo('Email', child.user?.email ?? 'N/A'),
               _buildProfileInfo('Téléphone', child.user?.phone ?? 'N/A'),
-              _buildProfileInfo('Date de naissance', child.user?.dateOfBirth ?? 'N/A'),
+              _buildProfileInfo(
+                'Date de naissance',
+                child.user?.dateOfBirth ?? 'N/A',
+              ),
               _buildProfileInfo('Adresse', child.user?.address ?? 'N/A'),
-              _buildProfileInfo('Date d\'inscription', child.enrollmentDate ?? 'N/A'),
+              _buildProfileInfo(
+                'Date d\'inscription',
+                child.enrollmentDate ?? 'N/A',
+              ),
               const SizedBox(height: 24),
               // Actions
               Row(
@@ -361,8 +364,8 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
             ],
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 
   Widget _buildProfileInfo(String label, String value) {
@@ -405,9 +408,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
     // Show loading dialog
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -438,9 +439,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
     // Show contact options
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Container(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -448,11 +447,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.school,
-                    color: AppDesignSystem.primary,
-                    size: 24,
-                  ),
+                  Icon(Icons.school, color: AppDesignSystem.primary, size: 24),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -537,9 +532,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.grey.withOpacity(0.2),
-            ),
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -550,11 +543,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
                   color: AppDesignSystem.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  color: AppDesignSystem.primary,
-                  size: 20,
-                ),
+                child: Icon(icon, color: AppDesignSystem.primary, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -580,11 +569,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
                   ],
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Colors.grey[400],
-              ),
+              Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
             ],
           ),
         ),
