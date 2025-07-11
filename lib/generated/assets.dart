@@ -2,12 +2,17 @@
 class Assets {
   Assets._();
 
+  static const String animationsCommunication =
+      'assets/animations/communication.json';
   static const String animationsEmptyState =
       'assets/animations/empty_state.json';
+  static const String animationsFamily = 'assets/animations/family.json';
   static const String animationsLoadingSpinner =
       'assets/animations/loading_spinner.json';
   static const String animationsStudentBackground =
       'assets/animations/student_background.json';
   static const String animationsSuccessCheckmark =
       'assets/animations/success_checkmark.json';
+  static const String animationsWelcomeEducation =
+      'assets/animations/welcome_education.json';
 }
