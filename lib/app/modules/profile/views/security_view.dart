@@ -11,7 +11,6 @@ class SecurityView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Container(
               margin: const EdgeInsets.all(20),
               padding: const EdgeInsets.all(24),
@@ -57,7 +56,6 @@ class SecurityView extends StatelessWidget {
               ),
             ),
 
-            // Security Options
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

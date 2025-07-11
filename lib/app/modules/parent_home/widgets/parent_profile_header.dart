@@ -60,7 +60,6 @@ class ParentProfileHeader extends GetView<ParentHomeController> {
               // Header Row
               Row(
                 children: [
-                  // Parent Avatar with Status
                   Stack(
                     children: [
                       Container(
