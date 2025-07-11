@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,40 +22,72 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Sélectionner un enfant',
+              'Mes enfants',
               style: GoogleFonts.inter(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
                 color: AppDesignSystem.textPrimary,
               ),
             ),
-            const SizedBox(height: 12),
-            // Horizontally scrollable container with proper visual feedback
+            const SizedBox(height: 16),
+            // Clean card-based selector
             Container(
-              height: 100,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(12),
-                itemCount: controller.children.length,
-                separatorBuilder: (context, index) => const SizedBox(width: 12),
-                itemBuilder: (context, index) {
-                  final child = controller.children[index];
-                  final isSelected =
-                      controller.selectedChildIndex.value == index;
+              child: Column(
+                children: [
+                  // Header with count
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppDesignSystem.primary.withOpacity(0.05),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.family_restroom,
+                          color: AppDesignSystem.primary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          '${controller.children.length} enfant${controller.children.length > 1 ? 's' : ''}',
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppDesignSystem.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Children list
+                  ...controller.children.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final child = entry.value;
+                    final isSelected =
+                        controller.selectedChildIndex.value == index;
+                    final isLast = index == controller.children.length - 1;
 
-                  return _buildChildTab(child, index, isSelected);
-                },
+                    return _buildChildItem(child, index, isSelected, isLast)
+                        .animate(delay: Duration(milliseconds: 100 * index))
+                        .fadeIn(duration: 300.ms)
+                        .slideX(begin: 0.3);
+                  }).toList(),
+                ],
               ),
             ),
           ],
@@ -63,54 +96,56 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
     });
   }
 
-  Widget _buildChildTab(dynamic child, int index, bool isSelected) {
+  Widget _buildChildItem(
+    dynamic child,
+    int index,
+    bool isSelected,
+    bool isLast,
+  ) {
     final childUser = child.user;
+    final className = child.classId == 1 ? 'Terminale S' : '3ème B';
 
-    return GestureDetector(
-      onTap: () => controller.selectChild(index),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        width: 76,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          // Strong visual feedback with color change
-          color: isSelected ? AppDesignSystem.primary : AppDesignSystem.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected
-                ? AppDesignSystem.primary
-                : AppDesignSystem.primary.withValues(alpha: 0.2),
-            width: 2,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppDesignSystem.primary.withValues(alpha: 0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                    spreadRadius: 1,
-                  ),
-                ]
-              : [],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
+    return Container(
+      decoration: BoxDecoration(
+        border: !isLast
+            ? Border(
+                bottom: BorderSide(
+                  color: Colors.grey.withOpacity(0.1),
+                  width: 1,
+                ),
+              )
+            : null,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => controller.selectChild(index),
+          borderRadius: BorderRadius.circular(isLast ? 20 : 0),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? AppDesignSystem.primary.withOpacity(0.05)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(isLast ? 20 : 0),
+            ),
+            child: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
+                // Avatar
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? Colors.white.withValues(alpha: 0.2)
-                        : AppDesignSystem.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(18),
+                        ? AppDesignSystem.primary
+                        : AppDesignSystem.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(24),
                     border: isSelected
                         ? Border.all(
-                            color: Colors.white.withValues(alpha: 0.3),
-                            width: 1,
+                            color: AppDesignSystem.primary.withOpacity(0.3),
+                            width: 3,
                           )
                         : null,
                   ),
@@ -118,7 +153,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
                     child: Text(
                       childUser?.firstName?.substring(0, 1) ?? 'E',
                       style: GoogleFonts.inter(
-                        fontSize: 14,
+                        fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: isSelected
                             ? Colors.white
@@ -127,41 +162,57 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
                     ),
                   ),
                 ),
-                // Selected indicator star icon
-                if (isSelected)
-                  Positioned(
-                    right: -2,
-                    top: -2,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: Colors.amber,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white, width: 1),
+                const SizedBox(width: 16),
+                // Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        childUser?.firstName ?? 'Élève',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? AppDesignSystem.primary
+                              : AppDesignSystem.textPrimary,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.star,
-                        size: 10,
-                        color: Colors.white,
+                      const SizedBox(height: 4),
+                      Text(
+                        className,
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: AppDesignSystem.textSecondary,
+                        ),
                       ),
+                    ],
+                  ),
+                ),
+                // Selection indicator
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppDesignSystem.primary
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSelected
+                          ? AppDesignSystem.primary
+                          : Colors.grey.withOpacity(0.3),
+                      width: 2,
                     ),
                   ),
+                  child: isSelected
+                      ? const Icon(Icons.check, size: 16, color: Colors.white)
+                      : null,
+                ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              childUser?.firstName ?? 'Élève',
-              style: GoogleFonts.inter(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : AppDesignSystem.textPrimary,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-            ),
-          ],
+          ),
         ),
       ),
     );
