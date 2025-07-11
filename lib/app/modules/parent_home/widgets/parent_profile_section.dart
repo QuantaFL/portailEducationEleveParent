@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-import '../../../themes/palette_system.dart';
 import '../controllers/parent_home_controller.dart';
 
 class ParentProfileSection extends GetView<ParentHomeController> {
@@ -11,293 +10,303 @@ class ParentProfileSection extends GetView<ParentHomeController> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: SingleChildScrollView(
+      child: Obx(
+        () => controller.isLoading.value
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    // Profile Section
+                    _buildProfileSection()
+                        .animate()
+                        .fadeIn(duration: 600.ms)
+                        .slideY(begin: 0.3),
+
+                    const SizedBox(height: 20),
+
+                    // Simple Settings List
+                    _buildSimpleSettingsList()
+                        .animate()
+                        .fadeIn(delay: 200.ms)
+                        .slideY(begin: 0.3),
+
+                    const SizedBox(height: 20),
+
+                    // Logout Button
+                    _buildLogoutButton()
+                        .animate()
+                        .fadeIn(delay: 400.ms)
+                        .slideY(begin: 0.3),
+
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildProfileSection() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Mon Profil',
-              style: GoogleFonts.inter(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: AppDesignSystem.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 20),
-            _buildProfileCard(),
-            const SizedBox(height: 20),
-            _buildSettingsSection(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 40,
-            backgroundColor: AppDesignSystem.primary.withOpacity(0.1),
-            child: Obx(() {
-              final user = controller.currentParentUser.value;
-              return Text(
-                user?.firstName?.substring(0, 1) ?? 'P',
-                style: GoogleFonts.inter(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: AppDesignSystem.primary,
-                ),
-              );
-            }),
-          ),
-          const SizedBox(height: 16),
-          Obx(() {
-            final user = controller.currentParentUser.value;
-            return Column(
-              children: [
-                Text(
+        child: Obx(() {
+          final user = controller.currentParentUser.value;
+          return Row(
+            children: [
+              CircleAvatar(
+                radius: 35,
+                backgroundColor: const Color(0xFF6366F1).withOpacity(0.1),
+                child: Text(
                   user != null
-                      ? '${user.firstName} ${user.lastName}'
-                      : 'Parent',
-                  style: GoogleFonts.inter(
+                      ? '${user.firstName.substring(0, 1)}${user.lastName.substring(0, 1)}'
+                      : 'PD',
+                  style: const TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: AppDesignSystem.textPrimary,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF6366F1),
                   ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  user?.email ?? '',
-                  style: GoogleFonts.inter(
-                    fontSize: 14,
-                    color: AppDesignSystem.textSecondary,
-                  ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user != null
+                          ? '${user.firstName} ${user.lastName}'
+                          : 'Parent',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Parent',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      user?.email ?? 'parent@example.com',
+                      style: const TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                _buildProfileInfoGrid(user),
-              ],
-            );
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProfileInfoGrid(dynamic user) {
-    return Column(
-      children: [
-        _buildProfileInfoTile('Téléphone', user?.phone ?? 'Non renseigné'),
-        _buildProfileInfoTile('Adresse', user?.address ?? 'Non renseignée'),
-        _buildProfileInfoTile(
-          'Date de naissance',
-          user?.dateOfBirth ?? 'Non renseignée',
-        ),
-        _buildProfileInfoTile(
-          'Genre',
-          user?.gender == 'M'
-              ? 'Masculin'
-              : user?.gender == 'F'
-              ? 'Féminin'
-              : 'Non renseigné',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildProfileInfoTile(String label, String value) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppDesignSystem.surface,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              label,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: AppDesignSystem.textSecondary,
               ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              value,
-              style: GoogleFonts.inter(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppDesignSystem.textPrimary,
-              ),
-            ),
-          ),
-        ],
+            ],
+          );
+        }),
       ),
     );
   }
 
-  Widget _buildSettingsSection() {
+  Widget _buildSimpleSettingsList() {
     return Container(
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Paramètres',
-            style: GoogleFonts.inter(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppDesignSystem.textPrimary,
-            ),
+          // Change Password
+          _buildSimpleSettingsItem(
+            Icons.lock_outline,
+            'Changer le mot de passe',
+            'Modifier votre mot de passe',
+            _changePassword,
           ),
-          const SizedBox(height: 16),
-          _buildSettingsTile(
-            Icons.edit_outlined,
-            'Modifier le profil',
-            'Mettre à jour vos informations personnelles',
-            () => _editProfile(),
+          const Divider(height: 1),
+
+          // Help
+          _buildSimpleSettingsItem(
+            Icons.help_outline,
+            'Aide',
+            'Centre d\'aide et support',
+            _showHelp,
           ),
-          _buildSettingsTile(
-            Icons.notifications_outlined,
-            'Notifications',
-            'Gérer les notifications',
-            () => _manageNotifications(),
-          ),
-          // Navigate to existing settings for security, help, and about
-          _buildSettingsTile(
-            Icons.settings_outlined,
-            'Paramètres avancés',
-            'Sécurité, aide et à propos',
-            () => Get.toNamed('/settings'),
-          ),
-          _buildSettingsTile(
-            Icons.logout,
-            'Se déconnecter',
-            'Quitter l\'application',
-            () => _logout(),
-            isDestructive: true,
+
+          const Divider(height: 1),
+
+          // About
+          _buildSimpleSettingsItem(
+            Icons.info_outline,
+            'À propos',
+            'Informations sur l\'application',
+            _showAbout,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSettingsTile(
+  Widget _buildSimpleSettingsItem(
     IconData icon,
     String title,
     String subtitle,
-    VoidCallback onTap, {
-    bool isDestructive = false,
-  }) {
-    return ListTile(
-      leading: Icon(
-        icon,
-        color: isDestructive ? Colors.red : AppDesignSystem.primary,
-      ),
-      title: Text(
-        title,
-        style: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: isDestructive ? Colors.red : AppDesignSystem.textPrimary,
+    VoidCallback onTap,
+  ) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF6366F1).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: const Color(0xFF6366F1), size: 20),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: Colors.grey[400]),
+            ],
+          ),
         ),
       ),
-      subtitle: Text(
-        subtitle,
-        style: GoogleFonts.inter(
-          fontSize: 12,
-          color: AppDesignSystem.textSecondary,
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: controller.logout,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.logout, color: Colors.red, size: 20),
+                ),
+                const SizedBox(width: 16),
+                const Text(
+                  'Se déconnecter',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
-      trailing: Icon(Icons.chevron_right, color: AppDesignSystem.textSecondary),
-      onTap: onTap,
     );
   }
 
-  void _editProfile() {
-    Get.snackbar(
-      'Profil',
-      'Fonctionnalité de modification du profil en développement',
-      backgroundColor: AppDesignSystem.primary.withOpacity(0.1),
-    );
-  }
-
-  void _manageNotifications() {
-    Get.snackbar(
-      'Notifications',
-      'Paramètres de notification en développement',
-      backgroundColor: AppDesignSystem.primary.withOpacity(0.1),
-    );
-  }
-
-  void _logout() {
+  // Local methods for settings actions
+  void _changePassword() {
     Get.dialog(
       AlertDialog(
-        title: Text(
-          'Déconnexion',
-          style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-        content: Text(
-          'Êtes-vous sûr de vouloir vous déconnecter?',
-          style: GoogleFonts.inter(fontSize: 14),
+        title: const Text('Changer le mot de passe'),
+        content: const Text(
+          'Cette fonctionnalité sera disponible prochainement.',
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Annuler',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600,
-                color: AppDesignSystem.textSecondary,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              // Navigate to auth/login instead of calling controller.logout()
-              Get.offAllNamed('/auth/login');
-            },
-            child: Text(
-              'Déconnecter',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600,
-                color: Colors.red,
-              ),
-            ),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('OK')),
+        ],
+      ),
+    );
+  }
+
+  void _showHelp() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Centre d\'aide'),
+        content: const Text(
+          'Pour obtenir de l\'aide, contactez votre établissement scolaire.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('OK')),
+        ],
+      ),
+    );
+  }
+
+  void _showAbout() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('À propos'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Portail Élève - Parent'),
+            Text('Version: 1.0.0'),
+            Text('Développé pour faciliter le suivi scolaire'),
+            SizedBox(height: 16),
+            Text('© 2025 Tous droits réservés'),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('OK')),
         ],
       ),
     );
