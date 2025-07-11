@@ -13,6 +13,8 @@ import '../data/models/user.dart';
 
 class ServiceInitializer {
   final Logger logger = Logger();
+
+  /// Client HTTP Dio avec configuration de base (URL, timeouts, en-têtes).
   final Dio dio = Dio(
     BaseOptions(
       baseUrl: 'https://10.0.2.2/8000/api/v1',
@@ -25,8 +27,18 @@ class ServiceInitializer {
       },
     ),
   );
+
+  /// Stockage sécurisé pour sauvegarder les données sensibles localement.
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
+  /// Initialise tous les services nécessaires à l'application.
+  ///
+  /// - Initialise les widgets Flutter.
+  /// - Initialise Hive pour le stockage local.
+  /// - Enregistre les adaptateurs Hive pour les modèles personnalisés.
+  /// - Ouvre les boîtes Hive correspondantes.
+  /// - Instancie et enregistre le contrôleur de connectivité avec GetX.
+  /// - Instancie et enregistre le client API avec ses dépendances.
   Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
 

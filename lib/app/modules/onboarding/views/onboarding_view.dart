@@ -23,10 +23,8 @@ class OnboardingView extends GetView<OnboardingController> {
         child: SafeArea(
           child: Column(
             children: [
-              // Header with Skip Button
               _buildHeader(context),
 
-              // Main Content
               Expanded(
                 child: PageView.builder(
                   controller: controller.pageController,
@@ -58,7 +56,6 @@ class OnboardingView extends GetView<OnboardingController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Logo/Brand
           Row(
             children: [
               Container(
@@ -88,7 +85,6 @@ class OnboardingView extends GetView<OnboardingController> {
             ],
           ),
 
-          // Skip Button
           Obx(
             () => AnimatedOpacity(
               opacity: controller.isLastPage.value ? 0.0 : 1.0,
@@ -132,7 +128,6 @@ class OnboardingView extends GetView<OnboardingController> {
       ),
       child: Column(
         children: [
-          // Animation/Illustration
           Expanded(
             flex: 3,
             child: Center(
@@ -153,13 +148,11 @@ class OnboardingView extends GetView<OnboardingController> {
             ),
           ),
 
-          // Content
           Expanded(
             flex: 2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Title
                 Text(
                       data.title,
                       style: AppDesignSystem.textTheme(context).displaySmall
@@ -175,7 +168,6 @@ class OnboardingView extends GetView<OnboardingController> {
 
                 SizedBox(height: AppDesignSystem.spacing(context, 16)),
 
-                // Description
                 Text(
                       data.description,
                       style: AppDesignSystem.textTheme(context).bodyLarge
@@ -191,7 +183,6 @@ class OnboardingView extends GetView<OnboardingController> {
 
                 SizedBox(height: AppDesignSystem.spacing(context, 32)),
 
-                // Feature Highlights (for certain pages)
                 if (index == 1) _buildFeatureHighlights(context),
               ],
             ),
@@ -278,10 +269,8 @@ class OnboardingView extends GetView<OnboardingController> {
           // ),
           SizedBox(height: AppDesignSystem.spacing(context, 32)),
 
-          // Navigation Buttons
           Row(
             children: [
-              // Back Button
               Obx(
                 () => AnimatedOpacity(
                   opacity: controller.currentPage.value > 0 ? 1.0 : 0.0,
@@ -317,7 +306,6 @@ class OnboardingView extends GetView<OnboardingController> {
 
               const Spacer(),
 
-              // Next/Get Started Button
               Obx(
                 () => GestureDetector(
                   onTap: () {
