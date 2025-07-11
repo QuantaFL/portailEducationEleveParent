@@ -11,7 +11,6 @@ class HelpView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Container(
               margin: const EdgeInsets.all(20),
               padding: const EdgeInsets.all(24),
@@ -57,7 +56,6 @@ class HelpView extends StatelessWidget {
               ),
             ),
 
-            // Quick Actions
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(20),
@@ -111,7 +109,6 @@ class HelpView extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Help Categories
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),

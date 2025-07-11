@@ -1,53 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Professional Design System for Student Portal
-/// Follows Material Design 3 principles with custom branding
+/// Design system palette for School App (Blue Theme)
+/// Author: Cheikh Tidiane
+/// Last updated: July 11, 2025
+
 class AppDesignSystem {
-  // === RESPONSIVE BREAKPOINTS ===
+  // === POINTS DE RUPTURE ===
+  /// Largeur max. pour l’affichage mobile.
   static const double mobileBreakpoint = 600;
+
+  /// Largeur max. pour l’affichage tablette.
   static const double tabletBreakpoint = 900;
+
+  /// À partir de cette largeur l’affichage est considéré desktop.
   static const double desktopBreakpoint = 1200;
 
-  // === COLOR PALETTE ===
-  // Primary Colors - Deep Blue Academic Theme
-  static const Color primaryDark = Color(0xFF0F172A); // Rich Navy
-  static const Color primary = Color(0xFF1E40AF); // Professional Blue
-  static const Color primaryLight = Color(0xFF3B82F6); // Bright Blue
-  static const Color primarySoft = Color(0xFFDBEAFE); // Light Blue Tint
+  // === PALETTE DE COULEURS ===
+  // Couleurs primaires (bleu académique)
+  /// Bleu marine riche pour les surfaces sombres.
+  static const Color primaryDark = Color(0xFF0F172A);
 
-  // Secondary Colors - Warm Academic Accents
-  static const Color secondary = Color(0xFF7C3AED); // Academic Purple
-  static const Color secondaryLight = Color(0xFFA855F7); // Light Purple
-  static const Color accent = Color(0xFFEAB308); // Gold Accent
-  static const Color accentLight = Color(0xFFFEF3C7); // Light Gold
+  /// Bleu institutionnel principal.
+  static const Color primary = Color(0xFF1E40AF);
 
-  // Success & Status Colors
-  static const Color success = Color(0xFF10B981); // Emerald Green
-  static const Color successLight = Color(0xFFD1FAE5); // Light Green
-  static const Color warning = Color(0xFFF59E0B); // Amber
-  static const Color warningLight = Color(0xFFFEF3C7); // Light Amber
-  static const Color error = Color(0xFFEF4444); // Red
-  static const Color errorLight = Color(0xFFFEE2E2); // Light Red
-  static const Color info = Color(0xFF3B82F6); // Blue
-  static const Color infoLight = Color(0xFFDBEAFE); // Light Blue
+  /// Bleu lumineux pour les états survol / actif.
+  static const Color primaryLight = Color(0xFF3B82F6);
 
-  // Neutral Colors - Professional Grays
-  static const Color surfaceDark = Color(0xFF0F172A); // Dark Surface
-  static const Color surface = Color(0xFFFAFAFA); // Light Surface
-  static const Color surfaceContainer = Color(0xFFFFFFFF); // White Container
-  static const Color surfaceVariant = Color(0xFFF1F5F9); // Light Gray
+  /// Teinte bleu clair pour les arrière-plans doux.
+  static const Color primarySoft = Color(0xFFDBEAFE);
 
-  static const Color textPrimary = Color(0xFF0F172A); // Dark Text
-  static const Color textSecondary = Color(0xFF64748B); // Medium Gray
-  static const Color textTertiary = Color(0xFF94A3B8); // Light Gray
-  static const Color textInverse = Color(0xFFFFFFFF); // White Text
+  // Couleurs secondaires et d’accent
+  static const Color secondary = Color(0xFF7C3AED); // Violet académique
+  static const Color secondaryLight = Color(0xFFA855F7); // Violet clair
+  static const Color accent = Color(0xFFEAB308); // Or
+  static const Color accentLight = Color(0xFFFEF3C7); // Or clair
 
-  static const Color border = Color(0xFFE2E8F0); // Light Border
-  static const Color borderVariant = Color(0xFFCBD5E1); // Medium Border
-  static const Color divider = Color(0xFFF1F5F9); // Subtle Divider
+  // États (succès / avertissement / erreur / information)
+  static const Color success = Color(0xFF10B981);
+  static const Color successLight = Color(0xFFD1FAE5);
+  static const Color warning = Color(0xFFF59E0B);
+  static const Color warningLight = Color(0xFFFEF3C7);
+  static const Color error = Color(0xFFEF4444);
+  static const Color errorLight = Color(0xFFFEE2E2);
+  static const Color info = Color(0xFF3B82F6);
+  static const Color infoLight = Color(0xFFDBEAFE);
 
-  // === GRADIENTS ===
+  // Neutres — gris professionnels
+  static const Color surfaceDark = Color(0xFF0F172A);
+  static const Color surface = Color(0xFFFAFAFA);
+  static const Color surfaceContainer = Color(0xFFFFFFFF);
+  static const Color surfaceVariant = Color(0xFFF1F5F9);
+
+  static const Color textPrimary = Color(0xFF0F172A);
+  static const Color textSecondary = Color(0xFF64748B);
+  static const Color textTertiary = Color(0xFF94A3B8);
+  static const Color textInverse = Color(0xFFFFFFFF);
+
+  static const Color border = Color(0xFFE2E8F0);
+  static const Color borderVariant = Color(0xFFCBD5E1);
+  static const Color divider = Color(0xFFF1F5F9);
+
+  // === DÉGRADÉS ===
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -72,143 +86,130 @@ class AppDesignSystem {
     colors: [Color(0xFFFAFAFA), Color(0xFFF8FAFC)],
   );
 
-  // === RESPONSIVE SPACING ===
-  static double spacing(BuildContext context, double baseSize) {
-    return baseSize * _getScaleFactor(context);
-  }
+  // === ESPACEMENT & DIMENSIONS RÉACTIVES ===
+  /// Calcule un espacement proportionnel à la largeur d’écran.
+  static double spacing(BuildContext context, double base) =>
+      base * _scale(context);
 
-  static double _getScaleFactor(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width < mobileBreakpoint) return 0.9;
-    if (width < tabletBreakpoint) return 1.0;
-    if (width < desktopBreakpoint) return 1.1;
+  static double _scale(BuildContext context) {
+    final w = MediaQuery.of(context).size.width;
+    if (w < mobileBreakpoint) return 0.9;
+    if (w < tabletBreakpoint) return 1.0;
+    if (w < desktopBreakpoint) return 1.1;
     return 1.2;
   }
 
-  // === RESPONSIVE DIMENSIONS ===
-  static double responsiveRadius(BuildContext context, double baseRadius) {
-    return baseRadius * _getScaleFactor(context);
-  }
+  static double responsiveRadius(BuildContext c, double base) =>
+      base * _scale(c);
+  static double responsiveSize(BuildContext c, double base) => base * _scale(c);
 
-  static double responsiveSize(BuildContext context, double baseSize) {
-    return baseSize * _getScaleFactor(context);
-  }
-
+  /// Renv. un padding symétrique ou uniforme adapté à l’écran.
   static EdgeInsets responsivePadding(
-    BuildContext context, {
+    BuildContext c, {
     double horizontal = 16,
     double vertical = 16,
     double? all,
   }) {
-    final scale = _getScaleFactor(context);
-    if (all != null) {
-      return EdgeInsets.all(all * scale);
-    }
-    return EdgeInsets.symmetric(
-      horizontal: horizontal * scale,
-      vertical: vertical * scale,
-    );
+    final s = _scale(c);
+    return all != null
+        ? EdgeInsets.all(all * s)
+        : EdgeInsets.symmetric(
+            horizontal: horizontal * s,
+            vertical: vertical * s,
+          );
   }
 
-  // === TYPOGRAPHY ===
-  static TextTheme textTheme(BuildContext context) {
-    final scale = _getScaleFactor(context);
+  // === TYPOGRAPHIE ===
+  /// Définit la hiérarchie de texte Inter ; tailles ajustées à l’écran.
+  static TextTheme textTheme(BuildContext c) {
+    final s = _scale(c);
     return GoogleFonts.interTextTheme().copyWith(
-      // Display Styles
       displayLarge: GoogleFonts.inter(
-        fontSize: 34 * scale,
+        fontSize: 34 * s,
         fontWeight: FontWeight.w800,
         color: textPrimary,
         height: 1.2,
       ),
       displayMedium: GoogleFonts.inter(
-        fontSize: 30 * scale,
+        fontSize: 30 * s,
         fontWeight: FontWeight.w700,
         color: textPrimary,
         height: 1.3,
       ),
       displaySmall: GoogleFonts.inter(
-        fontSize: 26 * scale,
+        fontSize: 26 * s,
         fontWeight: FontWeight.w600,
         color: textPrimary,
         height: 1.3,
       ),
-
-      // Headline Styles
       headlineLarge: GoogleFonts.inter(
-        fontSize: 24 * scale,
+        fontSize: 24 * s,
         fontWeight: FontWeight.w600,
         color: textPrimary,
         height: 1.4,
       ),
       headlineMedium: GoogleFonts.inter(
-        fontSize: 20 * scale,
+        fontSize: 20 * s,
         fontWeight: FontWeight.w600,
         color: textPrimary,
         height: 1.4,
       ),
       headlineSmall: GoogleFonts.inter(
-        fontSize: 18 * scale,
+        fontSize: 18 * s,
         fontWeight: FontWeight.w600,
         color: textPrimary,
         height: 1.4,
       ),
-
-      // Title Styles
       titleLarge: GoogleFonts.inter(
-        fontSize: 18 * scale,
+        fontSize: 18 * s,
         fontWeight: FontWeight.w600,
         color: textPrimary,
         height: 1.5,
       ),
       titleMedium: GoogleFonts.inter(
-        fontSize: 16 * scale,
+        fontSize: 16 * s,
         fontWeight: FontWeight.w600,
         color: textPrimary,
         height: 1.5,
       ),
       titleSmall: GoogleFonts.inter(
-        fontSize: 14 * scale,
+        fontSize: 14 * s,
         fontWeight: FontWeight.w600,
         color: textSecondary,
         height: 1.5,
       ),
-
-      // Body Styles
       bodyLarge: GoogleFonts.inter(
-        fontSize: 18 * scale,
+        fontSize: 18 * s,
         fontWeight: FontWeight.w400,
         color: textPrimary,
         height: 1.6,
       ),
       bodyMedium: GoogleFonts.inter(
-        fontSize: 16 * scale,
+        fontSize: 16 * s,
         fontWeight: FontWeight.w400,
         color: textPrimary,
         height: 1.6,
       ),
       bodySmall: GoogleFonts.inter(
-        fontSize: 14 * scale,
+        fontSize: 14 * s,
         fontWeight: FontWeight.w400,
         color: textSecondary,
         height: 1.6,
       ),
-
-      // Label Styles
       labelLarge: GoogleFonts.inter(
-        fontSize: 16 * scale,
+        fontSize: 16 * s,
         fontWeight: FontWeight.w500,
         color: textPrimary,
         height: 1.4,
       ),
       labelMedium: GoogleFonts.inter(
-        fontSize: 14 * scale,
+        fontSize: 14 * s,
         fontWeight: FontWeight.w500,
         color: textSecondary,
         height: 1.4,
       ),
       labelSmall: GoogleFonts.inter(
-        fontSize: 12 * scale,
+        fontSize: 12 * s,
         fontWeight: FontWeight.w500,
         color: textTertiary,
         height: 1.4,
@@ -216,13 +217,14 @@ class AppDesignSystem {
     );
   }
 
-  // === SHADOWS ===
+  // === OMBRES ===
+  /// Génère une élévation (1–4) sous forme de liste de [BoxShadow].
   static List<BoxShadow> elevation(int level) {
     switch (level) {
       case 1:
         return [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withOpacity(.04),
             offset: const Offset(0, 1),
             blurRadius: 3,
           ),
@@ -230,7 +232,7 @@ class AppDesignSystem {
       case 2:
         return [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withOpacity(.06),
             offset: const Offset(0, 2),
             blurRadius: 6,
           ),
@@ -238,7 +240,7 @@ class AppDesignSystem {
       case 3:
         return [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: Colors.black.withOpacity(.08),
             offset: const Offset(0, 4),
             blurRadius: 12,
           ),
@@ -246,7 +248,7 @@ class AppDesignSystem {
       case 4:
         return [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.10),
+            color: Colors.black.withOpacity(.10),
             offset: const Offset(0, 6),
             blurRadius: 18,
           ),
@@ -256,65 +258,59 @@ class AppDesignSystem {
     }
   }
 
-  // === COMPONENT STYLES ===
-  static BoxDecoration cardDecoration(
-    BuildContext context, {
-    int elevation = 2,
-  }) {
-    return BoxDecoration(
-      color: surfaceContainer,
-      borderRadius: BorderRadius.circular(responsiveRadius(context, 16)),
-      boxShadow: AppDesignSystem.elevation(elevation),
-    );
-  }
+  // === STYLES DE COMPOSANT ===
+  /// Décoration d’une carte avec rayon réactif et élévation.
+  static BoxDecoration cardDecoration(BuildContext c, {int elevation = 2}) =>
+      BoxDecoration(
+        color: surfaceContainer,
+        borderRadius: BorderRadius.circular(responsiveRadius(c, 16)),
+        boxShadow: AppDesignSystem.elevation(elevation),
+      );
 
+  /// Décoration d’un champ de saisie ; change de bordure selon le focus.
   static BoxDecoration inputDecoration(
-    BuildContext context, {
+    BuildContext c, {
     bool focused = false,
-  }) {
-    return BoxDecoration(
-      color: surfaceContainer,
-      borderRadius: BorderRadius.circular(responsiveRadius(context, 12)),
-      border: Border.all(
-        color: focused ? primary : border,
-        width: focused ? 2 : 1,
-      ),
-    );
-  }
+  }) => BoxDecoration(
+    color: surfaceContainer,
+    borderRadius: BorderRadius.circular(responsiveRadius(c, 12)),
+    border: Border.all(
+      color: focused ? primary : border,
+      width: focused ? 2 : 1,
+    ),
+  );
 
+  /// Décoration d’un bouton (plein ou secondaire).
   static BoxDecoration buttonDecoration(
-    BuildContext context, {
+    BuildContext c, {
     bool primary = true,
-  }) {
-    return BoxDecoration(
-      gradient: primary ? primaryGradient : null,
-      color: primary ? null : surfaceContainer,
-      borderRadius: BorderRadius.circular(responsiveRadius(context, 12)),
-      border: primary ? null : Border.all(color: border),
-      boxShadow: primary ? elevation(2) : null,
-    );
-  }
+  }) => BoxDecoration(
+    gradient: primary ? primaryGradient : null,
+    color: primary ? null : surfaceContainer,
+    borderRadius: BorderRadius.circular(responsiveRadius(c, 12)),
+    border: primary ? null : Border.all(color: border),
+    boxShadow: primary ? elevation(2) : null,
+  );
 
-  // === ANIMATION DURATIONS ===
+  // === DURÉES D’ANIMATION ===
   static const Duration fastAnimation = Duration(milliseconds: 200);
   static const Duration mediumAnimation = Duration(milliseconds: 300);
   static const Duration slowAnimation = Duration(milliseconds: 500);
 
-  // === DEVICE TYPE DETECTION ===
-  static bool isMobile(BuildContext context) {
-    return MediaQuery.of(context).size.width < mobileBreakpoint;
+  // === DÉTECTION DE TYPE D’APPAREIL ===
+  static bool isMobile(BuildContext c) =>
+      MediaQuery.of(c).size.width < mobileBreakpoint;
+
+  static bool isTablet(BuildContext c) {
+    final w = MediaQuery.of(c).size.width;
+    return w >= mobileBreakpoint && w < desktopBreakpoint;
   }
 
-  static bool isTablet(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    return width >= mobileBreakpoint && width < desktopBreakpoint;
-  }
-
-  static bool isDesktop(BuildContext context) {
-    return MediaQuery.of(context).size.width >= desktopBreakpoint;
-  }
+  static bool isDesktop(BuildContext c) =>
+      MediaQuery.of(c).size.width >= desktopBreakpoint;
 }
 
+/// Thème clair basé sur [AppDesignSystem].
 final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: AppDesignSystem.primary,
@@ -339,6 +335,7 @@ final ThemeData lightTheme = ThemeData(
   ),
 );
 
+/// Thème sombre basé sur [AppDesignSystem].
 final ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   primaryColor: AppDesignSystem.primaryLight,
