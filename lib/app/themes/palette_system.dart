@@ -314,3 +314,51 @@ class AppDesignSystem {
     return MediaQuery.of(context).size.width >= desktopBreakpoint;
   }
 }
+
+final ThemeData lightTheme = ThemeData(
+  brightness: Brightness.light,
+  primaryColor: AppDesignSystem.primary,
+  scaffoldBackgroundColor: AppDesignSystem.surface,
+  textTheme: GoogleFonts.interTextTheme(),
+  appBarTheme: AppBarTheme(
+    backgroundColor: AppDesignSystem.surface,
+    foregroundColor: AppDesignSystem.textPrimary,
+    elevation: 1,
+  ),
+  colorScheme: ColorScheme.light(
+    primary: AppDesignSystem.primary,
+    secondary: AppDesignSystem.secondary,
+    surface: AppDesignSystem.surface,
+    background: AppDesignSystem.surfaceContainer,
+    error: AppDesignSystem.error,
+    onPrimary: AppDesignSystem.textInverse,
+    onSecondary: AppDesignSystem.textInverse,
+    onSurface: AppDesignSystem.textPrimary,
+    onBackground: AppDesignSystem.textPrimary,
+    onError: AppDesignSystem.textInverse,
+  ),
+);
+
+final ThemeData darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  primaryColor: AppDesignSystem.primaryLight,
+  scaffoldBackgroundColor: AppDesignSystem.surfaceDark,
+  textTheme: GoogleFonts.interTextTheme(),
+  appBarTheme: AppBarTheme(
+    backgroundColor: AppDesignSystem.surfaceDark,
+    foregroundColor: AppDesignSystem.textInverse,
+    elevation: 1,
+  ),
+  colorScheme: ColorScheme.dark(
+    primary: AppDesignSystem.primaryLight,
+    secondary: AppDesignSystem.secondaryLight,
+    surface: AppDesignSystem.surfaceDark,
+    background: AppDesignSystem.surfaceDark,
+    error: AppDesignSystem.error,
+    onPrimary: AppDesignSystem.textInverse,
+    onSecondary: AppDesignSystem.textInverse,
+    onSurface: AppDesignSystem.textInverse,
+    onBackground: AppDesignSystem.textInverse,
+    onError: AppDesignSystem.textInverse,
+  ),
+);
