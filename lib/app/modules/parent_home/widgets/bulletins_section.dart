@@ -143,7 +143,6 @@ class BulletinsSection extends GetView<ParentHomeController> {
             ),
           ),
 
-          // Download Button
           Container(
             decoration: BoxDecoration(
               color: AppDesignSystem.primary.withOpacity(0.1),

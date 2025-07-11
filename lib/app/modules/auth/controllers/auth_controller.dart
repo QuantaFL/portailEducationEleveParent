@@ -19,7 +19,6 @@ class AuthController extends GetxController {
   final RxBool isPasswordValid = false.obs;
   final RxBool isFormValid = false.obs;
 
-  // Add reactive focus states
   final RxBool isEmailFocused = false.obs;
   final RxBool isPasswordFocused = false.obs;
 
@@ -28,8 +27,7 @@ class AuthController extends GetxController {
 
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
 
-  // Add user type tracking
-  final RxString userType = ''.obs; // 'student' or 'parent'
+  final RxString userType = ''.obs;
   final Rx<User?> currentUser = Rx<User?>(null);
   final Rx<Student?> currentStudent = Rx<Student?>(null);
   final Rx<Teacher?> currentTeacher = Rx<Teacher?>(null);
@@ -44,13 +42,11 @@ class AuthController extends GetxController {
   }
 
   void _setupValidation() {
-    // Email validation
     emailController.addListener(() {
       isEmailValid.value = GetUtils.isEmail(emailController.text);
       _updateFormValidation();
     });
 
-    // Password validation
     passwordController.addListener(() {
       isPasswordValid.value = passwordController.text.length >= 6;
       _updateFormValidation();
@@ -58,7 +54,6 @@ class AuthController extends GetxController {
   }
 
   void _setupFocusListeners() {
-    // Add focus listeners to update reactive variables
     emailFocusNode.addListener(() {
       isEmailFocused.value = emailFocusNode.hasFocus;
     });
@@ -102,13 +97,10 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Simulate API call to your Laravel backend
       await Future.delayed(const Duration(seconds: 2));
 
-      // Mock API response - replace with actual API call
       if (emailController.text.isNotEmpty &&
           passwordController.text.isNotEmpty) {
-        // Mock user data based on email pattern
         Map<String, dynamic> userData;
 
         if (emailController.text.contains('parent')) {
@@ -117,7 +109,6 @@ class AuthController extends GetxController {
           userData = await _mockStudentLogin();
         }
 
-        // Store auth token and user data
         await _storage.write(key: 'auth_token', value: userData['token']);
         await _storage.write(key: 'user_type', value: userData['type']);
         await _storage.write(
@@ -135,13 +126,9 @@ class AuthController extends GetxController {
           snackPosition: SnackPosition.TOP,
         );
 
-        // Navigate based on user role
         switch (userData['type']) {
           case 'parent':
             Get.offAllNamed('/parent-home');
-            break;
-          case 'teacher':
-            Get.offAllNamed('/teacher-home');
             break;
           case 'student':
           default:
