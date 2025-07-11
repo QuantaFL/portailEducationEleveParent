@@ -405,7 +405,6 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
       Get.back();
     }
 
-    // Show loading dialog
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -430,13 +429,10 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
       barrierDismissible: false,
     );
 
-    // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
 
-    // Close loading dialog
     Get.back();
 
-    // Show contact options
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -578,9 +574,8 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
   }
 
   void _makePhoneCall(String phoneNumber) async {
-    Get.back(); // Close dialog
+    Get.back();
 
-    // Show loading
     Get.snackbar(
       'Appel en cours',
       'Composition du numéro...',
@@ -589,7 +584,6 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
       duration: const Duration(seconds: 2),
     );
 
-    // Simulate phone call initiation
     await Future.delayed(const Duration(seconds: 1));
 
     Get.snackbar(
@@ -601,9 +595,8 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
   }
 
   void _sendEmail(String email, dynamic child) async {
-    Get.back(); // Close dialog
+    Get.back();
 
-    // Show loading
     Get.snackbar(
       'Email',
       'Ouverture de l\'application email...',
@@ -612,7 +605,6 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
       duration: const Duration(seconds: 2),
     );
 
-    // Simulate email app opening
     await Future.delayed(const Duration(seconds: 1));
 
     Get.snackbar(
@@ -624,9 +616,8 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
   }
 
   void _showSchoolLocation() async {
-    Get.back(); // Close dialog
+    Get.back();
 
-    // Show loading
     Get.snackbar(
       'Localisation',
       'Ouverture de la carte...',
@@ -635,7 +626,6 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
       duration: const Duration(seconds: 2),
     );
 
-    // Simulate map app opening
     await Future.delayed(const Duration(seconds: 1));
 
     Get.snackbar(
