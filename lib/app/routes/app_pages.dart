@@ -24,11 +24,13 @@ class AppPages {
       name: _Paths.ONBOARDING,
       page: () => const OnboardingView(),
       binding: OnboardingBinding(),
+      transition: Transition.zoom,
     ),
     GetPage(
       name: _Paths.LOGIN,
       page: () => const LoginView(),
       binding: AuthBinding(),
+      transition: Transition.leftToRightWithFade,
     ),
     GetPage(
       name: _Paths.HOME,

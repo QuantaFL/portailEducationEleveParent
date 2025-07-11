@@ -84,4 +84,28 @@ class ApiClient {
   }) {
     return dio.post<T>(path, data: data, cancelToken: cancelToken);
   }
+
+  /// Envoie une requête HTTP PUT à l'URL spécifiée avec des données facultatives.
+  /// /// [path] : le chemin ou l'URL relative de la requête.
+  /// /// [data] : les données à envoyer dans le corps de la requête.
+  /// /// [cancelToken] : un jeton permettant d'annuler la requête si nécessaire.
+  ///
+  /// Retourne une réponse de type [Response<T>].
+  Future<Response<T>> put<T>(
+    String path, {
+    dynamic data,
+    CancelToken? cancelToken,
+  }) {
+    return dio.put<T>(path, data: data, cancelToken: cancelToken);
+  }
+
+  /// Envoie une requête HTTP DELETE à l'URL spécifiée.
+  ///
+  /// [path] : le chemin ou l'URL relative de la requête.
+  /// [cancelToken] : un jeton permettant d'annuler la requête si nécessaire.
+  ///
+  /// Retourne une réponse de type [Response<T>].
+  Future<Response<T>> delete<T>(String path, {CancelToken? cancelToken}) {
+    return dio.delete<T>(path, cancelToken: cancelToken);
+  }
 }
