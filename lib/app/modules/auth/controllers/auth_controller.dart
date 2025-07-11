@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 
 import '../../../core/data/models/role.dart';
 import '../../../core/data/models/student.dart';
@@ -164,21 +165,17 @@ class AuthController extends GetxController {
   }
 
   Future<Map<String, dynamic>> _mockStudentLogin() async {
-    // Create user with student role
     final user = User(
       id: 1,
       firstName: 'Marie',
       lastName: 'Dupont',
       email: emailController.text,
       phone: '0123456789',
-      // This is nullable in model but required in constructor
       password: 'hashed_password',
       address: '123 Rue de la Paix',
-      // This is nullable in model but required in constructor
       dateOfBirth: '2005-03-15',
       gender: 'F',
       roleId: 3,
-      // Student role ID
       role: Role(id: 3, name: 'student'),
       createdAt: DateTime.now().toIso8601String(),
       updatedAt: DateTime.now().toIso8601String(),
@@ -207,7 +204,6 @@ class AuthController extends GetxController {
   }
 
   Future<Map<String, dynamic>> _mockParentLogin() async {
-    // Create user with parent role
     final user = User(
       id: 2,
       firstName: 'Jean',
@@ -219,13 +215,11 @@ class AuthController extends GetxController {
       dateOfBirth: '1975-05-20',
       gender: 'M',
       roleId: 2,
-      // Parent role ID
       role: Role(id: 2, name: 'parent'),
       createdAt: DateTime.now().toIso8601String(),
       updatedAt: DateTime.now().toIso8601String(),
     );
 
-    // Create child users first
     final marieUser = User(
       id: 3,
       firstName: 'Marie',
@@ -237,7 +231,6 @@ class AuthController extends GetxController {
       dateOfBirth: '2005-03-15',
       gender: 'F',
       roleId: 3,
-      // Student role ID
       role: Role(id: 3, name: 'student'),
       createdAt: DateTime.now().toIso8601String(),
       updatedAt: DateTime.now().toIso8601String(),
@@ -254,13 +247,11 @@ class AuthController extends GetxController {
       dateOfBirth: '2007-08-22',
       gender: 'M',
       roleId: 3,
-      // Student role ID
       role: Role(id: 3, name: 'student'),
       createdAt: DateTime.now().toIso8601String(),
       updatedAt: DateTime.now().toIso8601String(),
     );
 
-    // Mock parent's children with proper user associations
     final children = [
       Student(
         id: 1,
@@ -296,46 +287,6 @@ class AuthController extends GetxController {
     };
   }
 
-  Future<Map<String, dynamic>> _mockTeacherLogin() async {
-    // Create user with teacher role
-    final user = User(
-      id: 5,
-      firstName: 'Sophie',
-      lastName: 'Martin',
-      email: emailController.text,
-      phone: '0123456789',
-      // Required field
-      password: 'hashed_password',
-      address: '456 Avenue des Écoles',
-      // Required field
-      dateOfBirth: '1980-08-15',
-      gender: 'F',
-      roleId: 1,
-      // Teacher role ID
-      role: Role(id: 1, name: 'teacher'),
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
-    );
-
-    final teacher = Teacher(
-      id: 1,
-      userId: user.id,
-      hireDate: '2018-09-01',
-      user: user,
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
-    );
-
-    currentTeacher.value = teacher;
-
-    return {
-      'token': 'teacher_token_789',
-      'type': 'teacher',
-      'user': user,
-      'teacher': teacher,
-    };
-  }
-
   void forgotPassword() {
     if (!isEmailValid.value) {
       Get.snackbar(
@@ -358,9 +309,16 @@ class AuthController extends GetxController {
   }
 
   Future<void> logout() async {
-    // Clear all stored credentials
-    await _storage.deleteAll();
+    Future.wait([clearHiveData(), clearStorage()], eagerError: true);
     Get.offAllNamed('/login');
+  }
+
+  Future<void> clearHiveData() async {
+    await Hive.deleteFromDisk();
+  }
+
+  Future<void> clearStorage() async {
+    await _storage.deleteAll();
   }
 
   @override
