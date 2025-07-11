@@ -13,7 +13,6 @@ class NotificationsView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Ultra Modern Header
             Container(
               margin: const EdgeInsets.all(20),
               padding: const EdgeInsets.all(24),
@@ -30,7 +29,6 @@ class NotificationsView extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  // Top Bar
                   Row(
                     children: [
                       GestureDetector(
@@ -85,7 +83,6 @@ class NotificationsView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  // Title with accent
                   Row(
                     children: [
                       Container(
@@ -114,7 +111,6 @@ class NotificationsView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // Subtitle
                   Row(
                     children: [
                       const SizedBox(width: 16),
@@ -131,8 +127,6 @@ class NotificationsView extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Enhanced Quick Stats
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -193,10 +187,7 @@ class NotificationsView extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
-            // Modern Filter Tabs
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: SingleChildScrollView(
@@ -212,10 +203,7 @@ class NotificationsView extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
-            // Notifications List
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -228,7 +216,6 @@ class NotificationsView extends StatelessWidget {
                 },
               ),
             ),
-
             const SizedBox(height: 20),
           ],
         ),

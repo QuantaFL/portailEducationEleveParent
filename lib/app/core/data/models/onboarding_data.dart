@@ -23,7 +23,7 @@ class OnboardingData {
         title: "Suivi en Temps Réel",
         description:
             "Consultez vos notes, moyennes et classements dès leur publication par vos professeurs.",
-        lottieAsset: "assets/animations/real_time_analytics.json",
+        lottieAsset: "assets/animations/student_background.json",
       ),
       OnboardingData(
         title: "Communication Simplifiée",
