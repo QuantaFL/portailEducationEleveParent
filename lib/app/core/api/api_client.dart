@@ -48,8 +48,16 @@ class ApiClient {
     ]);
   }
 
+  /// Génère un nouveau [CancelToken] permettant d'annuler une requête en cours.
   CancelToken generateCancelToken() => CancelToken();
 
+  /// Envoie une requête HTTP GET à l'URL spécifiée.
+  ///
+  /// [path] : le chemin ou l'URL relative de la requête.
+  /// [queryParams] : les paramètres de requête facultatifs à inclure dans l'URL.
+  /// [cancelToken] : un jeton permettant d'annuler la requête si nécessaire.
+  ///
+  /// Retourne une réponse de type [Response<T>].
   Future<Response<T>> get<T>(
     String path, {
     Map<String, dynamic>? queryParams,
@@ -62,6 +70,13 @@ class ApiClient {
     );
   }
 
+  /// Envoie une requête HTTP POST à l'URL spécifiée avec des données facultatives.
+  ///
+  /// [path] : le chemin ou l'URL relative de la requête.
+  /// [data] : les données à envoyer dans le corps de la requête.
+  /// [cancelToken] : un jeton permettant d'annuler la requête si nécessaire.
+  ///
+  /// Retourne une réponse de type [Response<T>].
   Future<Response<T>> post<T>(
     String path, {
     dynamic data,
