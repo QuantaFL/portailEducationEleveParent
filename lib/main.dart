@@ -1,30 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:portail_eleve/app/services/connectivity_listener.dart';
 
 import 'app/routes/app_pages.dart';
+import 'app/themes/palette_system.dart';
 
 void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'Portail Élève',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        textTheme: GoogleFonts.interTextTheme(),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF2563EB),
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
+  runApp(
+    ConnectivityListener(
+      child: GetMaterialApp(
+        title: 'Portail Élève',
+        locale: Locale('fr', 'FR'),
+        fallbackLocale: Locale('en', 'US'),
+        initialRoute: AppPages.INITIAL,
+        getPages: AppPages.routes,
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: ThemeMode.system,
+        debugShowCheckedModeBanner: false,
       ),
-      initialRoute: AppPages.INITIAL,
-      getPages: AppPages.routes,
-      debugShowCheckedModeBanner: false,
-    );
-  }
+    ),
+  );
 }
