@@ -11,7 +11,6 @@ class AboutView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Container(
               margin: const EdgeInsets.all(20),
               padding: const EdgeInsets.all(24),
@@ -57,7 +56,6 @@ class AboutView extends StatelessWidget {
               ),
             ),
 
-            // App Info Card
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(24),
@@ -114,7 +112,6 @@ class AboutView extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // App Details
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -168,7 +165,6 @@ class AboutView extends StatelessWidget {
                     ),
                   ]),
 
-                  // Credits
                   Container(
                     margin: const EdgeInsets.only(top: 20, bottom: 40),
                     padding: const EdgeInsets.all(20),
