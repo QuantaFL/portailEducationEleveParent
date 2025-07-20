@@ -6,7 +6,7 @@ import 'package:portail_eleve/app/core/data/models/user.dart';
 part 'student.g.dart';
 
 @HiveType(typeId: 2)
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Student {
   @HiveField(0)
   final int id;
@@ -22,10 +22,12 @@ class Student {
   final String studentIdNumber;
   @HiveField(6)
   final User? user;
-  final ClassModel? classModel;
+
   @HiveField(7)
-  final String? createdAt;
+  final ClassModel? classModel;
   @HiveField(8)
+  final String? createdAt;
+  @HiveField(9)
   final String? updatedAt;
 
   Student({

@@ -1,36 +1,36 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:portail_eleve/app/core/data/models/student.dart';
 import 'package:portail_eleve/app/core/data/models/user.dart';
 
-part 'teacher.g.dart';
+part 'parent.g.dart';
 
-@HiveType(typeId: 3)
+@HiveType(typeId: 2)
 @JsonSerializable()
-class Teacher {
+class Parent {
   @HiveField(0)
   final int id;
   @HiveField(1)
   final int userId;
-  @HiveField(6)
-  final String hireDate;
-  @HiveField(7)
+  @HiveField(2)
+  final List<Student> childrens;
+  @HiveField(3)
   final User? user;
-  @HiveField(8)
+  @HiveField(7)
   final String? createdAt;
-  @HiveField(9)
+  @HiveField(8)
   final String? updatedAt;
 
-  Teacher({
+  Parent({
     required this.id,
     required this.userId,
-    required this.hireDate,
+    required this.childrens,
     this.user,
     this.createdAt,
     this.updatedAt,
   });
 
-  factory Teacher.fromJson(Map<String, dynamic> json) =>
-      _$TeacherFromJson(json);
+  factory Parent.fromJson(Map<String, dynamic> json) => _$ParentFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TeacherToJson(this);
+  Map<String, dynamic> toJson() => _$ParentToJson(this);
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:portail_eleve/app/core/api/api_client.dart';
 
 import '../../../core/data/models/notification_model.dart';
 import '../../../core/data/models/report_card.dart';
@@ -22,12 +23,14 @@ class ParentHomeController extends GetxController {
   var allBulletins = <ReportCard>[].obs; // For history
   var selectedAcademicYear = '2024-2025'.obs;
   var selectedPeriod = 'all'.obs;
+  late ApiClient apiClient;
 
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
+    apiClient = await Get.find<ApiClient>();
     loadParentDashboardData();
   }
 
@@ -44,10 +47,7 @@ class ParentHomeController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Simulate API call to get parent data
       await Future.delayed(const Duration(seconds: 1));
-
-      // Mock parent user data with proper User model
       currentParentUser.value = User(
         id: 2,
         firstName: 'Jean',
@@ -59,12 +59,10 @@ class ParentHomeController extends GetxController {
         dateOfBirth: '1975-05-20',
         gender: 'M',
         roleId: 2,
-        // Parent role ID
         createdAt: DateTime.now().toIso8601String(),
         updatedAt: DateTime.now().toIso8601String(),
       );
 
-      // Create child users with proper User model
       final marieUser = User(
         id: 3,
         firstName: 'Marie',
@@ -97,7 +95,6 @@ class ParentHomeController extends GetxController {
         updatedAt: DateTime.now().toIso8601String(),
       );
 
-      // Mock children data using proper Student model
       children.value = [
         Student(
           id: 1,
@@ -123,13 +120,10 @@ class ParentHomeController extends GetxController {
         ),
       ];
 
-      // Load bulletin data for first child by default
       loadSelectedChildData();
 
-      // Load all bulletins for history
       loadAllBulletins();
 
-      // Mock notifications
       notifications.addAll([
         NotificationModel(
           id: 1,
@@ -170,7 +164,6 @@ class ParentHomeController extends GetxController {
 
     final selectedChild = children[selectedChildIndex.value];
 
-    // Mock bulletins using proper ReportCard model
     selectedChildBulletins.clear();
     selectedChildBulletins.addAll([
       ReportCard(
@@ -217,7 +210,6 @@ class ParentHomeController extends GetxController {
       ),
     ]);
 
-    // Mock notifications for selected child
     selectedChildNotifications.clear();
     selectedChildNotifications.addAll([
       NotificationModel(

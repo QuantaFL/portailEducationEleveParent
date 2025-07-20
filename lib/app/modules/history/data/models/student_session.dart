@@ -1,8 +1,8 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:portail_eleve/app/core/data/models/class_model.dart';
+import 'package:portail_eleve/app/core/data/models/student.dart';
 
-import 'package:portail_eleve/app/core/data/models/core/class_model.dart';
-import 'package:portail_eleve/app/core/data/models/core/student.dart';
 import 'session.dart';
 
 part 'student_session.g.dart';

@@ -24,13 +24,10 @@ class LoginView extends GetView<AuthController> {
                 child: IntrinsicHeight(
                   child: Column(
                     children: [
-                      // Header with Lottie Animation
                       _buildAnimatedHeader(context),
 
-                      // Login Form
                       Expanded(child: _buildLoginForm(context)),
 
-                      // Footer
                       _buildFooter(context),
                     ],
                   ),
@@ -52,7 +49,6 @@ class LoginView extends GetView<AuthController> {
       ),
       child: Column(
         children: [
-          // Lottie Animation replacing the static logo
           Container(
                 width: AppDesignSystem.responsiveSize(context, 160),
                 height: AppDesignSystem.responsiveSize(context, 160),
@@ -78,9 +74,8 @@ class LoginView extends GetView<AuthController> {
 
           SizedBox(height: AppDesignSystem.spacing(context, 32)),
 
-          // Enhanced App Title with better typography
           Text(
-                'Portail Élève',
+                'Espace Scolaire',
                 style: AppDesignSystem.textTheme(context).displayLarge
                     ?.copyWith(
                       fontWeight: FontWeight.w900,
@@ -94,7 +89,6 @@ class LoginView extends GetView<AuthController> {
 
           SizedBox(height: AppDesignSystem.spacing(context, 12)),
 
-          // Cleaner subtitle without gradient
           Text(
                 'Accédez à vos bulletins scolaires\nen toute sécurité',
                 style: AppDesignSystem.textTheme(context).bodyLarge?.copyWith(
@@ -118,7 +112,7 @@ class LoginView extends GetView<AuthController> {
           padding: AppDesignSystem.responsivePadding(
             context,
             horizontal: 28,
-            vertical: 28, // Reduced from 40 to 28
+            vertical: 28,
           ),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -141,7 +135,6 @@ class LoginView extends GetView<AuthController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Welcome Text with improved styling
               Text(
                     'Bienvenue',
                     style: AppDesignSystem.textTheme(context).headlineLarge
@@ -156,9 +149,7 @@ class LoginView extends GetView<AuthController> {
                   .fadeIn(duration: 600.ms, delay: 600.ms)
                   .slideX(begin: -0.3, end: 0),
 
-              SizedBox(
-                height: AppDesignSystem.spacing(context, 6),
-              ), // Reduced from 8
+              SizedBox(height: AppDesignSystem.spacing(context, 6)),
 
               Text(
                     'Connectez-vous à votre espace personnel',
@@ -185,7 +176,6 @@ class LoginView extends GetView<AuthController> {
               SizedBox(
                 height: AppDesignSystem.spacing(context, 20),
               ), // Reduced from 24
-              // Password Field
               _buildPasswordField(context)
                   .animate()
                   .fadeIn(duration: 600.ms, delay: 900.ms)
@@ -193,8 +183,7 @@ class LoginView extends GetView<AuthController> {
 
               SizedBox(
                 height: AppDesignSystem.spacing(context, 28),
-              ), // Reduced from 40
-              // Login Button
+              ), // Reduced from
               _buildLoginButton(context)
                   .animate()
                   .fadeIn(duration: 600.ms, delay: 1000.ms)
@@ -203,7 +192,6 @@ class LoginView extends GetView<AuthController> {
               SizedBox(
                 height: AppDesignSystem.spacing(context, 18),
               ), // Reduced from 24
-              // Forgot Password Button
               _buildForgotPasswordButton(context)
                   .animate()
                   .fadeIn(duration: 600.ms, delay: 1100.ms)
@@ -239,9 +227,6 @@ class LoginView extends GetView<AuthController> {
               focusNode: controller.emailFocusNode,
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
-              onChanged: (value) {
-                // Validation is already handled by the controller listeners
-              },
               onFieldSubmitted: (_) =>
                   controller.passwordFocusNode.requestFocus(),
               decoration: InputDecoration(
@@ -371,10 +356,8 @@ class LoginView extends GetView<AuthController> {
             : null,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          // Much larger padding for a more prominent button
           padding: AppDesignSystem.responsivePadding(context, vertical: 24),
           decoration: BoxDecoration(
-            // Clean solid color instead of gradient
             color: controller.isFormValid.value
                 ? AppDesignSystem.primary
                 : AppDesignSystem.surfaceVariant,
@@ -480,7 +463,7 @@ class LoginView extends GetView<AuthController> {
         vertical: 16,
       ),
       child: Text(
-        '© 2025 Portail Élève - Tous droits réservés',
+        '© 2025 Espace Scolaire - Tous droits réservés',
         style: AppDesignSystem.textTheme(
           context,
         ).bodySmall?.copyWith(color: AppDesignSystem.textTertiary),
