@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:portail_eleve/app/modules/auth/bindings/change_password_binding.dart';
+import 'package:portail_eleve/app/modules/auth/views/change_password_view.dart';
 import 'package:portail_eleve/app/modules/notifications/views/notifications_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
@@ -31,6 +33,11 @@ class AppPages {
       page: () => const LoginView(),
       binding: AuthBinding(),
       transition: Transition.leftToRightWithFade,
+    ),
+    GetPage(
+      name: _Paths.CHANGE_PASSWORD,
+      page: () => const ChangePasswordView(),
+      binding: ChangePasswordBinding(),
     ),
     GetPage(
       name: _Paths.HOME,

@@ -1,9 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:portail_eleve/app/core/api/api_client.dart';
+import 'package:portail_eleve/app/modules/auth/data/useCases/auth_login.dart';
+import 'package:portail_eleve/app/routes/app_pages.dart';
 
-import '../../../core/data/models/role.dart';
 import '../../../core/data/models/student.dart';
 import '../../../core/data/models/teacher.dart';
 import '../../../core/data/models/user.dart';
@@ -21,6 +24,7 @@ class AuthController extends GetxController {
 
   final RxBool isEmailFocused = false.obs;
   final RxBool isPasswordFocused = false.obs;
+  late final AuthLogin authLogin;
 
   final emailFocusNode = FocusNode();
   final passwordFocusNode = FocusNode();
@@ -34,8 +38,9 @@ class AuthController extends GetxController {
   final RxList<Student> parentChildren = <Student>[].obs;
 
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
+    authLogin = await AuthLogin(apiClient: await Get.find<ApiClient>());
     _setupValidation();
     _setupFocusListeners();
     _checkAutoLogin();
@@ -74,14 +79,10 @@ class AuthController extends GetxController {
     if (token != null && type != null) {
       switch (type) {
         case 'parent':
-          Get.offAllNamed('/parent-home');
+          Get.offAllNamed(Routes.PARENT_HOME);
           break;
-        case 'teacher':
-          Get.offAllNamed('/teacher-home');
-          break;
-        case 'student':
         default:
-          Get.offAllNamed('/home');
+          Get.offAllNamed(Routes.HOME);
           break;
       }
     }
@@ -93,185 +94,119 @@ class AuthController extends GetxController {
 
   Future<void> login() async {
     if (!isFormValid.value) return;
-
     try {
       isLoading.value = true;
-
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (emailController.text.isNotEmpty &&
-          passwordController.text.isNotEmpty) {
-        Map<String, dynamic> userData;
-
-        if (emailController.text.contains('parent')) {
-          userData = await _mockParentLogin();
-        } else {
-          userData = await _mockStudentLogin();
-        }
-
-        await _storage.write(key: 'auth_token', value: userData['token']);
-        await _storage.write(key: 'user_type', value: userData['type']);
-        await _storage.write(
-          key: 'user_id',
-          value: userData['user'].id.toString(),
-        );
-
-        currentUser.value = userData['user'];
-
-        Get.snackbar(
-          'Connexion réussie',
-          'Bienvenue dans votre portail !',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-        );
-
-        switch (userData['type']) {
-          case 'parent':
-            Get.offAllNamed('/parent-home');
-            break;
-          case 'student':
-          default:
-            Get.offAllNamed('/home');
-            break;
-        }
-      } else {
-        throw Exception('Identifiants invalides');
-      }
+      final response = await authLogin.call(
+        emailController.text,
+        passwordController.text,
+      );
+      await _handleLoginSuccess(response);
+    } on DioException catch (e) {
+      _handleLoginError(e);
     } catch (e) {
-      Get.snackbar(
+      _showSnackbar(
         'Erreur de connexion',
         'Vérifiez vos identifiants',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
+        Colors.red,
       );
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<Map<String, dynamic>> _mockStudentLogin() async {
-    final user = User(
-      id: 1,
-      firstName: 'Marie',
-      lastName: 'Dupont',
-      email: emailController.text,
-      phone: '0123456789',
-      password: 'hashed_password',
-      address: '123 Rue de la Paix',
-      dateOfBirth: '2005-03-15',
-      gender: 'F',
-      roleId: 3,
-      role: Role(id: 3, name: 'student'),
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
+  Future<void> _handleLoginSuccess(Map<String, dynamic> response) async {
+    final token = response['data']['token'];
+    final user = User.fromJson(response['data']['user']);
+    final userType = user.role?.name;
+
+    if (userType != 'parent' && userType != 'student') {
+      _showSnackbar(
+        'Accès non autorisé',
+        'Seuls les parents et les élèves peuvent se connecter.',
+        Colors.red,
+      );
+      return;
+    }
+
+    currentUser.value = user;
+    await _storage.write(key: 'auth_token', value: token);
+    await _storage.write(key: 'user_type', value: userType);
+    await _storage.write(key: 'user_id', value: user.id.toString());
+
+    _showSnackbar(
+      'Connexion réussie',
+      'Bienvenue dans votre portail !',
+      Colors.green,
     );
 
-    final student = Student(
-      id: 1,
-      userId: user.id,
-      enrollmentDate: '2023-09-01',
-      classId: 1,
-      parentUserId: 2,
-      studentIdNumber: '2024001',
-      user: user,
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
-    );
-
-    currentStudent.value = student;
-
-    return {
-      'token': 'student_token_123',
-      'type': 'student',
-      'user': user,
-      'student': student,
-    };
+    if (userType == 'parent') {
+      Get.offAllNamed(Routes.PARENT_HOME);
+    } else {
+      Get.offAllNamed(Routes.HOME);
+    }
   }
 
-  Future<Map<String, dynamic>> _mockParentLogin() async {
-    final user = User(
-      id: 2,
-      firstName: 'Jean',
-      lastName: 'Dupont',
-      email: emailController.text,
-      phone: '0123456789',
-      password: 'hashed_password',
-      address: '123 Rue de la Paix',
-      dateOfBirth: '1975-05-20',
-      gender: 'M',
-      roleId: 2,
-      role: Role(id: 2, name: 'parent'),
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
+  void _handleLoginError(DioException e) {
+    final data = e.response?.data;
+    if (e.response?.statusCode == 403 &&
+        data['message']?.contains('First login') == true) {
+      Get.toNamed(Routes.CHANGE_PASSWORD);
+      _showSnackbar(
+        'Premier accès',
+        'Veuillez changer votre mot de passe avant de continuer.',
+        Colors.orange,
+      );
+    } else {
+      _showSnackbar(
+        'Erreur de connexion',
+        data?['message'] ?? 'Vérifiez vos identifiants',
+        Colors.red,
+      );
+    }
+  }
+
+  Future<void> changePassword(String oldPassword, String newPassword) async {
+    try {
+      final email = emailController.text;
+      await Get.find<ApiClient>().dio.post(
+        '/auth/change-password',
+        data: {
+          'email': email,
+          'old_password': oldPassword,
+          'new_password': newPassword,
+        },
+      );
+
+      _showSnackbar(
+        'Mot de passe changé',
+        'Veuillez vous reconnecter avec votre nouveau mot de passe.',
+        Colors.green,
+      );
+      Get.offAllNamed(Routes.LOGIN);
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      _showSnackbar(
+        'Erreur',
+        data?['message'] ?? 'Impossible de changer le mot de passe.',
+        Colors.red,
+      );
+    } catch (e) {
+      _showSnackbar(
+        'Erreur',
+        'Une erreur inattendue s\'est produite.',
+        Colors.red,
+      );
+    }
+  }
+
+  void _showSnackbar(String title, String message, Color color) {
+    Get.snackbar(
+      title,
+      message,
+      backgroundColor: color,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.TOP,
     );
-
-    final marieUser = User(
-      id: 3,
-      firstName: 'Marie',
-      lastName: 'Dupont',
-      email: 'marie.dupont@student.com',
-      phone: '0123456789',
-      password: 'hashed_password',
-      address: '123 Rue de la Paix',
-      dateOfBirth: '2005-03-15',
-      gender: 'F',
-      roleId: 3,
-      role: Role(id: 3, name: 'student'),
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
-    );
-
-    final pierreUser = User(
-      id: 4,
-      firstName: 'Pierre',
-      lastName: 'Dupont',
-      email: 'pierre.dupont@student.com',
-      phone: '0123456789',
-      password: 'hashed_password',
-      address: '123 Rue de la Paix',
-      dateOfBirth: '2007-08-22',
-      gender: 'M',
-      roleId: 3,
-      role: Role(id: 3, name: 'student'),
-      createdAt: DateTime.now().toIso8601String(),
-      updatedAt: DateTime.now().toIso8601String(),
-    );
-
-    final children = [
-      Student(
-        id: 1,
-        userId: marieUser.id,
-        enrollmentDate: '2023-09-01',
-        classId: 1,
-        parentUserId: user.id,
-        studentIdNumber: '2024001',
-        user: marieUser,
-        createdAt: DateTime.now().toIso8601String(),
-        updatedAt: DateTime.now().toIso8601String(),
-      ),
-      Student(
-        id: 2,
-        userId: pierreUser.id,
-        enrollmentDate: '2023-09-01',
-        classId: 2,
-        parentUserId: user.id,
-        studentIdNumber: '2024002',
-        user: pierreUser,
-        createdAt: DateTime.now().toIso8601String(),
-        updatedAt: DateTime.now().toIso8601String(),
-      ),
-    ];
-
-    parentChildren.value = children;
-
-    return {
-      'token': 'parent_token_456',
-      'type': 'parent',
-      'user': user,
-      'children': children,
-    };
   }
 
   void forgotPassword() {
@@ -297,7 +232,7 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     Future.wait([clearHiveData(), clearStorage()], eagerError: true);
-    Get.offAllNamed('/login');
+    Get.offAllNamed(Routes.LOGIN);
   }
 
   Future<void> clearHiveData() async {

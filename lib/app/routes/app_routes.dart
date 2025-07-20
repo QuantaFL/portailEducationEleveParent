@@ -10,6 +10,7 @@ abstract class Routes {
   static const HISTORY = _Paths.HISTORY;
   static const SETTINGS = _Paths.SETTINGS;
   static const NOTIFICATIONS = _Paths.NOTIFICATION;
+  static const CHANGE_PASSWORD = _Paths.CHANGE_PASSWORD;
 }
 
 abstract class _Paths {
@@ -22,4 +23,5 @@ abstract class _Paths {
   static const PARENT_HOME = '/parent-home';
   static const HISTORY = '/history';
   static const SETTINGS = '/settings';
+  static const CHANGE_PASSWORD = '/change-password';
 }
