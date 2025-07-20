@@ -60,21 +60,21 @@ class SessionAdapter extends TypeAdapter<Session> {
 // **************************************************************************
 
 Session _$SessionFromJson(Map<String, dynamic> json) => Session(
-  id: (json['id'] as num?)?.toInt(),
-  session: json['session'] as String,
-  startDate: DateTime.parse(json['startDate'] as String),
-  reenrollDate: json['registration_start_date'] == null
-      ? null
-      : DateTime.parse(json['registration_start_date'] as String),
-  endDate: DateTime.parse(json['endDate'] as String),
-  active: json['is_active'] as bool,
-);
+      id: (json['id'] as num?)?.toInt(),
+      session: json['session'] as String,
+      startDate: DateTime.parse(json['startDate'] as String),
+      reenrollDate: json['registration_start_date'] == null
+          ? null
+          : DateTime.parse(json['registration_start_date'] as String),
+      endDate: DateTime.parse(json['endDate'] as String),
+      active: json['is_active'] as bool,
+    );
 
 Map<String, dynamic> _$SessionToJson(Session instance) => <String, dynamic>{
-  'id': instance.id,
-  'session': instance.session,
-  'startDate': instance.startDate.toIso8601String(),
-  'registration_start_date': instance.reenrollDate?.toIso8601String(),
-  'endDate': instance.endDate.toIso8601String(),
-  'is_active': instance.active,
-};
+      'id': instance.id,
+      'session': instance.session,
+      'startDate': instance.startDate.toIso8601String(),
+      'registration_start_date': instance.reenrollDate?.toIso8601String(),
+      'endDate': instance.endDate.toIso8601String(),
+      'is_active': instance.active,
+    };

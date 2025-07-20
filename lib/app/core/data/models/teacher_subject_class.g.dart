@@ -66,11 +66,11 @@ TeacherSubjectClass _$TeacherSubjectClassFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$TeacherSubjectClassToJson(
-  TeacherSubjectClass instance,
-) => <String, dynamic>{
-  'teacherId': instance.teacherId,
-  'subjectId': instance.subjectId,
-  'classId': instance.classId,
-  'createdAt': instance.createdAt,
-  'updatedAt': instance.updatedAt,
-};
+        TeacherSubjectClass instance) =>
+    <String, dynamic>{
+      'teacherId': instance.teacherId,
+      'subjectId': instance.subjectId,
+      'classId': instance.classId,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+    };

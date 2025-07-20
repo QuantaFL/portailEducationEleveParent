@@ -78,19 +78,19 @@ class ReportCardAdapter extends TypeAdapter<ReportCard> {
 // **************************************************************************
 
 ReportCard _$ReportCardFromJson(Map<String, dynamic> json) => ReportCard(
-  id: (json['id'] as num).toInt(),
-  studentId: (json['studentId'] as num).toInt(),
-  academicYear: json['academicYear'] as String,
-  period: json['period'] as String,
-  averageGradeGeneral: (json['averageGradeGeneral'] as num?)?.toDouble(),
-  mention: json['mention'] as String?,
-  rank: (json['rank'] as num?)?.toInt(),
-  appreciation: json['appreciation'] as String?,
-  pdfPath: json['pdfPath'] as String,
-  generatedAt: json['generatedAt'] as String,
-  createdAt: json['createdAt'] as String?,
-  updatedAt: json['updatedAt'] as String?,
-);
+      id: (json['id'] as num).toInt(),
+      studentId: (json['studentId'] as num).toInt(),
+      academicYear: json['academicYear'] as String,
+      period: json['period'] as String,
+      averageGradeGeneral: (json['averageGradeGeneral'] as num?)?.toDouble(),
+      mention: json['mention'] as String?,
+      rank: (json['rank'] as num?)?.toInt(),
+      appreciation: json['appreciation'] as String?,
+      pdfPath: json['pdfPath'] as String,
+      generatedAt: json['generatedAt'] as String,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+    );
 
 Map<String, dynamic> _$ReportCardToJson(ReportCard instance) =>
     <String, dynamic>{

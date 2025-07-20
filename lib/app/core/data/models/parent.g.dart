@@ -1,51 +1,42 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'student.dart';
+part of 'parent.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class StudentAdapter extends TypeAdapter<Student> {
+class ParentAdapter extends TypeAdapter<Parent> {
   @override
   final int typeId = 2;
 
   @override
-  Student read(BinaryReader reader) {
+  Parent read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Student(
+    return Parent(
       id: fields[0] as int,
       userId: fields[1] as int,
-      user: fields[6] as User?,
-      enrollmentDate: fields[2] as String,
-      classId: fields[3] as int,
-      parentUserId: fields[4] as int?,
-      studentIdNumber: fields[5] as String,
+      childrens: (fields[2] as List).cast<Student>(),
+      user: fields[3] as User?,
       createdAt: fields[7] as String?,
       updatedAt: fields[8] as String?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Student obj) {
+  void write(BinaryWriter writer, Parent obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.userId)
       ..writeByte(2)
-      ..write(obj.enrollmentDate)
+      ..write(obj.childrens)
       ..writeByte(3)
-      ..write(obj.classId)
-      ..writeByte(4)
-      ..write(obj.parentUserId)
-      ..writeByte(5)
-      ..write(obj.studentIdNumber)
-      ..writeByte(6)
       ..write(obj.user)
       ..writeByte(7)
       ..write(obj.createdAt)
@@ -59,7 +50,7 @@ class StudentAdapter extends TypeAdapter<Student> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is StudentAdapter &&
+      other is ParentAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -68,32 +59,24 @@ class StudentAdapter extends TypeAdapter<Student> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Student _$StudentFromJson(Map<String, dynamic> json) => Student(
+Parent _$ParentFromJson(Map<String, dynamic> json) => Parent(
       id: (json['id'] as num).toInt(),
       userId: (json['userId'] as num).toInt(),
+      childrens: (json['childrens'] as List<dynamic>)
+          .map((e) => Student.fromJson(e as Map<String, dynamic>))
+          .toList(),
       user: json['user'] == null
           ? null
           : User.fromJson(json['user'] as Map<String, dynamic>),
-      classModel: json['classModel'] == null
-          ? null
-          : ClassModel.fromJson(json['classModel'] as Map<String, dynamic>),
-      enrollmentDate: json['enrollmentDate'] as String,
-      classId: (json['classId'] as num).toInt(),
-      parentUserId: (json['parentUserId'] as num?)?.toInt(),
-      studentIdNumber: json['studentIdNumber'] as String,
       createdAt: json['createdAt'] as String?,
       updatedAt: json['updatedAt'] as String?,
     );
 
-Map<String, dynamic> _$StudentToJson(Student instance) => <String, dynamic>{
+Map<String, dynamic> _$ParentToJson(Parent instance) => <String, dynamic>{
       'id': instance.id,
       'userId': instance.userId,
-      'enrollmentDate': instance.enrollmentDate,
-      'classId': instance.classId,
-      'parentUserId': instance.parentUserId,
-      'studentIdNumber': instance.studentIdNumber,
+      'childrens': instance.childrens,
       'user': instance.user,
-      'classModel': instance.classModel,
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,
     };

@@ -57,12 +57,12 @@ class ClassModelAdapter extends TypeAdapter<ClassModel> {
 // **************************************************************************
 
 ClassModel _$ClassModelFromJson(Map<String, dynamic> json) => ClassModel(
-  id: (json['id'] as num).toInt(),
-  name: json['name'] as String,
-  academicYear: json['academicYear'] as String,
-  createdAt: json['createdAt'] as String?,
-  updatedAt: json['updatedAt'] as String?,
-);
+      id: (json['id'] as num).toInt(),
+      name: json['name'] as String,
+      academicYear: json['academicYear'] as String,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+    );
 
 Map<String, dynamic> _$ClassModelToJson(ClassModel instance) =>
     <String, dynamic>{

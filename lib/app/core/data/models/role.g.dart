@@ -16,7 +16,10 @@ class RoleAdapter extends TypeAdapter<Role> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Role(id: fields[0] as int, name: fields[1] as String);
+    return Role(
+      id: fields[0] as int,
+      name: fields[1] as String,
+    );
   }
 
   @override
@@ -44,10 +47,12 @@ class RoleAdapter extends TypeAdapter<Role> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Role _$RoleFromJson(Map<String, dynamic> json) =>
-    Role(id: (json['id'] as num).toInt(), name: json['name'] as String);
+Role _$RoleFromJson(Map<String, dynamic> json) => Role(
+      id: (json['id'] as num).toInt(),
+      name: json['name'] as String,
+    );
 
 Map<String, dynamic> _$RoleToJson(Role instance) => <String, dynamic>{
-  'id': instance.id,
-  'name': instance.name,
-};
+      'id': instance.id,
+      'name': instance.name,
+    };

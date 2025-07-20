@@ -60,21 +60,21 @@ class TeacherAdapter extends TypeAdapter<Teacher> {
 // **************************************************************************
 
 Teacher _$TeacherFromJson(Map<String, dynamic> json) => Teacher(
-  id: (json['id'] as num).toInt(),
-  userId: (json['userId'] as num).toInt(),
-  hireDate: json['hireDate'] as String,
-  user: json['user'] == null
-      ? null
-      : User.fromJson(json['user'] as Map<String, dynamic>),
-  createdAt: json['createdAt'] as String?,
-  updatedAt: json['updatedAt'] as String?,
-);
+      id: (json['id'] as num).toInt(),
+      userId: (json['userId'] as num).toInt(),
+      hireDate: json['hireDate'] as String,
+      user: json['user'] == null
+          ? null
+          : User.fromJson(json['user'] as Map<String, dynamic>),
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+    );
 
 Map<String, dynamic> _$TeacherToJson(Teacher instance) => <String, dynamic>{
-  'id': instance.id,
-  'userId': instance.userId,
-  'hireDate': instance.hireDate,
-  'user': instance.user,
-  'createdAt': instance.createdAt,
-  'updatedAt': instance.updatedAt,
-};
+      'id': instance.id,
+      'userId': instance.userId,
+      'hireDate': instance.hireDate,
+      'user': instance.user,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+    };

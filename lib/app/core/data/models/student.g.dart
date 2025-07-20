@@ -69,31 +69,31 @@ class StudentAdapter extends TypeAdapter<Student> {
 // **************************************************************************
 
 Student _$StudentFromJson(Map<String, dynamic> json) => Student(
-  id: (json['id'] as num).toInt(),
-  userId: (json['userId'] as num).toInt(),
-  user: json['user'] == null
-      ? null
-      : User.fromJson(json['user'] as Map<String, dynamic>),
-  classModel: json['classModel'] == null
-      ? null
-      : ClassModel.fromJson(json['classModel'] as Map<String, dynamic>),
-  enrollmentDate: json['enrollmentDate'] as String,
-  classId: (json['classId'] as num).toInt(),
-  parentUserId: (json['parentUserId'] as num?)?.toInt(),
-  studentIdNumber: json['studentIdNumber'] as String,
-  createdAt: json['createdAt'] as String?,
-  updatedAt: json['updatedAt'] as String?,
-);
+      id: (json['id'] as num).toInt(),
+      userId: (json['userId'] as num).toInt(),
+      user: json['user'] == null
+          ? null
+          : User.fromJson(json['user'] as Map<String, dynamic>),
+      classModel: json['classModel'] == null
+          ? null
+          : ClassModel.fromJson(json['classModel'] as Map<String, dynamic>),
+      enrollmentDate: json['enrollmentDate'] as String,
+      classId: (json['classId'] as num).toInt(),
+      parentUserId: (json['parentUserId'] as num?)?.toInt(),
+      studentIdNumber: json['studentIdNumber'] as String,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+    );
 
 Map<String, dynamic> _$StudentToJson(Student instance) => <String, dynamic>{
-  'id': instance.id,
-  'userId': instance.userId,
-  'enrollmentDate': instance.enrollmentDate,
-  'classId': instance.classId,
-  'parentUserId': instance.parentUserId,
-  'studentIdNumber': instance.studentIdNumber,
-  'user': instance.user,
-  'classModel': instance.classModel,
-  'createdAt': instance.createdAt,
-  'updatedAt': instance.updatedAt,
-};
+      'id': instance.id,
+      'userId': instance.userId,
+      'enrollmentDate': instance.enrollmentDate,
+      'classId': instance.classId,
+      'parentUserId': instance.parentUserId,
+      'studentIdNumber': instance.studentIdNumber,
+      'user': instance.user,
+      'classModel': instance.classModel,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+    };

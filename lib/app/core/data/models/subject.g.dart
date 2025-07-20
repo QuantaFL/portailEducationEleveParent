@@ -60,19 +60,19 @@ class SubjectAdapter extends TypeAdapter<Subject> {
 // **************************************************************************
 
 Subject _$SubjectFromJson(Map<String, dynamic> json) => Subject(
-  id: (json['id'] as num).toInt(),
-  name: json['name'] as String,
-  coefficient: (json['coefficient'] as num).toDouble(),
-  level: json['level'] as String?,
-  createdAt: json['createdAt'] as String?,
-  updatedAt: json['updatedAt'] as String?,
-);
+      id: (json['id'] as num).toInt(),
+      name: json['name'] as String,
+      coefficient: (json['coefficient'] as num).toDouble(),
+      level: json['level'] as String?,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+    );
 
 Map<String, dynamic> _$SubjectToJson(Subject instance) => <String, dynamic>{
-  'id': instance.id,
-  'name': instance.name,
-  'coefficient': instance.coefficient,
-  'level': instance.level,
-  'createdAt': instance.createdAt,
-  'updatedAt': instance.updatedAt,
-};
+      'id': instance.id,
+      'name': instance.name,
+      'coefficient': instance.coefficient,
+      'level': instance.level,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+    };

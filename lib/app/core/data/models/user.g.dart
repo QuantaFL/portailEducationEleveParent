@@ -84,37 +84,37 @@ class UserAdapter extends TypeAdapter<User> {
 // **************************************************************************
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
-  id: (json['id'] as num).toInt(),
-  firstName: json['firstName'] as String,
-  lastName: json['lastName'] as String,
-  phone: json['phone'] as String,
-  email: json['email'] as String,
-  password: json['password'] as String,
-  roleId: (json['roleId'] as num).toInt(),
-  address: json['address'] as String,
-  dateOfBirth: json['dateOfBirth'] as String,
-  gender: json['gender'] as String,
-  role: json['role'] == null
-      ? null
-      : Role.fromJson(json['role'] as Map<String, dynamic>),
-  rememberToken: json['rememberToken'] as String?,
-  createdAt: json['createdAt'] as String?,
-  updatedAt: json['updatedAt'] as String?,
-);
+      id: (json['id'] as num).toInt(),
+      firstName: json['firstName'] as String,
+      lastName: json['lastName'] as String,
+      phone: json['phone'] as String,
+      email: json['email'] as String,
+      password: json['password'] as String,
+      roleId: (json['roleId'] as num).toInt(),
+      address: json['address'] as String,
+      dateOfBirth: json['dateOfBirth'] as String,
+      gender: json['gender'] as String,
+      role: json['role'] == null
+          ? null
+          : Role.fromJson(json['role'] as Map<String, dynamic>),
+      rememberToken: json['rememberToken'] as String?,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+    );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-  'id': instance.id,
-  'firstName': instance.firstName,
-  'lastName': instance.lastName,
-  'email': instance.email,
-  'phone': instance.phone,
-  'password': instance.password,
-  'address': instance.address,
-  'dateOfBirth': instance.dateOfBirth,
-  'gender': instance.gender,
-  'roleId': instance.roleId,
-  'role': instance.role,
-  'rememberToken': instance.rememberToken,
-  'createdAt': instance.createdAt,
-  'updatedAt': instance.updatedAt,
-};
+      'id': instance.id,
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
+      'email': instance.email,
+      'phone': instance.phone,
+      'password': instance.password,
+      'address': instance.address,
+      'dateOfBirth': instance.dateOfBirth,
+      'gender': instance.gender,
+      'roleId': instance.roleId,
+      'role': instance.role,
+      'rememberToken': instance.rememberToken,
+      'createdAt': instance.createdAt,
+      'updatedAt': instance.updatedAt,
+    };
