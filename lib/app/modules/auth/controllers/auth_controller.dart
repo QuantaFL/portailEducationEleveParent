@@ -99,8 +99,10 @@ class AuthController extends GetxController {
       //TODO remove for login to work
       if (emailController.text.contains("parent")) {
         Get.offAllNamed(Routes.PARENT_HOME);
-      } else {
+      } else if (emailController.text.contains("student")) {
         Get.offAllNamed(Routes.HOME);
+      } else {
+        Get.offAllNamed(Routes.CHANGE_PASSWORD);
       }
       final response = await authLogin.call(
         emailController.text,

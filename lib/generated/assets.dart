@@ -6,7 +6,8 @@ class Assets {
       'assets/animations/communication.json';
   static const String animationsEmptyState =
       'assets/animations/empty_state.json';
-  static const String animationsFamily = 'assets/animations/family.json';
+  static const String animationsFamilyEducation =
+      'assets/animations/family_education.json';
   static const String animationsLoadingSpinner =
       'assets/animations/loading_spinner.json';
   static const String animationsStudentBackground =
@@ -15,4 +16,5 @@ class Assets {
       'assets/animations/success_checkmark.json';
   static const String animationsWelcomeEducation =
       'assets/animations/welcome_education.json';
+  static const String iconsLock = 'assets/icons/lock.png';
 }
