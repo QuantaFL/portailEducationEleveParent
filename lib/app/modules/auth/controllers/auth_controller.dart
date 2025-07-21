@@ -11,8 +11,8 @@ import 'package:portail_eleve/app/routes/app_pages.dart';
 import '../../../core/data/models/user.dart';
 
 class AuthController extends GetxController {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  late TextEditingController emailController;
+  late TextEditingController passwordController;
 
   final RxBool isLoading = false.obs;
   final RxBool isPasswordVisible = false.obs;
@@ -36,13 +36,15 @@ class AuthController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    authLogin = await AuthLogin(apiClient: await Get.find<ApiClient>());
+    _checkAutoLogin();
     _setupValidation();
     _setupFocusListeners();
-    _checkAutoLogin();
+    authLogin = await AuthLogin(apiClient: await Get.find<ApiClient>());
   }
 
   void _setupValidation() {
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
     emailController.addListener(() {
       isEmailValid.value = GetUtils.isEmail(emailController.text);
       _updateFormValidation();
@@ -94,9 +96,9 @@ class AuthController extends GetxController {
       isLoading.value = true;
       if (emailController.text.contains('parent')) {
         Get.offAllNamed(Routes.PARENT_HOME);
-      } else if(emailController.text.contains('student')){
+      } else if (emailController.text.contains('student')) {
         Get.offAllNamed(Routes.HOME);
-      }else {
+      } else {
         Get.offAllNamed(Routes.CHANGE_PASSWORD);
       }
 
