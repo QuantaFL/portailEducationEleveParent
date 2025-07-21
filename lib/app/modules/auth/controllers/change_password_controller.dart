@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:portail_eleve/app/modules/auth/controllers/auth_controller.dart';
+import 'package:portail_eleve/app/core/api/api_client.dart';
+import 'package:portail_eleve/app/modules/auth/data/useCases/change_password.dart';
+import 'package:portail_eleve/app/routes/app_pages.dart';
 
 class ChangePasswordController extends GetxController {
-  final AuthController authController = Get.find<AuthController>();
+  late final ChangePassword _changePasswordUseCase;
+  final _storage = const FlutterSecureStorage();
 
   final oldPasswordController = TextEditingController();
   final newPasswordController = TextEditingController();
@@ -27,10 +31,14 @@ class ChangePasswordController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _changePasswordUseCase = ChangePassword(apiClient: Get.find<ApiClient>());
+
+    // Add listeners to trigger validation on text change
     oldPasswordController.addListener(_validateOldPassword);
     newPasswordController.addListener(_validateNewPassword);
     confirmPasswordController.addListener(_validateConfirmPassword);
 
+    // Add listeners to update UI on focus change
     oldPasswordFocusNode.addListener(update);
     newPasswordFocusNode.addListener(update);
     confirmPasswordFocusNode.addListener(update);
@@ -73,9 +81,31 @@ class ChangePasswordController extends GetxController {
 
     isLoading.value = true;
     try {
-      await authController.changePassword(
+      final email = await _storage.read(key: 'user_email');
+      if (email == null) {
+        throw Exception('User email not found in storage.');
+      }
+
+      await _changePasswordUseCase.call(
+        email,
         oldPasswordController.text,
         newPasswordController.text,
+      );
+
+      Get.snackbar(
+        'Succès',
+        'Mot de passe changé avec succès. Veuillez vous reconnecter.',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      Get.offAllNamed(Routes.LOGIN);
+    } catch (e) {
+      Get.snackbar(
+        'Erreur',
+        'Une erreur est survenue lors du changement de mot de passe.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
     } finally {
       isLoading.value = false;
