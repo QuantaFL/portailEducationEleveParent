@@ -26,10 +26,8 @@ class HomeController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Simulate API calls
       await Future.delayed(const Duration(seconds: 1));
 
-      // Mock student info
       studentInfo.value = {
         'name': 'Marie Dupont',
         'class': 'Terminale S',
