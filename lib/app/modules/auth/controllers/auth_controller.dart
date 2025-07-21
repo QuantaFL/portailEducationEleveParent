@@ -4,11 +4,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:portail_eleve/app/core/api/api_client.dart';
+import 'package:portail_eleve/app/core/data/models/login_response.dart';
 import 'package:portail_eleve/app/modules/auth/data/useCases/auth_login.dart';
 import 'package:portail_eleve/app/routes/app_pages.dart';
 
-import '../../../core/data/models/student.dart';
-import '../../../core/data/models/teacher.dart';
 import '../../../core/data/models/user.dart';
 
 class AuthController extends GetxController {
@@ -33,9 +32,6 @@ class AuthController extends GetxController {
 
   final RxString userType = ''.obs;
   final Rx<User?> currentUser = Rx<User?>(null);
-  final Rx<Student?> currentStudent = Rx<Student?>(null);
-  final Rx<Teacher?> currentTeacher = Rx<Teacher?>(null);
-  final RxList<Student> parentChildren = <Student>[].obs;
 
   @override
   Future<void> onInit() async {
@@ -96,14 +92,14 @@ class AuthController extends GetxController {
     if (!isFormValid.value) return;
     try {
       isLoading.value = true;
-      //TODO remove for login to work
-      if (emailController.text.contains("parent")) {
+      if (emailController.text.contains('parent')) {
         Get.offAllNamed(Routes.PARENT_HOME);
-      } else if (emailController.text.contains("student")) {
+      } else if(emailController.text.contains('student')){
         Get.offAllNamed(Routes.HOME);
-      } else {
+      }else {
         Get.offAllNamed(Routes.CHANGE_PASSWORD);
       }
+
       final response = await authLogin.call(
         emailController.text,
         passwordController.text,
@@ -122,11 +118,15 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> _handleLoginSuccess(Map<String, dynamic> response) async {
-    final token = response['data']['token'];
-    final user = User.fromJson(response['data']['user']);
-    final userType = user.role?.name;
-
+  Future<void> _handleLoginSuccess(LoginResponse loginResponse) async {
+    final token = loginResponse.token;
+    final user = loginResponse.user;
+    String userType = '';
+    if (user.roleId == 3) {
+      userType = 'student';
+    } else if (user.roleId == 3) {
+      userType = 'parent';
+    }
     if (userType != 'parent' && userType != 'student') {
       _showSnackbar(
         'Accès non autorisé',
@@ -140,6 +140,7 @@ class AuthController extends GetxController {
     await _storage.write(key: 'auth_token', value: token);
     await _storage.write(key: 'user_type', value: userType);
     await _storage.write(key: 'user_id', value: user.id.toString());
+    await _storage.write(key: 'user_email', value: user.email);
 
     _showSnackbar(
       'Connexion réussie',
@@ -168,40 +169,6 @@ class AuthController extends GetxController {
       _showSnackbar(
         'Erreur de connexion',
         data?['message'] ?? 'Vérifiez vos identifiants',
-        Colors.red,
-      );
-    }
-  }
-
-  Future<void> changePassword(String oldPassword, String newPassword) async {
-    try {
-      final email = emailController.text;
-      await Get.find<ApiClient>().dio.post(
-        '/auth/change-password',
-        data: {
-          'email': email,
-          'old_password': oldPassword,
-          'new_password': newPassword,
-        },
-      );
-
-      _showSnackbar(
-        'Mot de passe changé',
-        'Veuillez vous reconnecter avec votre nouveau mot de passe.',
-        Colors.green,
-      );
-      Get.offAllNamed(Routes.LOGIN);
-    } on DioException catch (e) {
-      final data = e.response?.data;
-      _showSnackbar(
-        'Erreur',
-        data?['message'] ?? 'Impossible de changer le mot de passe.',
-        Colors.red,
-      );
-    } catch (e) {
-      _showSnackbar(
-        'Erreur',
-        'Une erreur inattendue s\'est produite.',
         Colors.red,
       );
     }
