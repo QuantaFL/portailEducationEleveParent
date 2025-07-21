@@ -37,7 +37,6 @@ class DashboardStatsCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Subtle gradient overlay
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -54,14 +53,12 @@ class DashboardStatsCard extends StatelessWidget {
             ),
           ),
 
-          // Content
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Header with Icon
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -130,7 +127,6 @@ class DashboardStatsCard extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // Value and Title
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -176,7 +172,6 @@ class DashboardStatsCard extends StatelessWidget {
             ),
           ),
 
-          // Decorative elements
           Positioned(
             right: -20,
             bottom: -20,
