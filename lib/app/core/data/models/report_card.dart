@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'report_card.g.dart';
 
 @HiveType(typeId: 8)
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class ReportCard {
   @HiveField(0)
   final int id;
