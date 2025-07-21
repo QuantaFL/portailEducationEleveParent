@@ -49,100 +49,12 @@ class HomeView extends GetView<HomeController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               StudentProfileHeader(),
-
               const SizedBox(height: 32),
-
-              _buildStatsOverview(context),
-
-              const SizedBox(height: 32),
-
               _buildRecentBulletins(context),
-
               const SizedBox(height: 100),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildStatsOverview(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Simple header
-          Text(
-            'Aperçu',
-            style: GoogleFonts.inter(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppDesignSystem.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Simple stats row
-          Row(
-            children: [
-              Expanded(
-                child: _buildSimpleStatItem(
-                  '15.3',
-                  'Moyenne',
-                  AppDesignSystem.primary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildSimpleStatItem(
-                  '1er',
-                  'Classement',
-                  AppDesignSystem.accent,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildSimpleStatItem(
-                  '3',
-                  'Bulletins',
-                  AppDesignSystem.success,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSimpleStatItem(String value, String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppDesignSystem.border),
-      ),
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: GoogleFonts.inter(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: color,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              color: AppDesignSystem.textSecondary,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -153,68 +65,16 @@ class HomeView extends GetView<HomeController> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 3,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: AppDesignSystem.primary,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Bulletins récents',
-                    style: GoogleFonts.inter(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: AppDesignSystem.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-              GestureDetector(
-                onTap: () => controller.changeTab(1),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppDesignSystem.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Voir tout',
-                        style: GoogleFonts.inter(
-                          color: AppDesignSystem.primary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.arrow_forward_rounded,
-                        size: 16,
-                        color: AppDesignSystem.primary,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+          child: Text(
+            'Bulletins Récents',
+            style: GoogleFonts.inter(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: AppDesignSystem.textPrimary,
+            ),
           ),
         ),
-
         const SizedBox(height: 16),
-
         Obx(
           () => controller.isLoading.value
               ? _buildLoadingShimmer(context)
@@ -263,23 +123,19 @@ class HomeView extends GetView<HomeController> {
   Widget _buildHistory(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: AppDesignSystem.responsivePadding(
-          context,
-          horizontal: 16,
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Historique des bulletins',
-              style: AppDesignSystem.textTheme(context).headlineMedium
-                  ?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppDesignSystem.textPrimary,
-                  ),
+              'Historique',
+              style: GoogleFonts.inter(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: AppDesignSystem.textPrimary,
+              ),
             ),
-            SizedBox(height: AppDesignSystem.spacing(context, 16)),
+            const SizedBox(height: 24),
             Expanded(
               child: ListView.builder(
                 itemCount: 5, // Mock data
@@ -292,9 +148,7 @@ class HomeView extends GetView<HomeController> {
                     'date': '${10 + index}/0${index + 1}/2024',
                   };
                   return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: AppDesignSystem.spacing(context, 12),
-                    ),
+                    padding: const EdgeInsets.only(bottom: 12),
                     child: BulletinCard(
                       bulletin: bulletinData,
                       onTap: () => controller.viewBulletin(index.toString()),
@@ -314,68 +168,52 @@ class HomeView extends GetView<HomeController> {
   Widget _buildProfile(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: AppDesignSystem.responsivePadding(
-          context,
-          horizontal: 16,
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Mon profil',
-              style: AppDesignSystem.textTheme(context).headlineMedium
-                  ?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppDesignSystem.textPrimary,
-                  ),
+              'Profil',
+              style: GoogleFonts.inter(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: AppDesignSystem.textPrimary,
+              ),
             ),
-            SizedBox(height: AppDesignSystem.spacing(context, 20)),
+            const SizedBox(height: 24),
             Expanded(
               child: ListView(
                 children: [
-                  _buildProfileItem(
-                    context,
-                    Icons.person,
-                    'Informations personnelles',
-                    'Nom, prénom, email, etc.',
-                    () => Get.to(() => const PersonalInfoView()),
+                  ProfileListItem(
+                    icon: Icons.person_outline,
+                    title: 'Informations Personnelles',
+                    onTap: () => Get.to(() => const PersonalInfoView()),
                   ),
-                  _buildProfileItem(
-                    context,
-                    Icons.lock,
-                    'Sécurité',
-                    'Changer le mot de passe',
-                    () => Get.to(() => const SecurityView()),
+                  ProfileListItem(
+                    icon: Icons.lock_outline,
+                    title: 'Sécurité',
+                    onTap: () => Get.to(() => const SecurityView()),
                   ),
-                  _buildProfileItem(
-                    context,
-                    Icons.notifications,
-                    'Notifications',
-                    'Gérer les notifications',
-                    () => Get.snackbar('Info', 'Notifications'),
+                  ProfileListItem(
+                    icon: Icons.notifications_outlined,
+                    title: 'Notifications',
+                    onTap: () => Get.snackbar('Info', 'Notifications'),
                   ),
-                  _buildProfileItem(
-                    context,
-                    Icons.help,
-                    'Aide',
-                    'FAQ et support',
-                    () => Get.to(() => const HelpView()),
+                  ProfileListItem(
+                    icon: Icons.help_outline,
+                    title: 'Aide et Support',
+                    onTap: () => Get.to(() => const HelpView()),
                   ),
-                  _buildProfileItem(
-                    context,
-                    Icons.info,
-                    'À propos',
-                    'Version de l\'application',
-                    () => Get.to(() => const AboutView()),
+                  ProfileListItem(
+                    icon: Icons.info_outline,
+                    title: 'À Propos',
+                    onTap: () => Get.to(() => const AboutView()),
                   ),
-                  SizedBox(height: AppDesignSystem.spacing(context, 20)),
-                  _buildProfileItem(
-                    context,
-                    Icons.logout,
-                    'Déconnexion',
-                    'Se déconnecter du compte',
-                    () => controller.logout(),
+                  const SizedBox(height: 20),
+                  ProfileListItem(
+                    icon: Icons.logout,
+                    title: 'Déconnexion',
+                    onTap: () => controller.logout(),
                     isDestructive: true,
                   ),
                 ],
@@ -383,64 +221,6 @@ class HomeView extends GetView<HomeController> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildProfileItem(
-    BuildContext context,
-    IconData icon,
-    String title,
-    String subtitle,
-    VoidCallback onTap, {
-    bool isDestructive = false,
-  }) {
-    return Container(
-      margin: EdgeInsets.only(bottom: AppDesignSystem.spacing(context, 12)),
-      decoration: BoxDecoration(
-        color: AppDesignSystem.surfaceContainer,
-        borderRadius: BorderRadius.circular(
-          AppDesignSystem.responsiveRadius(context, 12),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ListTile(
-        leading: Container(
-          padding: AppDesignSystem.responsivePadding(context, all: 8),
-          decoration: BoxDecoration(
-            color: (isDestructive ? Colors.red : Colors.blue).withValues(
-              alpha: 0.1,
-            ),
-            borderRadius: BorderRadius.circular(
-              AppDesignSystem.responsiveRadius(context, 8),
-            ),
-          ),
-          child: Icon(
-            icon,
-            color: isDestructive ? Colors.red : Colors.blue,
-            size: 20,
-          ),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: isDestructive ? Colors.red : Colors.black87,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(color: Colors.grey[600], fontSize: 13),
-        ),
-        trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
-        onTap: onTap,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -509,6 +289,63 @@ class HomeView extends GetView<HomeController> {
                 ),
               ),
             ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProfileListItem extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+  final bool isDestructive;
+
+  const ProfileListItem({
+    Key? key,
+    required this.icon,
+    required this.title,
+    required this.onTap,
+    this.isDestructive = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.grey.shade200),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 24,
+              color: isDestructive ? Colors.red : AppDesignSystem.textPrimary,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color:
+                      isDestructive ? Colors.red : AppDesignSystem.textPrimary,
+                ),
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey.shade400,
+            ),
           ],
         ),
       ),

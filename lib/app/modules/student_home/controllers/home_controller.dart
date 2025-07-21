@@ -3,14 +3,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:portail_eleve/app/routes/app_pages.dart';
 
-import '../../../core/data/models/notification_model.dart';
-
 class HomeController extends GetxController {
   var currentIndex = 0.obs;
   var isLoading = false.obs;
-  var notifications = <NotificationModel>[].obs;
   var recentBulletins = <Map<String, dynamic>>[].obs;
-  var studentInfo = <String, dynamic>{}.obs;
 
   @override
   void onInit() {
@@ -27,14 +23,6 @@ class HomeController extends GetxController {
       isLoading.value = true;
 
       await Future.delayed(const Duration(seconds: 1));
-
-      studentInfo.value = {
-        'name': 'Marie Dupont',
-        'class': 'Terminale S',
-        'establishment': 'Lycée Victor Hugo',
-        'studentId': '2024001',
-        'profileImage': null,
-      };
 
       // Mock recent bulletins
       recentBulletins.addAll([
@@ -69,24 +57,6 @@ class HomeController extends GetxController {
           'isDownloaded': true,
         },
       ]);
-
-      // Mock notifications
-      // notifications.addAll([
-      //   NotificationModel(
-      //     id: '1',
-      //     title: 'Nouveau bulletin disponible',
-      //     message: 'Votre bulletin du 1er trimestre est maintenant disponible',
-      //     type: 'bulletin',
-      //     createdAt: DateTime.now().subtract(const Duration(hours: 2)),
-      //   ),
-      //   NotificationModel(
-      //     id: '2',
-      //     title: 'Rappel: Réunion parents-professeurs',
-      //     message: 'N\'oubliez pas la réunion prévue le 15 janvier',
-      //     type: 'reminder',
-      //     createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      //   ),
-      // ]);
     } catch (e) {
       Get.snackbar(
         'Erreur',
@@ -211,9 +181,7 @@ class HomeController extends GetxController {
     FlutterSecureStorage storage = const FlutterSecureStorage();
     // Clear local data
     currentIndex.value = 0;
-    notifications.clear();
     recentBulletins.clear();
-    studentInfo.clear();
     await storage.deleteAll();
 
     // Here you would typically:
