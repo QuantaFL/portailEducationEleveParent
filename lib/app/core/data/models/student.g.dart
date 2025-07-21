@@ -20,19 +20,20 @@ class StudentAdapter extends TypeAdapter<Student> {
       id: fields[0] as int,
       userId: fields[1] as int,
       user: fields[6] as User?,
+      classModel: fields[7] as ClassModel?,
       enrollmentDate: fields[2] as String,
       classId: fields[3] as int,
       parentUserId: fields[4] as int?,
       studentIdNumber: fields[5] as String,
-      createdAt: fields[7] as String?,
-      updatedAt: fields[8] as String?,
+      createdAt: fields[8] as String?,
+      updatedAt: fields[9] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Student obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -48,8 +49,10 @@ class StudentAdapter extends TypeAdapter<Student> {
       ..writeByte(6)
       ..write(obj.user)
       ..writeByte(7)
-      ..write(obj.createdAt)
+      ..write(obj.classModel)
       ..writeByte(8)
+      ..write(obj.createdAt)
+      ..writeByte(9)
       ..write(obj.updatedAt);
   }
 
@@ -70,30 +73,30 @@ class StudentAdapter extends TypeAdapter<Student> {
 
 Student _$StudentFromJson(Map<String, dynamic> json) => Student(
       id: (json['id'] as num).toInt(),
-      userId: (json['userId'] as num).toInt(),
+      userId: (json['user_id'] as num).toInt(),
       user: json['user'] == null
           ? null
           : User.fromJson(json['user'] as Map<String, dynamic>),
-      classModel: json['classModel'] == null
+      classModel: json['class_model'] == null
           ? null
-          : ClassModel.fromJson(json['classModel'] as Map<String, dynamic>),
-      enrollmentDate: json['enrollmentDate'] as String,
-      classId: (json['classId'] as num).toInt(),
-      parentUserId: (json['parentUserId'] as num?)?.toInt(),
-      studentIdNumber: json['studentIdNumber'] as String,
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+          : ClassModel.fromJson(json['class_model'] as Map<String, dynamic>),
+      enrollmentDate: json['enrollment_date'] as String,
+      classId: (json['class_id'] as num).toInt(),
+      parentUserId: (json['parent_user_id'] as num?)?.toInt(),
+      studentIdNumber: json['student_id_number'] as String,
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
     );
 
 Map<String, dynamic> _$StudentToJson(Student instance) => <String, dynamic>{
       'id': instance.id,
-      'userId': instance.userId,
-      'enrollmentDate': instance.enrollmentDate,
-      'classId': instance.classId,
-      'parentUserId': instance.parentUserId,
-      'studentIdNumber': instance.studentIdNumber,
+      'user_id': instance.userId,
+      'enrollment_date': instance.enrollmentDate,
+      'class_id': instance.classId,
+      'parent_user_id': instance.parentUserId,
+      'student_id_number': instance.studentIdNumber,
       'user': instance.user,
-      'classModel': instance.classModel,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
+      'class_model': instance.classModel,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
     };
