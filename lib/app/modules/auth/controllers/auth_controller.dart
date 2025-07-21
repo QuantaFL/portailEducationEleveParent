@@ -96,6 +96,12 @@ class AuthController extends GetxController {
     if (!isFormValid.value) return;
     try {
       isLoading.value = true;
+      //TODO remove for login to work
+      if (emailController.text.contains("parent")) {
+        Get.offAllNamed(Routes.PARENT_HOME);
+      } else {
+        Get.offAllNamed(Routes.HOME);
+      }
       final response = await authLogin.call(
         emailController.text,
         passwordController.text,

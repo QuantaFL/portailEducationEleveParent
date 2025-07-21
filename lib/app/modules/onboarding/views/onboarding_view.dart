@@ -24,7 +24,6 @@ class OnboardingView extends GetView<OnboardingController> {
           child: Column(
             children: [
               _buildHeader(context),
-
               Expanded(
                 child: PageView.builder(
                   controller: controller.pageController,
@@ -37,7 +36,6 @@ class OnboardingView extends GetView<OnboardingController> {
                 ),
               ),
 
-              // Bottom Navigation
               _buildBottomNavigation(context),
             ],
           ),
@@ -149,7 +147,7 @@ class OnboardingView extends GetView<OnboardingController> {
           ),
 
           Expanded(
-            flex: 2,
+            flex: 4,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -246,7 +244,7 @@ class OnboardingView extends GetView<OnboardingController> {
       padding: AppDesignSystem.responsivePadding(
         context,
         horizontal: 24,
-        vertical: 32,
+        vertical: 22,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
