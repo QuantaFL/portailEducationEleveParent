@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:portail_eleve/app/core/api/api_client.dart';
+import 'package:portail_eleve/app/core/data/models/academic_year.dart';
+import 'package:portail_eleve/app/core/data/models/class_model.dart';
+import 'package:portail_eleve/app/core/data/models/student_session.dart';
+import 'package:portail_eleve/app/core/data/models/term.dart';
+import 'package:portail_eleve/app/core/data/models/user_model.dart';
 
 import '../../../core/data/models/notification_model.dart';
 import '../../../core/data/models/report_card.dart';
 import '../../../core/data/models/student.dart';
-import '../../../core/data/models/user.dart';
 
 class ParentHomeController extends GetxController {
   var currentIndex = 0.obs;
@@ -15,7 +19,12 @@ class ParentHomeController extends GetxController {
 
   var notifications = <NotificationModel>[].obs;
   var children = <Student>[].obs;
-  var currentParentUser = Rx<User?>(null);
+  var childrenUsers = <UserModel>[].obs;
+  var currentParentUser = Rx<UserModel?>(null);
+  var academicYears = <AcademicYear>[].obs;
+  var terms = <Term>[].obs;
+  var classes = <ClassModel>[].obs;
+  var studentSessions = <StudentSession>[].obs;
 
   // Enhanced bulletin data using ReportCard model
   var selectedChildBulletins = <ReportCard>[].obs;
@@ -30,7 +39,7 @@ class ParentHomeController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    apiClient = await Get.find<ApiClient>();
+    apiClient = Get.find<ApiClient>();
     loadParentDashboardData();
   }
 
@@ -48,76 +57,121 @@ class ParentHomeController extends GetxController {
       isLoading.value = true;
 
       await Future.delayed(const Duration(seconds: 1));
-      currentParentUser.value = User(
+      currentParentUser.value = UserModel(
         id: 2,
         firstName: 'Jean',
         lastName: 'Dupont',
         email: 'parent@example.com',
         phone: '0123456789',
-        password: 'hashed_password',
-        address: '123 Rue de la Paix',
-        dateOfBirth: '1975-05-20',
-        gender: 'M',
+        adress: '123 Rue de la Paix',
+        birthday: DateTime(1975, 5, 20),
         roleId: 2,
-        createdAt: DateTime.now().toIso8601String(),
-        updatedAt: DateTime.now().toIso8601String(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
-      final marieUser = User(
+      final marieUser = UserModel(
         id: 3,
         firstName: 'Marie',
         lastName: 'Dupont',
         email: 'marie.dupont@student.com',
         phone: '0123456789',
-        password: 'hashed_password',
-        address: '123 Rue de la Paix',
-        dateOfBirth: '2005-03-15',
-        gender: 'F',
+        adress: '123 Rue de la Paix',
+        birthday: DateTime(2005, 3, 15),
         roleId: 3,
-        // Student role ID
-        createdAt: DateTime.now().toIso8601String(),
-        updatedAt: DateTime.now().toIso8601String(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
-      final pierreUser = User(
+      final pierreUser = UserModel(
         id: 4,
         firstName: 'Pierre',
         lastName: 'Dupont',
         email: 'pierre.dupont@student.com',
         phone: '0123456789',
-        password: 'hashed_password',
-        address: '123 Rue de la Paix',
-        dateOfBirth: '2007-08-22',
-        gender: 'M',
+        adress: '123 Rue de la Paix',
+        birthday: DateTime(2007, 8, 22),
         roleId: 3,
-        // Student role ID
-        createdAt: DateTime.now().toIso8601String(),
-        updatedAt: DateTime.now().toIso8601String(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
+      childrenUsers.value = [marieUser, pierreUser];
 
       children.value = [
         Student(
           id: 1,
-          userId: marieUser.id,
-          enrollmentDate: '2023-09-01',
-          classId: 1,
-          parentUserId: currentParentUser.value!.id,
-          studentIdNumber: '2024001',
-          user: marieUser,
+          userModelId: marieUser.id,
+          matricule: '2024001',
+          parentModelId: currentParentUser.value!.id,
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
         ),
         Student(
           id: 2,
-          userId: pierreUser.id,
-          enrollmentDate: '2023-09-01',
-          classId: 2,
-          parentUserId: currentParentUser.value!.id,
-          studentIdNumber: '2024002',
-          user: pierreUser,
+          userModelId: pierreUser.id,
+          matricule: '2024002',
+          parentModelId: currentParentUser.value!.id,
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
         ),
+      ];
+      academicYears.value = [
+        AcademicYear(
+          id: 1,
+          label: '2024-2025',
+          startDate: DateTime(2024, 9, 1).toIso8601String(),
+          endDate: DateTime(2025, 6, 30).toIso8601String(),
+        ),
+        AcademicYear(
+          id: 2,
+          label: '2023-2024',
+          startDate: DateTime(2023, 9, 1).toIso8601String(),
+          endDate: DateTime(2024, 6, 30).toIso8601String(),
+        ),
+        AcademicYear(
+          id: 3,
+          label: '2022-2023',
+          startDate: DateTime(2022, 9, 1).toIso8601String(),
+          endDate: DateTime(2023, 6, 30).toIso8601String(),
+        ),
+      ];
+      terms.value = [
+        Term(id: 1, name: '1er Trimestre', academicYearId: 1),
+        Term(id: 2, name: '2ème Trimestre', academicYearId: 1),
+        Term(id: 3, name: '3ème Trimestre', academicYearId: 1),
+        Term(id: 4, name: '1er Trimestre', academicYearId: 2),
+        Term(id: 5, name: '2ème Trimestre', academicYearId: 2),
+        Term(id: 6, name: '3ème Trimestre', academicYearId: 2),
+      ];
+      classes.value = [
+        ClassModel(id: 1, name: 'Terminale S'),
+        ClassModel(id: 2, name: '3ème B'),
+      ];
+      studentSessions.value = [
+        StudentSession(
+          id: 1,
+          studentId: 1,
+          classModelId: 1,
+          academicYearId: 1,
+        ), // Marie 24-25
+        StudentSession(
+          id: 2,
+          studentId: 2,
+          classModelId: 2,
+          academicYearId: 1,
+        ), // Pierre 24-25
+        StudentSession(
+          id: 3,
+          studentId: 1,
+          classModelId: 1,
+          academicYearId: 2,
+        ), // Marie 23-24
+        StudentSession(
+          id: 4,
+          studentId: 2,
+          classModelId: 2,
+          academicYearId: 2,
+        ), // Pierre 23-24
       ];
 
       loadSelectedChildData();
@@ -127,7 +181,7 @@ class ParentHomeController extends GetxController {
       notifications.addAll([
         NotificationModel(
           id: 1,
-          userId: currentParentUser.value!.id,
+          userId: currentParentUser.value!.id!,
           type: 'bulletin',
           message:
               'Nouveau bulletin disponible pour Marie - 1er Trimestre 2024-2025',
@@ -138,7 +192,7 @@ class ParentHomeController extends GetxController {
         ),
         NotificationModel(
           id: 2,
-          userId: currentParentUser.value!.id,
+          userId: currentParentUser.value!.id!,
           type: 'bulletin',
           message: 'Bulletin du 2ème trimestre disponible pour Pierre',
           isSent: false,
@@ -163,61 +217,42 @@ class ParentHomeController extends GetxController {
     if (children.isEmpty) return;
 
     final selectedChild = children[selectedChildIndex.value];
+    final childUser = childrenUsers.firstWhere(
+      (user) => user.id == selectedChild.userModelId,
+    );
 
     selectedChildBulletins.clear();
     selectedChildBulletins.addAll([
       ReportCard(
         id: 1,
-        studentId: selectedChild.id,
-        academicYear: '2024-2025',
-        period: '1er Trimestre',
-        averageGradeGeneral: selectedChild.user?.firstName == 'Marie'
-            ? 14.5
-            : 12.8,
-        mention: selectedChild.user?.firstName == 'Marie'
-            ? 'Assez Bien'
-            : 'Passable',
-        rank: selectedChild.user?.firstName == 'Marie' ? 8 : 15,
-        appreciation: 'Élève sérieux(se) avec de bons résultats',
-        pdfPath: '/bulletins/bulletin_${selectedChild.id}_T1_2024.pdf',
-        generatedAt: DateTime.now()
-            .subtract(const Duration(days: 30))
-            .toIso8601String(),
-        createdAt: DateTime.now()
-            .subtract(const Duration(days: 30))
-            .toIso8601String(),
+        studentSessionId: 1, // Marie's session for 24-25
+        termId: 1, // 1er Trimestre
+        averageGrade: childUser.firstName == 'Marie' ? 14.5 : 12.8,
+        honors: childUser.firstName == 'Marie' ? 'Assez Bien' : 'Passable',
+        rank: childUser.firstName == 'Marie' ? 8 : 15,
+        path: '/bulletins/bulletin_${selectedChild.id}_T1_2024.pdf',
+        createdAt: DateTime.now().subtract(const Duration(days: 30)),
       ),
       ReportCard(
         id: 2,
-        studentId: selectedChild.id,
-        academicYear: '2023-2024',
-        period: '3ème Trimestre',
-        averageGradeGeneral: selectedChild.user?.firstName == 'Marie'
-            ? 15.2
-            : 13.1,
-        mention: selectedChild.user?.firstName == 'Marie'
-            ? 'Bien'
-            : 'Assez Bien',
-        rank: selectedChild.user?.firstName == 'Marie' ? 6 : 12,
-        appreciation: 'Progression constante, continuez ainsi',
-        pdfPath: '/bulletins/bulletin_${selectedChild.id}_T3_2023.pdf',
-        generatedAt: DateTime.now()
-            .subtract(const Duration(days: 120))
-            .toIso8601String(),
-        createdAt: DateTime.now()
-            .subtract(const Duration(days: 120))
-            .toIso8601String(),
+        studentSessionId: 3, // Marie's session for 23-24
+        termId: 6, // 3eme Trimestre
+        averageGrade: childUser.firstName == 'Marie' ? 15.2 : 13.1,
+        honors: childUser.firstName == 'Marie' ? 'Bien' : 'Assez Bien',
+        rank: childUser.firstName == 'Marie' ? 6 : 12,
+        path: '/bulletins/bulletin_${selectedChild.id}_T3_2023.pdf',
+        createdAt: DateTime.now().subtract(const Duration(days: 120)),
       ),
     ]);
 
     selectedChildNotifications.clear();
     selectedChildNotifications.addAll([
       NotificationModel(
-        id: selectedChild.id + 100,
-        userId: currentParentUser.value!.id,
+        id: selectedChild.id! + 100,
+        userId: currentParentUser.value!.id!,
         type: 'bulletin',
         message:
-            'Nouveau bulletin disponible pour ${selectedChild.user?.firstName ?? 'l\'élève'}',
+            'Nouveau bulletin disponible pour ${childUser.firstName ?? 'l\'élève'}',
         isSent: false,
         createdAt: DateTime.now()
             .subtract(const Duration(hours: 1))
@@ -227,41 +262,29 @@ class ParentHomeController extends GetxController {
   }
 
   void loadAllBulletins() {
-    // Mock historical bulletins for all children
     allBulletins.clear();
 
-    for (final child in children) {
-      // Add multiple years of bulletins
-      for (String year in ['2024-2025', '2023-2024', '2022-2023']) {
-        for (String period in [
-          '1er Trimestre',
-          '2ème Trimestre',
-          '3ème Trimestre',
-        ]) {
-          final random = DateTime.now().millisecondsSinceEpoch % 20;
-          final average = 10.0 + random;
-
-          allBulletins.add(
-            ReportCard(
-              id: allBulletins.length + 1,
-              studentId: child.id,
-              academicYear: year,
-              period: period,
-              averageGradeGeneral: average,
-              mention: _getMentionFromAverage(average),
-              rank: (random % 30) + 1,
-              appreciation: 'Bulletin de $period $year',
-              pdfPath:
-                  '/bulletins/bulletin_${child.id}_${period.replaceAll(' ', '_')}_${year.replaceAll('-', '_')}.pdf',
-              generatedAt: DateTime.now()
-                  .subtract(Duration(days: 30 + allBulletins.length * 10))
-                  .toIso8601String(),
-              createdAt: DateTime.now()
-                  .subtract(Duration(days: 30 + allBulletins.length * 10))
-                  .toIso8601String(),
+    for (final session in studentSessions) {
+      for (final term in terms.where(
+        (t) => t.academicYearId == session.academicYearId,
+      )) {
+        final random = DateTime.now().millisecondsSinceEpoch % 20;
+        final average = 10.0 + random;
+        allBulletins.add(
+          ReportCard(
+            id: allBulletins.length + 1,
+            studentSessionId: session.id,
+            termId: term.id,
+            averageGrade: average,
+            honors: _getMentionFromAverage(average),
+            rank: (random % 30) + 1,
+            path:
+                '/bulletins/bulletin_${session.studentId}_${term.name!.replaceAll(' ', '_')}.pdf',
+            createdAt: DateTime.now().subtract(
+              Duration(days: 30 + allBulletins.length * 10),
             ),
-          );
-        }
+          ),
+        );
       }
     }
   }
@@ -274,12 +297,10 @@ class ParentHomeController extends GetxController {
     return 'Insuffisant';
   }
 
-  // Enhanced PDF download with proper file handling
   Future<void> downloadBulletin(ReportCard bulletin) async {
     try {
       isLoading.value = true;
 
-      // Check if user is authenticated
       final token = await _storage.read(key: 'auth_token');
       if (token == null) {
         Get.snackbar(
@@ -291,7 +312,6 @@ class ParentHomeController extends GetxController {
         return;
       }
 
-      // Simulate PDF download process
       Get.snackbar(
         'Téléchargement en cours',
         'Préparation du bulletin PDF...',
@@ -301,15 +321,17 @@ class ParentHomeController extends GetxController {
       );
 
       await Future.delayed(const Duration(seconds: 2));
-
-      // In a real app, this would download the actual PDF file
-      // using the bulletin.pdfPath from your Laravel backend
-      // Example: await ApiClient.downloadPdf(bulletin.pdfPath, token);
-      // The PDF would be saved to the device's Downloads folder
+      final term = terms.firstWhere((t) => t.id == bulletin.termId);
+      final session = studentSessions.firstWhere(
+        (s) => s.id == bulletin.studentSessionId,
+      );
+      final academicYear = academicYears.firstWhere(
+        (ay) => ay.id == session.academicYearId,
+      );
 
       Get.snackbar(
         'Téléchargement réussi',
-        'Bulletin ${bulletin.period} ${bulletin.academicYear} téléchargé dans le dossier Téléchargements',
+        'Bulletin ${term.name} ${academicYear.label} téléchargé dans le dossier Téléchargements',
         backgroundColor: Colors.green,
         colorText: Colors.white,
         duration: const Duration(seconds: 4),
@@ -326,40 +348,51 @@ class ParentHomeController extends GetxController {
     }
   }
 
-  // Filter bulletins by academic year and period
   List<ReportCard> getFilteredBulletins() {
+    final selectedChild = children[selectedChildIndex.value];
+    final childSessions = studentSessions
+        .where((s) => s.studentId == selectedChild.id)
+        .toList();
+
     var filtered = allBulletins
         .where(
           (bulletin) =>
-              bulletin.studentId == children[selectedChildIndex.value].id,
+              childSessions.any((cs) => cs.id == bulletin.studentSessionId),
         )
         .toList();
 
     if (selectedAcademicYear.value != 'all') {
-      filtered = filtered
-          .where(
-            (bulletin) => bulletin.academicYear == selectedAcademicYear.value,
-          )
-          .toList();
+      final academicYear = academicYears.firstWhere(
+        (ay) => ay.label == selectedAcademicYear.value,
+        orElse: () => AcademicYear(id: -1),
+      );
+      if (academicYear.id != -1) {
+        filtered = filtered.where((bulletin) {
+          final session = studentSessions.firstWhere(
+            (s) => s.id == bulletin.studentSessionId,
+          );
+          return session.academicYearId == academicYear.id;
+        }).toList();
+      }
     }
 
     if (selectedPeriod.value != 'all') {
-      filtered = filtered
-          .where((bulletin) => bulletin.period == selectedPeriod.value)
-          .toList();
+      final term = terms.firstWhere(
+        (t) => t.name == selectedPeriod.value,
+        orElse: () => Term(id: -1),
+      );
+      if (term.id != -1) {
+        filtered = filtered
+            .where((bulletin) => bulletin.termId == term.id)
+            .toList();
+      }
     }
 
-    // Sort by most recent first
-    filtered.sort(
-      (a, b) => DateTime.parse(
-        b.generatedAt,
-      ).compareTo(DateTime.parse(a.generatedAt)),
-    );
+    filtered.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
 
     return filtered;
   }
 
-  // Set filters for bulletin history
   void setAcademicYearFilter(String year) {
     selectedAcademicYear.value = year;
   }
@@ -368,42 +401,24 @@ class ParentHomeController extends GetxController {
     selectedPeriod.value = period;
   }
 
-  // Get available academic years
   List<String> getAvailableAcademicYears() {
-    final years = allBulletins
-        .where(
-          (bulletin) =>
-              bulletin.studentId == children[selectedChildIndex.value].id,
-        )
-        .map((bulletin) => bulletin.academicYear)
-        .toSet()
-        .toList();
+    final years = academicYears.map((ay) => ay.label!).toSet().toList();
     years.insert(0, 'all');
     return years;
   }
 
-  // Get available periods
   List<String> getAvailablePeriods() {
-    final periods = allBulletins
-        .where(
-          (bulletin) =>
-              bulletin.studentId == children[selectedChildIndex.value].id,
-        )
-        .map((bulletin) => bulletin.period)
-        .toSet()
-        .toList();
+    final periods = terms.map((t) => t.name!).toSet().toList();
     periods.insert(0, 'all');
     return periods;
   }
 
-  // Navigation methods
   void goToBulletinHistory() {
     Get.toNamed(
       '/bulletin-history',
       arguments: {
         'studentId': children[selectedChildIndex.value].id,
-        'studentName':
-            children[selectedChildIndex.value].user?.firstName ?? 'Élève',
+        'studentName': selectedChildName,
       },
     );
   }
@@ -415,14 +430,25 @@ class ParentHomeController extends GetxController {
   String get selectedChildName {
     if (children.isEmpty) return '';
     final child = children[selectedChildIndex.value];
-    final user = child.user;
-    return user != null ? '${user.firstName} ${user.lastName}' : 'Élève';
+    final user = childrenUsers.firstWhere((u) => u.id == child.userModelId);
+    return '${user.firstName} ${user.lastName}';
   }
 
   String get selectedChildClass {
     if (children.isEmpty) return '';
     final child = children[selectedChildIndex.value];
-    return child.classId == 1 ? 'Terminale S' : '3ème B';
+    final currentSession = studentSessions.firstWhere(
+      (s) => s.studentId == child.id && s.academicYearId == 1, // Current AY
+      orElse: () => StudentSession(),
+    );
+    if (currentSession.classModelId != null) {
+      final currentClass = classes.firstWhere(
+        (c) => c.id == currentSession.classModelId,
+        orElse: () => ClassModel(),
+      );
+      return currentClass.name ?? 'N/A';
+    }
+    return 'N/A';
   }
 
   String get parentName {

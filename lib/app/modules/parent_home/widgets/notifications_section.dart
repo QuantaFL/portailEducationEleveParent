@@ -119,7 +119,7 @@ class NotificationsSection extends GetView<ParentHomeController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  notification.type ?? 'Notification',
+                  notification.type,
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -128,7 +128,7 @@ class NotificationsSection extends GetView<ParentHomeController> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  notification.message ?? '',
+                  notification.message,
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     color: AppDesignSystem.textSecondary,
