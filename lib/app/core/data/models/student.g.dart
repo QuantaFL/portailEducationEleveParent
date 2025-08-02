@@ -8,7 +8,7 @@ part of 'student.dart';
 
 class StudentAdapter extends TypeAdapter<Student> {
   @override
-  final int typeId = 2;
+  final int typeId = 19;
 
   @override
   Student read(BinaryReader reader) {
@@ -17,43 +17,52 @@ class StudentAdapter extends TypeAdapter<Student> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Student(
-      id: fields[0] as int,
-      userId: fields[1] as int,
-      user: fields[6] as User?,
-      classModel: fields[7] as ClassModel?,
-      enrollmentDate: fields[2] as String,
-      classId: fields[3] as int,
-      parentUserId: fields[4] as int?,
-      studentIdNumber: fields[5] as String,
-      createdAt: fields[8] as String?,
-      updatedAt: fields[9] as String?,
+      id: fields[0] as int?,
+      matricule: fields[1] as String?,
+      createdAt: fields[2] as String?,
+      updatedAt: fields[3] as String?,
+      parentModelId: fields[4] as int?,
+      userModelId: fields[5] as int?,
+      academicRecordsUrl: fields[6] as String?,
+      userModel: fields[7] as UserModel?,
+      parentModel: fields[8] as Parent?,
+      latestStudentSession: fields[9] as StudentSession?,
+      count: fields[10] as int?,
+      maleCount: fields[11] as int?,
+      femaleCount: fields[12] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Student obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.userId)
+      ..write(obj.matricule)
       ..writeByte(2)
-      ..write(obj.enrollmentDate)
-      ..writeByte(3)
-      ..write(obj.classId)
-      ..writeByte(4)
-      ..write(obj.parentUserId)
-      ..writeByte(5)
-      ..write(obj.studentIdNumber)
-      ..writeByte(6)
-      ..write(obj.user)
-      ..writeByte(7)
-      ..write(obj.classModel)
-      ..writeByte(8)
       ..write(obj.createdAt)
+      ..writeByte(3)
+      ..write(obj.updatedAt)
+      ..writeByte(4)
+      ..write(obj.parentModelId)
+      ..writeByte(5)
+      ..write(obj.userModelId)
+      ..writeByte(6)
+      ..write(obj.academicRecordsUrl)
+      ..writeByte(7)
+      ..write(obj.userModel)
+      ..writeByte(8)
+      ..write(obj.parentModel)
       ..writeByte(9)
-      ..write(obj.updatedAt);
+      ..write(obj.latestStudentSession)
+      ..writeByte(10)
+      ..write(obj.count)
+      ..writeByte(11)
+      ..write(obj.maleCount)
+      ..writeByte(12)
+      ..write(obj.femaleCount);
   }
 
   @override
@@ -72,31 +81,40 @@ class StudentAdapter extends TypeAdapter<Student> {
 // **************************************************************************
 
 Student _$StudentFromJson(Map<String, dynamic> json) => Student(
-      id: (json['id'] as num).toInt(),
-      userId: (json['user_id'] as num).toInt(),
-      user: json['user'] == null
-          ? null
-          : User.fromJson(json['user'] as Map<String, dynamic>),
-      classModel: json['class_model'] == null
-          ? null
-          : ClassModel.fromJson(json['class_model'] as Map<String, dynamic>),
-      enrollmentDate: json['enrollment_date'] as String,
-      classId: (json['class_id'] as num).toInt(),
-      parentUserId: (json['parent_user_id'] as num?)?.toInt(),
-      studentIdNumber: json['student_id_number'] as String,
+      id: (json['id'] as num?)?.toInt(),
+      matricule: json['matricule'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
+      parentModelId: (json['parent_model_id'] as num?)?.toInt(),
+      userModelId: (json['user_model_id'] as num?)?.toInt(),
+      academicRecordsUrl: json['academic_records_url'] as String?,
+      userModel: json['userModel'] == null
+          ? null
+          : UserModel.fromJson(json['userModel'] as Map<String, dynamic>),
+      parentModel: json['parentModel'] == null
+          ? null
+          : Parent.fromJson(json['parentModel'] as Map<String, dynamic>),
+      latestStudentSession: json['latest_student_session'] == null
+          ? null
+          : StudentSession.fromJson(
+              json['latest_student_session'] as Map<String, dynamic>),
+      count: (json['count'] as num?)?.toInt(),
+      maleCount: (json['maleCount'] as num?)?.toInt(),
+      femaleCount: (json['femaleCount'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$StudentToJson(Student instance) => <String, dynamic>{
       'id': instance.id,
-      'user_id': instance.userId,
-      'enrollment_date': instance.enrollmentDate,
-      'class_id': instance.classId,
-      'parent_user_id': instance.parentUserId,
-      'student_id_number': instance.studentIdNumber,
-      'user': instance.user,
-      'class_model': instance.classModel,
+      'matricule': instance.matricule,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
+      'parent_model_id': instance.parentModelId,
+      'user_model_id': instance.userModelId,
+      'academic_records_url': instance.academicRecordsUrl,
+      'userModel': instance.userModel?.toJson(),
+      'parentModel': instance.parentModel?.toJson(),
+      'latest_student_session': instance.latestStudentSession?.toJson(),
+      'count': instance.count,
+      'maleCount': instance.maleCount,
+      'femaleCount': instance.femaleCount,
     };

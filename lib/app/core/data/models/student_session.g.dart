@@ -8,7 +8,7 @@ part of 'student_session.dart';
 
 class StudentSessionAdapter extends TypeAdapter<StudentSession> {
   @override
-  final int typeId = 1;
+  final int typeId = 20;
 
   @override
   StudentSession read(BinaryReader reader) {
@@ -18,36 +18,39 @@ class StudentSessionAdapter extends TypeAdapter<StudentSession> {
     };
     return StudentSession(
       id: fields[0] as int?,
-      session: fields[1] as Session,
-      student: fields[2] as Student,
-      classe: fields[4] as ClassModel,
-      isLeave: fields[5] as bool,
-      isActive: fields[6] as bool,
-      enrollDate: fields[7] as DateTime,
-      status: fields[8] as String,
+      studentId: fields[1] as int?,
+      classModelId: fields[2] as int?,
+      academicYearId: fields[3] as int?,
+      createdAt: fields[4] as String?,
+      updatedAt: fields[5] as String?,
+      justificatifUrl: fields[6] as String?,
+      classModel: fields[7] as ClassModel?,
+      academicYear: fields[8] as AcademicYear?,
     );
   }
 
   @override
   void write(BinaryWriter writer, StudentSession obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.session)
+      ..write(obj.studentId)
       ..writeByte(2)
-      ..write(obj.student)
+      ..write(obj.classModelId)
+      ..writeByte(3)
+      ..write(obj.academicYearId)
       ..writeByte(4)
-      ..write(obj.classe)
+      ..write(obj.createdAt)
       ..writeByte(5)
-      ..write(obj.isLeave)
+      ..write(obj.updatedAt)
       ..writeByte(6)
-      ..write(obj.isActive)
+      ..write(obj.justificatifUrl)
       ..writeByte(7)
-      ..write(obj.enrollDate)
+      ..write(obj.classModel)
       ..writeByte(8)
-      ..write(obj.status);
+      ..write(obj.academicYear);
   }
 
   @override
@@ -68,23 +71,30 @@ class StudentSessionAdapter extends TypeAdapter<StudentSession> {
 StudentSession _$StudentSessionFromJson(Map<String, dynamic> json) =>
     StudentSession(
       id: (json['id'] as num?)?.toInt(),
-      session: Session.fromJson(json['session'] as Map<String, dynamic>),
-      student: Student.fromJson(json['student'] as Map<String, dynamic>),
-      classe: ClassModel.fromJson(json['classe'] as Map<String, dynamic>),
-      isLeave: json['is_leave'] as bool,
-      isActive: json['is_active'] as bool,
-      enrollDate: DateTime.parse(json['enroll_date'] as String),
-      status: json['status'] as String,
+      studentId: (json['student_id'] as num?)?.toInt(),
+      classModelId: (json['class_model_id'] as num?)?.toInt(),
+      academicYearId: (json['academic_year_id'] as num?)?.toInt(),
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
+      justificatifUrl: json['justificatif_url'] as String?,
+      classModel: json['class_model'] == null
+          ? null
+          : ClassModel.fromJson(json['class_model'] as Map<String, dynamic>),
+      academicYear: json['academic_year'] == null
+          ? null
+          : AcademicYear.fromJson(
+              json['academic_year'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$StudentSessionToJson(StudentSession instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'session': instance.session.toJson(),
-      'student': instance.student.toJson(),
-      'classe': instance.classe.toJson(),
-      'is_leave': instance.isLeave,
-      'is_active': instance.isActive,
-      'enroll_date': instance.enrollDate.toIso8601String(),
-      'status': instance.status,
+      'student_id': instance.studentId,
+      'class_model_id': instance.classModelId,
+      'academic_year_id': instance.academicYearId,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
+      'justificatif_url': instance.justificatifUrl,
+      'class_model': instance.classModel,
+      'academic_year': instance.academicYear,
     };

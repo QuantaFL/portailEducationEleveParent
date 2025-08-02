@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:portail_eleve/app/core/data/models/student.dart';
 import 'package:portail_eleve/app/routes/app_pages.dart';
 
 import '../../../themes/palette_system.dart';
 
 class StudentProfileHeader extends StatelessWidget {
-  const StudentProfileHeader({Key? key}) : super(key: key);
+  final Student student;
+  const StudentProfileHeader({Key? key, required this.student})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: AppDesignSystem.responsivePadding(context, all: 16),
+      margin: AppDesignSystem.responsivePadding(context, all: 0),
       padding: AppDesignSystem.responsivePadding(context, all: 20),
       decoration: BoxDecoration(
         gradient: AppDesignSystem.primaryGradient,
@@ -21,10 +24,8 @@ class StudentProfileHeader extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Main row with profile info and notification
           Row(
             children: [
-              // Profile Avatar
               Container(
                 width: AppDesignSystem.responsiveSize(context, 60),
                 height: AppDesignSystem.responsiveSize(context, 60),
@@ -39,7 +40,12 @@ class StudentProfileHeader extends StatelessWidget {
                 child: CircleAvatar(
                   backgroundColor: AppDesignSystem.textInverse,
                   child: Text(
-                    'MC',
+                    ((student.userModel?.firstName ?? '').isNotEmpty
+                            ? student.userModel!.firstName![0]
+                            : '') +
+                        ((student.userModel?.lastName ?? '').isNotEmpty
+                            ? student.userModel!.lastName![0]
+                            : ''),
                     style: AppDesignSystem.textTheme(context).titleLarge
                         ?.copyWith(
                           color: AppDesignSystem.primary,
@@ -51,7 +57,6 @@ class StudentProfileHeader extends StatelessWidget {
 
               SizedBox(width: AppDesignSystem.spacing(context, 16)),
 
-              // Student Info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +72,7 @@ class StudentProfileHeader extends StatelessWidget {
                     ),
                     SizedBox(height: AppDesignSystem.spacing(context, 4)),
                     Text(
-                      'Marie Curie',
+                      '${student.userModel?.firstName} ${student.userModel?.lastName}',
                       style: AppDesignSystem.textTheme(context).headlineLarge
                           ?.copyWith(
                             color: AppDesignSystem.textInverse,
@@ -76,7 +81,7 @@ class StudentProfileHeader extends StatelessWidget {
                     ),
                     SizedBox(height: AppDesignSystem.spacing(context, 2)),
                     Text(
-                      'Terminale S • Lycée Victor Hugo',
+                      'Groupe Scolaire Quanta',
                       style: AppDesignSystem.textTheme(context).bodyLarge
                           ?.copyWith(
                             color: AppDesignSystem.textInverse.withValues(
@@ -133,7 +138,7 @@ class StudentProfileHeader extends StatelessWidget {
                   context,
                   Icons.calendar_month_rounded,
                   'Année scolaire',
-                  '2024-2025',
+                  student.latestStudentSession?.academicYear?.label ?? 'N/A',
                 ),
               ),
               Container(
@@ -146,7 +151,7 @@ class StudentProfileHeader extends StatelessWidget {
                   context,
                   Icons.group_rounded,
                   'Classe',
-                  'TS2',
+                  student.latestStudentSession?.classModel?.name ?? 'N/A',
                 ),
               ),
               Container(
@@ -159,7 +164,7 @@ class StudentProfileHeader extends StatelessWidget {
                   context,
                   Icons.badge_rounded,
                   'Matricule',
-                  'ET_0405',
+                  student.matricule ?? 'N/A',
                 ),
               ),
             ],

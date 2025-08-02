@@ -1,55 +1,54 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'academic_year.dart';
 import 'class_model.dart';
-import 'session.dart';
-import 'student.dart';
 
 part 'student_session.g.dart';
 
-@HiveType(typeId: 1)
-@JsonSerializable(explicitToJson: true)
+@HiveType(typeId: 20)
+@JsonSerializable(fieldRename: FieldRename.snake)
 class StudentSession {
   @HiveField(0)
   final int? id;
 
   @HiveField(1)
-  final Session session;
+  final int? studentId;
 
   @HiveField(2)
-  final Student student;
+  final int? classModelId;
+
+  @HiveField(3)
+  final int? academicYearId;
 
   @HiveField(4)
-  final ClassModel classe;
+  final String? createdAt;
 
   @HiveField(5)
-  @JsonKey(name: 'is_leave')
-  final bool isLeave;
+  final String? updatedAt;
 
   @HiveField(6)
-  @JsonKey(name: 'is_active')
-  final bool isActive;
+  final String? justificatifUrl;
 
   @HiveField(7)
-  @JsonKey(name: 'enroll_date')
-  final DateTime enrollDate;
+  final ClassModel? classModel;
 
   @HiveField(8)
-  final String status;
+  final AcademicYear? academicYear;
 
   StudentSession({
     this.id,
-    required this.session,
-    required this.student,
-    required this.classe,
-    required this.isLeave,
-    required this.isActive,
-    required this.enrollDate,
-    required this.status,
+    this.studentId,
+    this.classModelId,
+    this.academicYearId,
+    this.createdAt,
+    this.updatedAt,
+    this.justificatifUrl,
+    this.classModel,
+    this.academicYear,
   });
 
   factory StudentSession.fromJson(Map<String, dynamic> json) =>
       _$StudentSessionFromJson(json);
-
   Map<String, dynamic> toJson() => _$StudentSessionToJson(this);
 }
