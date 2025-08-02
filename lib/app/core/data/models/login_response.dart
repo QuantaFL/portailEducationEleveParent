@@ -3,7 +3,7 @@ import 'package:portail_eleve/app/core/data/models/user.dart';
 
 part 'login_response.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class LoginResponse {
   String token;
   User user;
