@@ -34,11 +34,9 @@ class PollLatestNotes {
     final studentIds = await getLinkedStudentIds();
     for (final studentId in studentIds) {
       final lastSeenKey = await getLastSeenNoteKey(studentId);
-      String? lastNoteId;
       String? lastUpdatedAt;
       if (lastSeenKey != null && lastSeenKey.contains('_')) {
         final parts = lastSeenKey.split('_');
-        lastNoteId = parts[0];
         lastUpdatedAt = parts[1];
       }
       final response = await apiClient.get(

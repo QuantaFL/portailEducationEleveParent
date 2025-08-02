@@ -72,9 +72,9 @@ class PollLatestBulletins {
     String studentName = 'Votre enfant';
     final title = 'Nouveau bulletin disponible';
     final body =
-        'Le bulletin de $studentName du(${reportCard.academicYear}) est maintenant accessible.';
+        'Le bulletin de $studentName est maintenant accessible.';
     await notifications.show(
-      reportCard.id,
+      reportCard.id!,
       title,
       body,
       NotificationDetails(
