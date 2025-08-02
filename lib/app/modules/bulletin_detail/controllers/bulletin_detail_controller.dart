@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'package:get/get.dart';
 
 class BulletinDetailController extends GetxController {
@@ -9,7 +9,7 @@ class BulletinDetailController extends GetxController {
   final RxList<Map<String, dynamic>> subjects = <Map<String, dynamic>>[].obs;
   final RxString pdfUrl = ''.obs;
 
-  static const FlutterSecureStorage _storage = FlutterSecureStorage();
+  
 
   String? bulletinId;
 
