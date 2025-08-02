@@ -8,7 +8,7 @@ part of 'teacher.dart';
 
 class TeacherAdapter extends TypeAdapter<Teacher> {
   @override
-  final int typeId = 3;
+  final int typeId = 22;
 
   @override
   Teacher read(BinaryReader reader) {
@@ -17,12 +17,12 @@ class TeacherAdapter extends TypeAdapter<Teacher> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Teacher(
-      id: fields[0] as int,
-      userId: fields[1] as int,
-      hireDate: fields[6] as String,
-      user: fields[7] as User?,
-      createdAt: fields[8] as String?,
-      updatedAt: fields[9] as String?,
+      id: fields[0] as int?,
+      hireDate: fields[1] as DateTime?,
+      createdAt: fields[2] as DateTime?,
+      updatedAt: fields[3] as DateTime?,
+      userModelId: fields[4] as int?,
+      count: fields[5] as int?,
     );
   }
 
@@ -33,15 +33,15 @@ class TeacherAdapter extends TypeAdapter<Teacher> {
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.userId)
-      ..writeByte(6)
       ..write(obj.hireDate)
-      ..writeByte(7)
-      ..write(obj.user)
-      ..writeByte(8)
+      ..writeByte(2)
       ..write(obj.createdAt)
-      ..writeByte(9)
-      ..write(obj.updatedAt);
+      ..writeByte(3)
+      ..write(obj.updatedAt)
+      ..writeByte(4)
+      ..write(obj.userModelId)
+      ..writeByte(5)
+      ..write(obj.count);
   }
 
   @override
@@ -60,21 +60,25 @@ class TeacherAdapter extends TypeAdapter<Teacher> {
 // **************************************************************************
 
 Teacher _$TeacherFromJson(Map<String, dynamic> json) => Teacher(
-      id: (json['id'] as num).toInt(),
-      userId: (json['userId'] as num).toInt(),
-      hireDate: json['hireDate'] as String,
-      user: json['user'] == null
+      id: (json['id'] as num?)?.toInt(),
+      hireDate: json['hire_date'] == null
           ? null
-          : User.fromJson(json['user'] as Map<String, dynamic>),
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+          : DateTime.parse(json['hire_date'] as String),
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
+      userModelId: (json['user_model_id'] as num?)?.toInt(),
+      count: (json['count'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TeacherToJson(Teacher instance) => <String, dynamic>{
       'id': instance.id,
-      'userId': instance.userId,
-      'hireDate': instance.hireDate,
-      'user': instance.user,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
+      'hire_date': instance.hireDate?.toIso8601String(),
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
+      'user_model_id': instance.userModelId,
+      'count': instance.count,
     };

@@ -22,22 +22,23 @@ class UserAdapter extends TypeAdapter<User> {
       lastName: fields[3] as String,
       phone: fields[5] as String,
       email: fields[4] as String,
-      password: fields[6] as String,
-      roleId: fields[10] as int,
-      address: fields[7] as String,
-      dateOfBirth: fields[8] as String,
-      gender: fields[9] as String,
-      role: fields[11] as Role?,
-      rememberToken: fields[12] as String?,
-      createdAt: fields[13] as String?,
-      updatedAt: fields[14] as String?,
+      roleId: fields[9] as int,
+      address: fields[6] as String,
+      dateOfBirth: fields[7] as String,
+      gender: fields[8] as String,
+      isFirstLogin: fields[11] as bool,
+      profilePictureUrl: fields[12] as String?,
+      role: fields[10] as Role?,
+      rememberToken: fields[13] as String?,
+      createdAt: fields[14] as String?,
+      updatedAt: fields[15] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, User obj) {
     writer
-      ..writeByte(14)
+      ..writeByte(15)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(2)
@@ -49,22 +50,24 @@ class UserAdapter extends TypeAdapter<User> {
       ..writeByte(5)
       ..write(obj.phone)
       ..writeByte(6)
-      ..write(obj.password)
-      ..writeByte(7)
       ..write(obj.address)
-      ..writeByte(8)
+      ..writeByte(7)
       ..write(obj.dateOfBirth)
-      ..writeByte(9)
+      ..writeByte(8)
       ..write(obj.gender)
-      ..writeByte(10)
+      ..writeByte(9)
       ..write(obj.roleId)
-      ..writeByte(11)
+      ..writeByte(10)
       ..write(obj.role)
+      ..writeByte(11)
+      ..write(obj.isFirstLogin)
       ..writeByte(12)
-      ..write(obj.rememberToken)
+      ..write(obj.profilePictureUrl)
       ..writeByte(13)
-      ..write(obj.createdAt)
+      ..write(obj.rememberToken)
       ..writeByte(14)
+      ..write(obj.createdAt)
+      ..writeByte(15)
       ..write(obj.updatedAt);
   }
 
@@ -85,36 +88,38 @@ class UserAdapter extends TypeAdapter<User> {
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
       id: (json['id'] as num).toInt(),
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
+      firstName: json['first_name'] as String,
+      lastName: json['last_name'] as String,
       phone: json['phone'] as String,
       email: json['email'] as String,
-      password: json['password'] as String,
-      roleId: (json['roleId'] as num).toInt(),
+      roleId: (json['role_id'] as num).toInt(),
       address: json['address'] as String,
-      dateOfBirth: json['dateOfBirth'] as String,
+      dateOfBirth: json['date_of_birth'] as String,
       gender: json['gender'] as String,
+      isFirstLogin: json['is_first_login'] as bool,
+      profilePictureUrl: json['profile_picture_url'] as String?,
       role: json['role'] == null
           ? null
           : Role.fromJson(json['role'] as Map<String, dynamic>),
-      rememberToken: json['rememberToken'] as String?,
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+      rememberToken: json['remember_token'] as String?,
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'id': instance.id,
-      'firstName': instance.firstName,
-      'lastName': instance.lastName,
+      'first_name': instance.firstName,
+      'last_name': instance.lastName,
       'email': instance.email,
       'phone': instance.phone,
-      'password': instance.password,
       'address': instance.address,
-      'dateOfBirth': instance.dateOfBirth,
+      'date_of_birth': instance.dateOfBirth,
       'gender': instance.gender,
-      'roleId': instance.roleId,
-      'role': instance.role,
-      'rememberToken': instance.rememberToken,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
+      'role_id': instance.roleId,
+      'role': instance.role?.toJson(),
+      'is_first_login': instance.isFirstLogin,
+      'profile_picture_url': instance.profilePictureUrl,
+      'remember_token': instance.rememberToken,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
     };

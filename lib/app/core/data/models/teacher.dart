@@ -1,36 +1,39 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:portail_eleve/app/core/data/models/user.dart';
 
 part 'teacher.g.dart';
 
-@HiveType(typeId: 3)
-@JsonSerializable()
+@HiveType(typeId: 22)
+@JsonSerializable(fieldRename: FieldRename.snake)
 class Teacher {
   @HiveField(0)
-  final int id;
+  final int? id;
+
   @HiveField(1)
-  final int userId;
-  @HiveField(6)
-  final String hireDate;
-  @HiveField(7)
-  final User? user;
-  @HiveField(8)
-  final String? createdAt;
-  @HiveField(9)
-  final String? updatedAt;
+  final DateTime? hireDate;
+
+  @HiveField(2)
+  final DateTime? createdAt;
+
+  @HiveField(3)
+  final DateTime? updatedAt;
+
+  @HiveField(4)
+  final int? userModelId;
+
+  @HiveField(5)
+  final int? count;
 
   Teacher({
-    required this.id,
-    required this.userId,
-    required this.hireDate,
-    this.user,
+    this.id,
+    this.hireDate,
     this.createdAt,
     this.updatedAt,
+    this.userModelId,
+    this.count,
   });
 
   factory Teacher.fromJson(Map<String, dynamic> json) =>
       _$TeacherFromJson(json);
-
   Map<String, dynamic> toJson() => _$TeacherToJson(this);
 }

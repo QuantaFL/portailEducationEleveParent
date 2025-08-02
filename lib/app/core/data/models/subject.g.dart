@@ -8,7 +8,7 @@ part of 'subject.dart';
 
 class SubjectAdapter extends TypeAdapter<Subject> {
   @override
-  final int typeId = 5;
+  final int typeId = 21;
 
   @override
   Subject read(BinaryReader reader) {
@@ -17,12 +17,12 @@ class SubjectAdapter extends TypeAdapter<Subject> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Subject(
-      id: fields[0] as int,
-      name: fields[1] as String,
-      coefficient: fields[2] as double,
-      level: fields[3] as String?,
-      createdAt: fields[4] as String?,
-      updatedAt: fields[5] as String?,
+      id: fields[0] as int?,
+      name: fields[1] as String?,
+      level: fields[2] as String?,
+      coefficient: fields[3] as int?,
+      createdAt: fields[4] as DateTime?,
+      updatedAt: fields[5] as DateTime?,
     );
   }
 
@@ -35,9 +35,9 @@ class SubjectAdapter extends TypeAdapter<Subject> {
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.coefficient)
-      ..writeByte(3)
       ..write(obj.level)
+      ..writeByte(3)
+      ..write(obj.coefficient)
       ..writeByte(4)
       ..write(obj.createdAt)
       ..writeByte(5)
@@ -60,19 +60,23 @@ class SubjectAdapter extends TypeAdapter<Subject> {
 // **************************************************************************
 
 Subject _$SubjectFromJson(Map<String, dynamic> json) => Subject(
-      id: (json['id'] as num).toInt(),
-      name: json['name'] as String,
-      coefficient: (json['coefficient'] as num).toDouble(),
+      id: (json['id'] as num?)?.toInt(),
+      name: json['name'] as String?,
       level: json['level'] as String?,
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+      coefficient: (json['coefficient'] as num?)?.toInt(),
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
     );
 
 Map<String, dynamic> _$SubjectToJson(Subject instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'coefficient': instance.coefficient,
       'level': instance.level,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
+      'coefficient': instance.coefficient,
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
     };
