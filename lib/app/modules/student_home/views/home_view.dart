@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:portail_eleve/app/modules/student_home/widgets/contact_card.dart';
+import 'package:portail_eleve/app/modules/student_home/widgets/next_classes_timetable.dart';
 
 import '../../../themes/palette_system.dart';
 import '../../profile/views/about_view.dart';
@@ -45,14 +47,48 @@ class HomeView extends GetView<HomeController> {
         backgroundColor: Colors.white,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              StudentProfileHeader(),
-              const SizedBox(height: 32),
-              _buildRecentBulletins(context),
-              const SizedBox(height: 100),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Obx(() {
+                    if (controller.student.value != null) {
+                      return StudentProfileHeader(
+                        student: controller.student.value!,
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  }),
+                ),
+                const SizedBox(height: 32),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SizedBox(
+                    height: 400,
+                    child: NextClassesTimetable(
+                      getNextClasses: controller.getNextClasses,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                _buildRecentBulletins(context),
+                const SizedBox(height: 32),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: ContactCard(
+                    icon: Icons.headset_mic_rounded,
+                    title: 'Contacter l\'école',
+                    subtitle: 'Poser une question ou signaler un problème',
+                    onTap: () {},
+                  ),
+                ),
+                const SizedBox(height: 100),
+              ],
+            ),
           ),
         ),
       ),
@@ -75,30 +111,60 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
         const SizedBox(height: 16),
-        Obx(
-          () => controller.isLoading.value
-              ? _buildLoadingShimmer(context)
-              : ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: controller.recentBulletins.length > 3
-                      ? 3
-                      : controller.recentBulletins.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final bulletin = controller.recentBulletins[index];
-                    return BulletinCard(
-                      bulletin: bulletin,
-                      onTap: () => controller.viewBulletin(bulletin['id']),
-                      onDownload: () =>
-                          controller.downloadBulletin(bulletin['id']),
-                    );
-                  },
-                ),
-        ),
+        Obx(() {
+          if (controller.isLoading.value) {
+            return _buildLoadingShimmer(context);
+          }
+          if (controller.recentBulletins.isEmpty) {
+            return _buildEmptyState();
+          }
+          return SizedBox(
+            height: 180, // Adjust height for the new card design
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemCount: controller.recentBulletins.length,
+              separatorBuilder: (context, index) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                final bulletin = controller.recentBulletins[index];
+                return BulletinCard(
+                  bulletin: bulletin,
+                  onTap: () => controller.viewBulletin(bulletin.id!),
+                  onDownload: () => controller.downloadBulletin(bulletin.id!),
+                );
+              },
+            ),
+          );
+        }),
       ],
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.folder_off_outlined,
+              size: 60,
+              color: Colors.grey.shade400,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Aucun bulletin récent',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -137,27 +203,29 @@ class HomeView extends GetView<HomeController> {
             ),
             const SizedBox(height: 24),
             Expanded(
-              child: ListView.builder(
-                itemCount: 5, // Mock data
-                itemBuilder: (context, index) {
-                  final bulletinData = {
-                    'title': 'Bulletin Trimestre ${index + 1}',
-                    'periode': '2023-2024',
-                    'status': 'Consulté',
-                    'moyenne': (15.5 + index * 0.5).toString(),
-                    'date': '${10 + index}/0${index + 1}/2024',
-                  };
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: BulletinCard(
-                      bulletin: bulletinData,
-                      onTap: () => controller.viewBulletin(index.toString()),
-                      onDownload: () =>
-                          controller.downloadBulletin(index.toString()),
-                    ),
-                  );
-                },
-              ),
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return _buildLoadingShimmer(context);
+                }
+                if (controller.allBulletins.isEmpty) {
+                  return _buildEmptyState();
+                }
+                return ListView.builder(
+                  itemCount: controller.allBulletins.length,
+                  itemBuilder: (context, index) {
+                    final bulletin = controller.allBulletins[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: BulletinCard(
+                        bulletin: bulletin,
+                        onTap: () => controller.viewBulletin(bulletin.id!),
+                        onDownload: () =>
+                            controller.downloadBulletin(bulletin.id!),
+                      ),
+                    );
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -318,9 +386,7 @@ class ProfileListItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Colors.grey.shade200),
-          ),
+          border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
         ),
         child: Row(
           children: [
@@ -336,8 +402,9 @@ class ProfileListItem extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color:
-                      isDestructive ? Colors.red : AppDesignSystem.textPrimary,
+                  color: isDestructive
+                      ? Colors.red
+                      : AppDesignSystem.textPrimary,
                 ),
               ),
             ),

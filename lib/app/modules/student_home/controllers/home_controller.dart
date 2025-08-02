@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
+import 'package:portail_eleve/app/core/data/models/next_class.dart';
+import 'package:portail_eleve/app/core/data/models/report_card.dart';
+import 'package:portail_eleve/app/core/data/models/student.dart';
+import 'package:portail_eleve/app/core/data/repositories/bulletin_repository.dart';
+import 'package:portail_eleve/app/core/data/repositories/student_repository.dart';
 import 'package:portail_eleve/app/routes/app_pages.dart';
 
 class HomeController extends GetxController {
+  final BulletinRepository bulletinRepository;
+  final StudentRepository studentRepository;
   var currentIndex = 0.obs;
   var isLoading = false.obs;
-  var recentBulletins = <Map<String, dynamic>>[].obs;
+  var student = Rx<Student?>(null);
+  var recentBulletins = <ReportCard>[].obs;
+  var allBulletins = <ReportCard>[].obs;
+
+  HomeController({
+    required this.bulletinRepository,
+    required this.studentRepository,
+  });
 
   @override
   void onInit() {
@@ -18,49 +33,31 @@ class HomeController extends GetxController {
     currentIndex.value = index;
   }
 
+  /// Loads the latest student details from the backend using the new details endpoint.
+  /// Falls back to Hive if the network call fails.
   Future<void> loadDashboardData() async {
     try {
       isLoading.value = true;
-
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Mock recent bulletins
-      recentBulletins.addAll([
-        {
-          'id': '1',
-          'title': 'Bulletin T1 2024-2025',
-          'period': '1er Trimestre',
-          'average': 14.5,
-          'rank': 8,
-          'totalStudents': 32,
-          'date': DateTime.now().subtract(const Duration(days: 30)),
-          'isDownloaded': false,
-        },
-        {
-          'id': '2',
-          'title': 'Bulletin T2 2023-2024',
-          'period': '2ème Trimestre',
-          'average': 15.2,
-          'rank': 6,
-          'totalStudents': 32,
-          'date': DateTime.now().subtract(const Duration(days: 120)),
-          'isDownloaded': true,
-        },
-        {
-          'id': '3',
-          'title': 'Bulletin T3 2023-2024',
-          'period': '3ème Trimestre',
-          'average': 16.1,
-          'rank': 4,
-          'totalStudents': 32,
-          'date': DateTime.now().subtract(const Duration(days: 180)),
-          'isDownloaded': true,
-        },
-      ]);
+      const storage = FlutterSecureStorage();
+      final studentId = await storage.read(key: 'studentId');
+      if (studentId != null) {
+        try {
+          final detailedStudent = await studentRepository.getStudentDetails(
+            int.parse(studentId),
+          );
+          student.value = detailedStudent;
+          await studentRepository.saveStudentToHive(detailedStudent);
+        } catch (e) {
+          Logger logger = Logger();
+          logger.e('Failed to fetch student details from backend: $e');
+          await studentRepository.getStudentFromHive(int.parse(studentId));
+          student.value = studentRepository.student;
+        }
+      }
     } catch (e) {
       Get.snackbar(
         'Erreur',
-        'Impossible de charger les données: ${e.toString()}',
+        'Impossible de charger les données: \\${e.toString()}',
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -69,7 +66,7 @@ class HomeController extends GetxController {
     }
   }
 
-  void downloadBulletin(String bulletinId) {
+  void downloadBulletin(int bulletinId) {
     // TODO: Implement bulletin download
     Get.snackbar(
       'Téléchargement',
@@ -79,7 +76,7 @@ class HomeController extends GetxController {
     );
   }
 
-  void viewBulletin(String bulletinId) {
+  void viewBulletin(int bulletinId) {
     // TODO: Implement bulletin view
     Get.snackbar(
       'Bulletin',
@@ -194,5 +191,17 @@ class HomeController extends GetxController {
     // await SharedPreferences.getInstance().then((prefs) => prefs.clear());
     // await FlutterSecureStorage().deleteAll();
     // Get.delete<AuthController>(); // Clear auth controller if exists
+  }
+
+  /// Fetches the next 3 classes for the current student.
+  /// Uses the enhanced repository method with API-first approach and Hive fallback.
+  Future<List<NextClass>> getNextClasses() async {
+    try {
+      return await studentRepository.fetchNextClasses();
+    } catch (e) {
+      Logger().e('Error fetching next classes in controller: $e');
+      // Return empty list on error to prevent UI crashes
+      return [];
+    }
   }
 }
