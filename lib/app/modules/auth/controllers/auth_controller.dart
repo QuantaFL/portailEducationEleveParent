@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:logger/logger.dart';
 import 'package:portail_eleve/app/core/api/api_client.dart';
 import 'package:portail_eleve/app/core/data/models/login_response.dart';
 import 'package:portail_eleve/app/modules/auth/data/useCases/auth_login.dart';
@@ -11,14 +12,14 @@ import 'package:portail_eleve/app/routes/app_pages.dart';
 import '../../../core/data/models/user.dart';
 
 class AuthController extends GetxController {
-  late TextEditingController emailController;
-  late TextEditingController passwordController;
-
   final RxBool isLoading = false.obs;
   final RxBool isPasswordVisible = false.obs;
 
   final RxBool isEmailValid = false.obs;
   final RxBool isPasswordValid = false.obs;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   final RxBool isFormValid = false.obs;
 
   final RxBool isEmailFocused = false.obs;
@@ -34,17 +35,15 @@ class AuthController extends GetxController {
   final Rx<User?> currentUser = Rx<User?>(null);
 
   @override
-  Future<void> onInit() async {
+  void onInit() {
     super.onInit();
-    _checkAutoLogin();
     _setupValidation();
     _setupFocusListeners();
-    authLogin = await AuthLogin(apiClient: await Get.find<ApiClient>());
+    _checkAutoLogin();
+    authLogin = AuthLogin(apiClient: Get.find<ApiClient>());
   }
 
   void _setupValidation() {
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
     emailController.addListener(() {
       isEmailValid.value = GetUtils.isEmail(emailController.text);
       _updateFormValidation();
@@ -91,22 +90,18 @@ class AuthController extends GetxController {
   }
 
   Future<void> login() async {
+    Logger log = Logger();
     if (!isFormValid.value) return;
     try {
       isLoading.value = true;
-      if (emailController.text.contains('parent')) {
-        Get.offAllNamed(Routes.PARENT_HOME);
-      } else if (emailController.text.contains('student')) {
-        Get.offAllNamed(Routes.HOME);
-      } else {
-        Get.offAllNamed(Routes.CHANGE_PASSWORD);
-      }
 
       final response = await authLogin.call(
         emailController.text,
         passwordController.text,
       );
+      log.d('Login response: ${response.toJson()}');
       await _handleLoginSuccess(response);
+      log.d('Login successful: ${response.toJson()}');
     } on DioException catch (e) {
       _handleLoginError(e);
     } catch (e) {
@@ -115,45 +110,68 @@ class AuthController extends GetxController {
         'Vérifiez vos identifiants',
         Colors.red,
       );
+      Logger log = Logger();
+      log.e('Login error: ${e.toString()}');
     } finally {
       isLoading.value = false;
     }
   }
 
+  /// Handles successful login by storing user data and navigating to the appropriate home screen.
+  /// Shows a success snackbar and persists authentication info securely.
+  /// Only allows users with roleId 3 (student) or 4 (parent) to proceed.
   Future<void> _handleLoginSuccess(LoginResponse loginResponse) async {
+    final Logger log = Logger();
+    log.d('Login success: userId=${loginResponse}');
     final token = loginResponse.token;
     final user = loginResponse.user;
+
+    // Determine user type based on roleId
     String userType = '';
     if (user.roleId == 3) {
       userType = 'student';
-    } else if (user.roleId == 3) {
+    } else if (user.roleId == 4) {
       userType = 'parent';
-    }
-    if (userType != 'parent' && userType != 'student') {
-      _showSnackbar(
-        'Accès non autorisé',
-        'Seuls les parents et les élèves peuvent se connecter.',
-        Colors.red,
+    } else {
+      log.e(
+        'Unauthorized roleId: \'${user.roleId}\'. Only student (3) and parent (4) are allowed.',
       );
+      // Optionally show error to user and return
       return;
     }
 
-    currentUser.value = user;
-    await _storage.write(key: 'auth_token', value: token);
-    await _storage.write(key: 'user_type', value: userType);
-    await _storage.write(key: 'user_id', value: user.id.toString());
-    await _storage.write(key: 'user_email', value: user.email);
-
-    _showSnackbar(
-      'Connexion réussie',
-      'Bienvenue dans votre portail !',
-      Colors.green,
+    log.d(
+      'Login success: userId=${user.id}, roleId=${user.roleId}, userType=$userType, token=${token != null ? '***' : 'null'}',
     );
 
-    if (userType == 'parent') {
-      Get.offAllNamed(Routes.PARENT_HOME);
-    } else {
+    // Save token and user info securely
+    try {
+      await _storage.write(key: 'auth_token', value: token);
+      await _storage.write(key: 'user_type', value: userType);
+      await _storage.write(key: 'user_id', value: user.id.toString());
+      await _storage.write(key: 'user_email', value: user.email ?? '');
+      log.d('Token, userType, and userId saved to secure storage.');
+    } catch (e) {
+      log.e('Error saving to secure storage: \'${e.toString()}\'');
+      // Optionally show error to user
+      return;
+    }
+
+    // Navigate to the correct home screen based on userType
+    if (userType == 'student') {
       Get.offAllNamed(Routes.HOME);
+      _showSnackbar(
+        'Connexion réussie',
+        'Bienvenue, ${user.firstName}!',
+        Colors.green,
+      );
+    } else if (userType == 'parent') {
+      Get.offAllNamed(Routes.PARENT_HOME);
+      _showSnackbar(
+        'Connexion réussie',
+        'Bienvenue, ${user.firstName}!',
+        Colors.green,
+      );
     }
   }
 
