@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:portail_eleve/app/modules/auth/bindings/change_password_binding.dart';
 import 'package:portail_eleve/app/modules/auth/views/change_password_view.dart';
 import 'package:portail_eleve/app/modules/notifications/views/notifications_view.dart';
+import 'package:portail_eleve/app/modules/student_home/views/home_view.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
@@ -12,7 +13,6 @@ import '../modules/onboarding/views/onboarding_view.dart';
 import '../modules/parent_home/bindings/parent_home_binding.dart';
 import '../modules/parent_home/views/parent_home_view.dart';
 import '../modules/student_home/bindings/home_binding.dart';
-import '../modules/student_home/views/home_view.dart';
 
 part 'app_routes.dart';
 
