@@ -3,51 +3,52 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'report_card.g.dart';
 
-@HiveType(typeId: 8)
+@HiveType(typeId: 18)
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ReportCard {
   @HiveField(0)
-  final int id;
+  final int? id;
+
   @HiveField(1)
-  final int studentId;
+  final double? averageGrade;
+
   @HiveField(2)
-  final String academicYear;
+  final String? honors;
+
   @HiveField(3)
-  final String period;
+  final String? path;
+
   @HiveField(4)
-  final double? averageGradeGeneral;
+  final String? pdfUrl;
+
   @HiveField(5)
-  final String? mention;
-  @HiveField(6)
   final int? rank;
+
+  @HiveField(6)
+  final DateTime? createdAt;
+
   @HiveField(7)
-  final String? appreciation;
+  final DateTime? updatedAt;
+
   @HiveField(8)
-  final String pdfPath;
+  final int? studentSessionId;
+
   @HiveField(9)
-  final String generatedAt;
-  @HiveField(10)
-  final String? createdAt;
-  @HiveField(11)
-  final String? updatedAt;
+  final int? termId;
 
   ReportCard({
-    required this.id,
-    required this.studentId,
-    required this.academicYear,
-    required this.period,
-    this.averageGradeGeneral,
-    this.mention,
+    this.id,
+    this.averageGrade,
+    this.honors,
+    this.path,
+    this.pdfUrl,
     this.rank,
-    this.appreciation,
-    required this.pdfPath,
-    required this.generatedAt,
     this.createdAt,
     this.updatedAt,
+    this.studentSessionId,
+    this.termId,
   });
 
-  factory ReportCard.fromJson(Map<String, dynamic> json) =>
-      _$ReportCardFromJson(json);
-
+  factory ReportCard.fromJson(Map<String, dynamic> json) => _$ReportCardFromJson(json);
   Map<String, dynamic> toJson() => _$ReportCardToJson(this);
 }

@@ -8,7 +8,7 @@ part of 'report_card.dart';
 
 class ReportCardAdapter extends TypeAdapter<ReportCard> {
   @override
-  final int typeId = 8;
+  final int typeId = 18;
 
   @override
   ReportCard read(BinaryReader reader) {
@@ -17,49 +17,43 @@ class ReportCardAdapter extends TypeAdapter<ReportCard> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ReportCard(
-      id: fields[0] as int,
-      studentId: fields[1] as int,
-      academicYear: fields[2] as String,
-      period: fields[3] as String,
-      averageGradeGeneral: fields[4] as double?,
-      mention: fields[5] as String?,
-      rank: fields[6] as int?,
-      appreciation: fields[7] as String?,
-      pdfPath: fields[8] as String,
-      generatedAt: fields[9] as String,
-      createdAt: fields[10] as String?,
-      updatedAt: fields[11] as String?,
+      id: fields[0] as int?,
+      averageGrade: fields[1] as double?,
+      honors: fields[2] as String?,
+      path: fields[3] as String?,
+      pdfUrl: fields[4] as String?,
+      rank: fields[5] as int?,
+      createdAt: fields[6] as DateTime?,
+      updatedAt: fields[7] as DateTime?,
+      studentSessionId: fields[8] as int?,
+      termId: fields[9] as int?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ReportCard obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.studentId)
+      ..write(obj.averageGrade)
       ..writeByte(2)
-      ..write(obj.academicYear)
+      ..write(obj.honors)
       ..writeByte(3)
-      ..write(obj.period)
+      ..write(obj.path)
       ..writeByte(4)
-      ..write(obj.averageGradeGeneral)
+      ..write(obj.pdfUrl)
       ..writeByte(5)
-      ..write(obj.mention)
-      ..writeByte(6)
       ..write(obj.rank)
-      ..writeByte(7)
-      ..write(obj.appreciation)
-      ..writeByte(8)
-      ..write(obj.pdfPath)
-      ..writeByte(9)
-      ..write(obj.generatedAt)
-      ..writeByte(10)
+      ..writeByte(6)
       ..write(obj.createdAt)
-      ..writeByte(11)
-      ..write(obj.updatedAt);
+      ..writeByte(7)
+      ..write(obj.updatedAt)
+      ..writeByte(8)
+      ..write(obj.studentSessionId)
+      ..writeByte(9)
+      ..write(obj.termId);
   }
 
   @override
@@ -78,32 +72,32 @@ class ReportCardAdapter extends TypeAdapter<ReportCard> {
 // **************************************************************************
 
 ReportCard _$ReportCardFromJson(Map<String, dynamic> json) => ReportCard(
-      id: (json['id'] as num).toInt(),
-      studentId: (json['studentId'] as num).toInt(),
-      academicYear: json['academicYear'] as String,
-      period: json['period'] as String,
-      averageGradeGeneral: (json['averageGradeGeneral'] as num?)?.toDouble(),
-      mention: json['mention'] as String?,
+      id: (json['id'] as num?)?.toInt(),
+      averageGrade: (json['average_grade'] as num?)?.toDouble(),
+      honors: json['honors'] as String?,
+      path: json['path'] as String?,
+      pdfUrl: json['pdf_url'] as String?,
       rank: (json['rank'] as num?)?.toInt(),
-      appreciation: json['appreciation'] as String?,
-      pdfPath: json['pdfPath'] as String,
-      generatedAt: json['generatedAt'] as String,
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
+      studentSessionId: (json['student_session_id'] as num?)?.toInt(),
+      termId: (json['term_id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$ReportCardToJson(ReportCard instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'studentId': instance.studentId,
-      'academicYear': instance.academicYear,
-      'period': instance.period,
-      'averageGradeGeneral': instance.averageGradeGeneral,
-      'mention': instance.mention,
+      'average_grade': instance.averageGrade,
+      'honors': instance.honors,
+      'path': instance.path,
+      'pdf_url': instance.pdfUrl,
       'rank': instance.rank,
-      'appreciation': instance.appreciation,
-      'pdfPath': instance.pdfPath,
-      'generatedAt': instance.generatedAt,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
+      'student_session_id': instance.studentSessionId,
+      'term_id': instance.termId,
     };
