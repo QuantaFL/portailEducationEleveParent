@@ -8,7 +8,7 @@ part of 'class_model.dart';
 
 class ClassModelAdapter extends TypeAdapter<ClassModel> {
   @override
-  final int typeId = 4;
+  final int typeId = 15;
 
   @override
   ClassModel read(BinaryReader reader) {
@@ -17,27 +17,30 @@ class ClassModelAdapter extends TypeAdapter<ClassModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ClassModel(
-      id: fields[0] as int,
-      name: fields[1] as String,
-      academicYear: fields[2] as String,
-      createdAt: fields[3] as String?,
-      updatedAt: fields[4] as String?,
+      id: fields[0] as int?,
+      name: fields[1] as String?,
+      level: fields[2] as String?,
+      count: fields[3] as int?,
+      createdAt: fields[4] as String?,
+      updatedAt: fields[5] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ClassModel obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.academicYear)
+      ..write(obj.level)
       ..writeByte(3)
-      ..write(obj.createdAt)
+      ..write(obj.count)
       ..writeByte(4)
+      ..write(obj.createdAt)
+      ..writeByte(5)
       ..write(obj.updatedAt);
   }
 
@@ -57,18 +60,20 @@ class ClassModelAdapter extends TypeAdapter<ClassModel> {
 // **************************************************************************
 
 ClassModel _$ClassModelFromJson(Map<String, dynamic> json) => ClassModel(
-      id: (json['id'] as num).toInt(),
-      name: json['name'] as String,
-      academicYear: json['academicYear'] as String,
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
+      id: (json['id'] as num?)?.toInt(),
+      name: json['name'] as String?,
+      level: json['level'] as String?,
+      count: (json['count'] as num?)?.toInt(),
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
     );
 
 Map<String, dynamic> _$ClassModelToJson(ClassModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'academicYear': instance.academicYear,
-      'createdAt': instance.createdAt,
-      'updatedAt': instance.updatedAt,
+      'level': instance.level,
+      'count': instance.count,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
     };
