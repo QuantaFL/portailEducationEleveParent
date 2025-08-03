@@ -9,17 +9,16 @@ import '../data/models/student.dart';
 import '../data/models/user_model.dart';
 import '../data/repositories/bulletin_repository.dart';
 
-/// Parent service with Hive caching support
 class ParentService extends GetxService {
   late final ApiClient _apiClient;
   late final BulletinRepository _bulletinRepository;
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
   final Logger _logger = Logger();
 
-  // Hive boxes for caching
   static const String _parentBoxName = 'parent_data';
   static const String _childrenBoxName = 'children_data';
   static const String _childrenUsersBoxName = 'children_users_data';
+  static const String _bulletinsBoxName = 'bulletins_data';
 
   @override
   void onInit() {
@@ -37,7 +36,6 @@ class ParentService extends GetxService {
       final response = await _apiClient.get('/parents/$userId');
       final parentUser = UserModel.fromJson(response.data['userModel']);
 
-      // Save to Hive for offline access
       await _saveParentToHive(parentUser);
       _logger.i('✅ Données parent chargées et sauvées');
 
@@ -59,7 +57,6 @@ class ParentService extends GetxService {
           .map((json) => Student.fromJson(json))
           .toList();
 
-      // Save to Hive for offline access
       await _saveChildrenToHive(children);
       _logger.i('✅ ${children.length} enfants chargés et sauvés');
 
@@ -98,20 +95,23 @@ class ParentService extends GetxService {
     }
   }
 
-  /// Gets bulletins for a specific child
+  /// Gets bulletins for a specific child with Hive fallback
   Future<List<ReportCard>> getBulletinsForChild(int studentId) async {
     try {
       _logger.d('🔍 Chargement des bulletins pour l\'enfant $studentId...');
       final bulletins = await _bulletinRepository.getBulletins(studentId);
+
+      await _saveBulletinsToHive(studentId, bulletins);
+
       _logger.i(
-        '✅ ${bulletins.length} bulletins chargés pour l\'enfant $studentId',
+        '✅ ${bulletins.length} bulletins chargés et sauvés pour l\'enfant $studentId',
       );
       return bulletins;
     } catch (e) {
-      _logger.e(
-        '❌ Erreur lors du chargement des bulletins pour l\'enfant $studentId: $e',
+      _logger.w(
+        '⚠️ Erreur réseau, fallback vers Hive pour enfant $studentId: $e',
       );
-      return [];
+      return await _getBulletinsFromHive(studentId);
     }
   }
 
@@ -131,8 +131,6 @@ class ParentService extends GetxService {
       throw Exception('Impossible de télécharger le bulletin');
     }
   }
-
-  // HIVE OPERATIONS
 
   /// Save parent data to Hive
   Future<void> _saveParentToHive(UserModel parent) async {
@@ -225,6 +223,43 @@ class ParentService extends GetxService {
       }
     } catch (e) {
       _logger.e('❌ Erreur lecture utilisateurs enfants depuis Hive: $e');
+    }
+
+    return [];
+  }
+
+  /// Save bulletins to Hive
+  Future<void> _saveBulletinsToHive(
+    int studentId,
+    List<ReportCard> bulletins,
+  ) async {
+    try {
+      final box = await Hive.openBox<List>(_bulletinsBoxName);
+      await box.put(
+        'bulletins_list_$studentId',
+        bulletins.map((b) => b.toJson()).toList(),
+      );
+      await box.close();
+    } catch (e) {
+      _logger.e('❌ Erreur sauvegarde bulletins vers Hive: $e');
+    }
+  }
+
+  /// Get bulletins from Hive
+  Future<List<ReportCard>> _getBulletinsFromHive(int studentId) async {
+    try {
+      final box = await Hive.openBox<List>(_bulletinsBoxName);
+      final bulletinsData = box.get('bulletins_list_$studentId');
+      await box.close();
+
+      if (bulletinsData != null) {
+        _logger.i('✅ ${bulletinsData.length} bulletins récupérés depuis Hive');
+        return bulletinsData
+            .map((data) => ReportCard.fromJson(Map<String, dynamic>.from(data)))
+            .toList();
+      }
+    } catch (e) {
+      _logger.e('❌ Erreur lecture bulletins depuis Hive: $e');
     }
 
     return [];
