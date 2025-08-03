@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:portail_eleve/app/modules/profile/controllers/profile_controller.dart';
+import 'package:portail_eleve/app/themes/palette_system.dart';
 
 class PersonalInfoView extends StatelessWidget {
   const PersonalInfoView({Key? key}) : super(key: key);
@@ -10,7 +11,7 @@ class PersonalInfoView extends StatelessWidget {
     final ProfileController controller = Get.put(ProfileController());
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppDesignSystem.backgroundOf(context),
       body: SafeArea(
         child: Obx(() {
           if (controller.isLoading.value) {
@@ -126,6 +127,7 @@ class PersonalInfoView extends StatelessWidget {
                               false,
                             ),
                         ],
+                        context,
                       ),
 
                       const SizedBox(height: 20),
@@ -149,7 +151,7 @@ class PersonalInfoView extends StatelessWidget {
                           Icons.location_on_rounded,
                           true,
                         ),
-                      ]),
+                      ], context),
 
                       const SizedBox(height: 20),
 
@@ -183,6 +185,7 @@ class PersonalInfoView extends StatelessWidget {
                               false,
                             ),
                           ],
+                          context,
                         ),
 
                         const SizedBox(height: 20),
@@ -210,6 +213,7 @@ class PersonalInfoView extends StatelessWidget {
                               true,
                             ),
                           ],
+                          context,
                         ),
 
                         const SizedBox(height: 20),
@@ -233,6 +237,7 @@ class PersonalInfoView extends StatelessWidget {
                               false,
                             ),
                           ],
+                          context,
                         ),
 
                         const SizedBox(height: 20),
@@ -373,7 +378,12 @@ class PersonalInfoView extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(String title, IconData icon, List<Widget> items) {
+  Widget _buildSection(
+    String title,
+    IconData icon,
+    List<Widget> items,
+    BuildContext context,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -395,10 +405,10 @@ class PersonalInfoView extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF1E293B),
+                  color: AppDesignSystem.textPrimaryOf(context),
                   letterSpacing: -0.3,
                 ),
               ),

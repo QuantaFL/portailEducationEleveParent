@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:portail_eleve/app/themes/palette_system.dart';
 
 class SecurityView extends StatelessWidget {
   const SecurityView({Key? key}) : super(key: key);
@@ -7,7 +8,7 @@ class SecurityView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppDesignSystem.backgroundOf(context),
       body: SafeArea(
         child: Column(
           children: [
