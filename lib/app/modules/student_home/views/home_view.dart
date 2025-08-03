@@ -68,7 +68,7 @@ class HomeView extends GetView<HomeController> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SizedBox(
-                    height: 400,
+                    height: 490,
                     child: NextClassesTimetable(
                       getNextClasses: controller.getNextClasses,
                     ),

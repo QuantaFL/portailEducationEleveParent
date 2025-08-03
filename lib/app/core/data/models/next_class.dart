@@ -6,10 +6,16 @@ part 'next_class.g.dart';
 @JsonSerializable()
 class NextClass {
   final String subject;
+  final String teacher;
   final String time;
   final String color;
 
-  NextClass({required this.subject, required this.time, required this.color});
+  NextClass({
+    required this.subject,
+    required this.teacher,
+    required this.time,
+    required this.color,
+  });
 
   factory NextClass.fromJson(Map<String, dynamic> json) =>
       _$NextClassFromJson(json);
