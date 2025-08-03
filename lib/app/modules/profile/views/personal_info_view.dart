@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:portail_eleve/app/modules/profile/controllers/profile_controller.dart';
 
-/// Enhanced personal information view with modern design and dynamic data
 class PersonalInfoView extends StatelessWidget {
   const PersonalInfoView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Use ProfileController to get real student/parent data
     final ProfileController controller = Get.put(ProfileController());
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Obx(() {
-          // Show loading indicator while data is being fetched
           if (controller.isLoading.value) {
             return const Center(
               child: CircularProgressIndicator(color: Color(0xFF6366F1)),
@@ -24,7 +21,6 @@ class PersonalInfoView extends StatelessWidget {
 
           return CustomScrollView(
             slivers: [
-              // Modern Header with Gradient
               SliverToBoxAdapter(
                 child: Container(
                   margin: const EdgeInsets.all(20),
@@ -47,7 +43,6 @@ class PersonalInfoView extends StatelessWidget {
                     padding: const EdgeInsets.all(24),
                     child: Column(
                       children: [
-                        // Navigation and Title
                         Row(
                           children: [
                             GestureDetector(
@@ -81,47 +76,11 @@ class PersonalInfoView extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () => controller.editProfile(),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 10,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.3),
-                                  ),
-                                ),
-                                child: const Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.edit_rounded,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      'Modifier',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
                           ],
                         ),
 
                         const SizedBox(height: 24),
 
-                        // Enhanced Profile Section
                         _buildProfileHeader(controller),
                       ],
                     ),
@@ -129,7 +88,6 @@ class PersonalInfoView extends StatelessWidget {
                 ),
               ),
 
-              // Information Sections
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -138,7 +96,6 @@ class PersonalInfoView extends StatelessWidget {
                     children: [
                       const SizedBox(height: 8),
 
-                      // Personal Information Section
                       _buildSection(
                         'Informations personnelles',
                         Icons.person_rounded,
@@ -172,7 +129,6 @@ class PersonalInfoView extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      // Contact Information Section
                       _buildSection('Coordonnées', Icons.contact_mail_rounded, [
                         _buildInfoItem(
                           'Email',
@@ -196,7 +152,6 @@ class PersonalInfoView extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      // Academic Information Section
                       _buildSection(
                         'Informations scolaires',
                         Icons.school_rounded,
@@ -230,7 +185,6 @@ class PersonalInfoView extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      // Parent Information Section
                       _buildSection(
                         'Contact parent/tuteur',
                         Icons.family_restroom_rounded,
@@ -268,11 +222,9 @@ class PersonalInfoView extends StatelessWidget {
     );
   }
 
-  /// Builds the enhanced profile header with avatar and basic info
   Widget _buildProfileHeader(ProfileController controller) {
     return Row(
       children: [
-        // Enhanced Avatar with Status Indicator
         Stack(
           children: [
             Container(
@@ -305,7 +257,6 @@ class PersonalInfoView extends StatelessWidget {
                 ),
               ),
             ),
-            // Status indicator
             Positioned(
               bottom: 2,
               right: 2,
@@ -329,7 +280,6 @@ class PersonalInfoView extends StatelessWidget {
 
         const SizedBox(width: 16),
 
-        // User Info
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,12 +341,10 @@ class PersonalInfoView extends StatelessWidget {
     );
   }
 
-  /// Builds a modern information section with cards
   Widget _buildSection(String title, IconData icon, List<Widget> items) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section Header
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Row(
@@ -426,7 +374,6 @@ class PersonalInfoView extends StatelessWidget {
           ),
         ),
 
-        // Section Content
         Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -472,7 +419,6 @@ class PersonalInfoView extends StatelessWidget {
 
           const SizedBox(width: 16),
 
-          // Content
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -500,7 +446,6 @@ class PersonalInfoView extends StatelessWidget {
             ),
           ),
 
-          // Edit Indicator
           if (isEditable)
             Container(
               padding: const EdgeInsets.all(8),

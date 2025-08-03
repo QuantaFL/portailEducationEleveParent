@@ -244,8 +244,6 @@ class PollLatestBulletins {
   /// Retourne un nom par défaut si indisponible.
   Future<String> getStudentName(int studentId) async {
     try {
-      // Ici, vous pourriez faire un appel API pour récupérer le nom
-      // Pour l'instant, retourne un nom par défaut
       return 'Votre enfant';
     } catch (e) {
       return 'Votre enfant';
