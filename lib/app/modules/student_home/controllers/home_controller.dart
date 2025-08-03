@@ -138,13 +138,11 @@ class HomeController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Find the bulletin by ID
       final bulletin = [...allBulletins, ...recentBulletins].firstWhere(
         (b) => b.id == bulletinId,
         orElse: () => throw Exception('Bulletin non trouvé'),
       );
 
-      // Get student information for naming
       final studentName = student.value?.userModel?.firstName ?? 'Etudiant';
       final studentId = int.parse(
         await const FlutterSecureStorage().read(key: 'studentId') ?? '0',
@@ -154,7 +152,6 @@ class HomeController extends GetxController {
         throw Exception('ID étudiant non trouvé');
       }
 
-      // Show download progress
       Get.snackbar(
         'Téléchargement',
         'Téléchargement du bulletin en cours...',
@@ -163,7 +160,6 @@ class HomeController extends GetxController {
         duration: const Duration(seconds: 2),
       );
 
-      // Use the polling service download method for consistency
       final downloadPath = await _pollService.downloadBulletin(
         studentId,
         bulletin,
