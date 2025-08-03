@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:portail_eleve/app/core/data/models/student.dart';
 
 import '../../../themes/palette_system.dart';
 import '../controllers/parent_home_controller.dart';
@@ -97,13 +98,13 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
   }
 
   Widget _buildChildItem(
-    dynamic child,
+    Student child,
     int index,
     bool isSelected,
     bool isLast,
   ) {
-    final childUser = child.user;
-    final className = child.classId == 1 ? 'Terminale S' : '3ème B';
+    final childUser = child.userModel;
+    final className = child.latestStudentSession?.classModel?.name;
 
     return Container(
       decoration: BoxDecoration(
@@ -180,7 +181,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        className,
+                        className!,
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           color: AppDesignSystem.textSecondary,
@@ -268,7 +269,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
     }
   }
 
-  void _showChildProfile(dynamic child) {
+  void _showChildProfile(Student child) {
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -285,7 +286,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
                     radius: 35,
                     backgroundColor: AppDesignSystem.primary.withOpacity(0.1),
                     child: Text(
-                      child.user?.firstName?.substring(0, 1) ?? 'E',
+                      child.userModel?.firstName?.substring(0, 1) ?? 'E',
                       style: GoogleFonts.inter(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
@@ -299,7 +300,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${child.user?.firstName ?? ''} ${child.user?.lastName ?? ''}',
+                          '${child.userModel?.firstName ?? ''} ${child.userModel?.lastName ?? ''}',
                           style: GoogleFonts.inter(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -308,7 +309,7 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          child.classId == 1 ? 'Terminale S' : '3ème B',
+                          child.latestStudentSession?.classModel?.name ?? 'N/A',
                           style: GoogleFonts.inter(
                             fontSize: 14,
                             color: AppDesignSystem.textSecondary,
@@ -325,20 +326,17 @@ class ChildSelectorTabs extends GetView<ParentHomeController> {
               ),
               const SizedBox(height: 24),
               // Profile Information
-              _buildProfileInfo(
-                'Numéro étudiant',
-                child.studentIdNumber ?? 'N/A',
-              ),
-              _buildProfileInfo('Email', child.user?.email ?? 'N/A'),
-              _buildProfileInfo('Téléphone', child.user?.phone ?? 'N/A'),
+              _buildProfileInfo('Numéro étudiant', child.matricule ?? 'N/A'),
+              _buildProfileInfo('Email', child.userModel?.email ?? 'N/A'),
+              _buildProfileInfo('Téléphone', child.userModel?.phone ?? 'N/A'),
               _buildProfileInfo(
                 'Date de naissance',
-                child.user?.dateOfBirth ?? 'N/A',
+                child.userModel?.birthday?.toIso8601String() ?? 'N/A',
               ),
-              _buildProfileInfo('Adresse', child.user?.address ?? 'N/A'),
+              _buildProfileInfo('Adresse', child.userModel?.adress ?? 'N/A'),
               _buildProfileInfo(
                 'Date d\'inscription',
-                child.enrollmentDate ?? 'N/A',
+                child.createdAt ?? 'N/A',
               ),
               const SizedBox(height: 24),
               // Actions
