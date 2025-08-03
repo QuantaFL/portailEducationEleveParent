@@ -22,7 +22,7 @@ class ReportCardAdapter extends TypeAdapter<ReportCard> {
       honors: fields[2] as String?,
       path: fields[3] as String?,
       pdfUrl: fields[4] as String?,
-      rank: fields[5] as int?,
+      rank: fields[5] as String?,
       createdAt: fields[6] as DateTime?,
       updatedAt: fields[7] as DateTime?,
       studentSessionId: fields[8] as int?,
@@ -77,7 +77,7 @@ ReportCard _$ReportCardFromJson(Map<String, dynamic> json) => ReportCard(
       honors: json['honors'] as String?,
       path: json['path'] as String?,
       pdfUrl: json['pdf_url'] as String?,
-      rank: (json['rank'] as num?)?.toInt(),
+      rank: json['rank'] as String?,
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
