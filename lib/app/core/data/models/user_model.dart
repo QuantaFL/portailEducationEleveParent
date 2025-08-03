@@ -49,6 +49,9 @@ class UserModel {
   @HiveField(13)
   final StudentSession? latestStudentSession;
 
+  @HiveField(14)
+  final String? gender;
+
   UserModel({
     this.id,
     this.firstName,
@@ -64,9 +67,11 @@ class UserModel {
     this.nationality,
     this.isFirstLogin,
     this.latestStudentSession,
+    this.gender,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }
