@@ -229,7 +229,7 @@ class ParentHomeController extends GetxController {
         termId: 1, // 1er Trimestre
         averageGrade: childUser.firstName == 'Marie' ? 14.5 : 12.8,
         honors: childUser.firstName == 'Marie' ? 'Assez Bien' : 'Passable',
-        rank: childUser.firstName == 'Marie' ? 8 : 15,
+        // rank: childUser.firstName == 'Marie' ? 8 : 15,
         path: '/bulletins/bulletin_${selectedChild.id}_T1_2024.pdf',
         createdAt: DateTime.now().subtract(const Duration(days: 30)),
       ),
@@ -239,7 +239,7 @@ class ParentHomeController extends GetxController {
         termId: 6, // 3eme Trimestre
         averageGrade: childUser.firstName == 'Marie' ? 15.2 : 13.1,
         honors: childUser.firstName == 'Marie' ? 'Bien' : 'Assez Bien',
-        rank: childUser.firstName == 'Marie' ? 6 : 12,
+        // rank: childUser.firstName == 'Marie' ? 6 : 12,
         path: '/bulletins/bulletin_${selectedChild.id}_T3_2023.pdf',
         createdAt: DateTime.now().subtract(const Duration(days: 120)),
       ),
@@ -277,7 +277,7 @@ class ParentHomeController extends GetxController {
             termId: term.id,
             averageGrade: average,
             honors: _getMentionFromAverage(average),
-            rank: (random % 30) + 1,
+            // rank: (random % 30) + 1,
             path:
                 '/bulletins/bulletin_${session.studentId}_${term.name!.replaceAll(' ', '_')}.pdf',
             createdAt: DateTime.now().subtract(
