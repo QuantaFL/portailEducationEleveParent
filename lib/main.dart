@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:portail_eleve/app/core/initializer/service_initializer.dart';
 import 'package:portail_eleve/app/services/connectivity_listener.dart';
 
@@ -10,7 +9,6 @@ import 'app/themes/palette_system.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Hive.deleteFromDisk();
   await ServiceInitializer().init();
   runApp(
     ConnectivityListener(

@@ -5,8 +5,6 @@ import 'package:portail_eleve/app/core/data/models/next_class.dart';
 
 import '../../../themes/palette_system.dart';
 
-/// A beautiful, modern timetable widget that displays upcoming classes
-/// with glassmorphism design, animations, and time-based visual indicators.
 class NextClassesTimetable extends StatefulWidget {
   final Future<List<NextClass>> Function() getNextClasses;
 
@@ -164,7 +162,7 @@ class _NextClassesTimetableState extends State<NextClassesTimetable>
                 style: GoogleFonts.inter(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppDesignSystem.textPrimary,
+                  color: AppDesignSystem.textPrimaryOf(context),
                 ),
               ),
               Text(
@@ -305,7 +303,7 @@ class _NextClassesTimetableState extends State<NextClassesTimetable>
                           fontWeight: isFirst
                               ? FontWeight.bold
                               : FontWeight.w600,
-                          color: AppDesignSystem.textPrimary,
+                          color: AppDesignSystem.textPrimaryOf(context),
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -314,7 +312,7 @@ class _NextClassesTimetableState extends State<NextClassesTimetable>
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: AppDesignSystem.textSecondary,
+                          color: AppDesignSystem.textSecondaryOf(context),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -323,7 +321,7 @@ class _NextClassesTimetableState extends State<NextClassesTimetable>
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
-                          color: AppDesignSystem.textSecondary,
+                          color: AppDesignSystem.textSecondaryOf(context),
                         ),
                       ),
                     ],
@@ -533,7 +531,7 @@ class _NextClassesTimetableState extends State<NextClassesTimetable>
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppDesignSystem.backgroundOf(context),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
