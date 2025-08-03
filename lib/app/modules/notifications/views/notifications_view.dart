@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../student_home/widgets/notification_card.dart';
-
+/// Streamlined notification page focused exclusively on bulletin notifications
 class NotificationsView extends StatelessWidget {
   const NotificationsView({Key? key}) : super(key: key);
 
@@ -13,6 +12,7 @@ class NotificationsView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            // Header Section
             Container(
               margin: const EdgeInsets.all(20),
               padding: const EdgeInsets.all(24),
@@ -71,7 +71,7 @@ class NotificationsView extends StatelessWidget {
                             ],
                           ),
                           child: const Text(
-                            'Tout marquer',
+                            'Tout marquer lu',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
@@ -99,7 +99,7 @@ class NotificationsView extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       const Text(
-                        'Notifications',
+                        'Bulletins',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w800,
@@ -111,11 +111,12 @@ class NotificationsView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
+                  // TODO: Connect to real bulletin notification count
                   Row(
                     children: [
                       const SizedBox(width: 16),
                       Text(
-                        '5 nouvelles notifications',
+                        'Chargement des bulletins...',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
@@ -127,6 +128,8 @@ class NotificationsView extends StatelessWidget {
                 ],
               ),
             ),
+
+            // Bulletin Status Summary
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
@@ -145,12 +148,12 @@ class NotificationsView extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      child: _buildEnhancedStat(
-                        'Non lues',
-                        '5',
+                      child: _buildBulletinStat(
+                        'Nouveaux',
+                        '--', // TODO: Connect to real new bulletin count
                         const Color(0xFFEF4444),
                         const Color(0xFFFEF2F2),
-                        Icons.mark_email_unread_rounded,
+                        Icons.fiber_new_rounded,
                       ),
                     ),
                     Container(
@@ -160,74 +163,72 @@ class NotificationsView extends StatelessWidget {
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                     ),
                     Expanded(
-                      child: _buildEnhancedStat(
-                        'Aujourd\'hui',
-                        '3',
-                        const Color(0xFF3B82F6),
-                        const Color(0xFFEFF6FF),
-                        Icons.today_rounded,
-                      ),
-                    ),
-                    Container(
-                      width: 1,
-                      height: 40,
-                      color: Colors.grey.shade200,
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                    Expanded(
-                      child: _buildEnhancedStat(
-                        'Cette semaine',
-                        '12',
+                      child: _buildBulletinStat(
+                        'Total',
+                        '--', // TODO: Connect to real total bulletin count
                         const Color(0xFF10B981),
                         const Color(0xFFF0FDF4),
-                        Icons.date_range_rounded,
+                        Icons.assignment_rounded,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    _buildModernFilterTab('Toutes', true),
-                    _buildModernFilterTab('Non lues', false),
-                    _buildModernFilterTab('Bulletins', false),
-                    _buildModernFilterTab('Notes', false),
-                    _buildModernFilterTab('Devoirs', false),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
+
+            // Bulletin Notifications List
             Expanded(
-              child: ListView.separated(
+              child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: _mockNotifications.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final notification = _mockNotifications[index];
-                  return NotificationCard(notification: notification);
-                },
+                child: _buildBulletinsList(),
               ),
             ),
-            const SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildEnhancedStat(
+  /// Builds the bulletins list widget
+  Widget _buildBulletinsList() {
+    // TODO: Replace with GetX controller or FutureBuilder connected to real data
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.assignment_outlined,
+            size: 64,
+            color: Colors.grey.shade400,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Aucun bulletin disponible',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Les nouveaux bulletins apparaîtront ici',
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Builds a bulletin statistic widget
+  Widget _buildBulletinStat(
     String label,
     String value,
-    Color color,
-    Color bgColor,
+    Color primaryColor,
+    Color backgroundColor,
     IconData icon,
   ) {
     return Column(
@@ -236,72 +237,161 @@ class NotificationsView extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: color.withValues(alpha: 0.1), width: 1),
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(14),
           ),
-          child: Icon(icon, color: color, size: 24),
+          child: Icon(icon, color: primaryColor, size: 24),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 20,
+          style: const TextStyle(
+            fontSize: 24,
             fontWeight: FontWeight.w800,
-            color: color,
+            color: Color(0xFF0F172A),
           ),
         ),
         const SizedBox(height: 4),
         Text(
           label,
           style: TextStyle(
-            fontSize: 11,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
             color: Colors.grey.shade600,
           ),
-          textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
-  Widget _buildModernFilterTab(String label, bool isSelected) {
+  /// Builds a bulletin notification card
+  Widget _buildBulletinNotificationCard(Map<String, dynamic> bulletin) {
+    final bool isNew = bulletin['isNew'] ?? false;
+
     return Container(
-      margin: const EdgeInsets.only(right: 8),
-      child: GestureDetector(
-        onTap: () {
-          // Handle filter selection
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            gradient: isSelected
-                ? const LinearGradient(
-                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                  )
-                : null,
-            color: isSelected ? null : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isSelected ? Colors.transparent : const Color(0xFFE2E8F0),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: isSelected
-                    ? const Color(0xFF6366F1).withValues(alpha: 0.2)
-                    : Colors.black.withValues(alpha: 0.04),
-                blurRadius: isSelected ? 12 : 8,
-                offset: Offset(0, isSelected ? 4 : 2),
-              ),
-            ],
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: isNew
+            ? Border.all(
+                color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+                width: 1,
+              )
+            : null,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
           ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-              color: isSelected ? Colors.white : const Color(0xFF475569),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _openBulletin(bulletin),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                // Bulletin Icon
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isNew
+                          ? [const Color(0xFF6366F1), const Color(0xFF8B5CF6)]
+                          : [Colors.grey.shade400, Colors.grey.shade500],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.assignment_rounded,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+
+                const SizedBox(width: 16),
+
+                // Bulletin Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              bulletin['title'] ?? 'Bulletin de notes',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF0F172A),
+                              ),
+                            ),
+                          ),
+                          if (isNew)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEF4444),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text(
+                                'NOUVEAU',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        bulletin['period'] ?? 'Période non spécifiée',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.schedule_rounded,
+                            size: 14,
+                            color: Colors.grey.shade500,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            bulletin['date'] ?? 'Date inconnue',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Arrow Icon
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 16,
+                  color: Colors.grey.shade400,
+                ),
+              ],
             ),
           ),
         ),
@@ -309,71 +399,29 @@ class NotificationsView extends StatelessWidget {
     );
   }
 
+  /// Marks all bulletin notifications as read
   void _markAllAsRead() {
+    // TODO: Implement actual mark all as read functionality
     Get.snackbar(
-      'Notifications',
-      'Toutes les notifications ont été marquées comme lues',
+      'Bulletins marqués',
+      'Tous les bulletins ont été marqués comme lus',
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: const Color(0xFF10B981),
       colorText: Colors.white,
       duration: const Duration(seconds: 2),
-      borderRadius: 12,
-      margin: const EdgeInsets.all(16),
     );
   }
 
-  static final List<Map<String, dynamic>> _mockNotifications = [
-    {
-      'id': '1',
-      'title': 'Nouveau bulletin disponible',
-      'message':
-          'Votre bulletin du 2ème trimestre est maintenant disponible pour consultation.',
-      'type': 'bulletin',
-      'time': DateTime.now().subtract(const Duration(minutes: 30)),
-      'isUnread': true,
-    },
-    {
-      'id': '2',
-      'title': 'Note ajoutée',
-      'message': 'Une nouvelle note a été ajoutée en Mathématiques: 16/20',
-      'type': 'note',
-      'time': DateTime.now().subtract(const Duration(hours: 2)),
-      'isUnread': true,
-    },
-    {
-      'id': '3',
-      'title': 'Devoir à rendre',
-      'message':
-          'N\'oubliez pas de rendre votre devoir de Français pour demain.',
-      'type': 'devoir',
-      'time': DateTime.now().subtract(const Duration(hours: 4)),
-      'isUnread': false,
-    },
-    {
-      'id': '4',
-      'title': 'Absence signalée',
-      'message':
-          'Votre absence du 15 janvier a été signalée par le professeur.',
-      'type': 'absence',
-      'time': DateTime.now().subtract(const Duration(days: 1)),
-      'isUnread': false,
-    },
-    {
-      'id': '5',
-      'title': 'Réunion parents-professeurs',
-      'message':
-          'La réunion parents-professeurs aura lieu le 25 janvier à 18h.',
-      'type': 'info',
-      'time': DateTime.now().subtract(const Duration(days: 2)),
-      'isUnread': false,
-    },
-    {
-      'id': '6',
-      'title': 'Bulletin consulté',
-      'message': 'Votre bulletin du 1er trimestre a été consulté avec succès.',
-      'type': 'bulletin',
-      'time': DateTime.now().subtract(const Duration(days: 3)),
-      'isUnread': false,
-    },
-  ];
+  /// Opens the selected bulletin
+  void _openBulletin(Map<String, dynamic> bulletin) {
+    // TODO: Implement actual bulletin opening/downloading functionality
+    Get.snackbar(
+      'Ouverture du bulletin',
+      'Téléchargement de ${bulletin['title']}...',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: const Color(0xFF6366F1),
+      colorText: Colors.white,
+      duration: const Duration(seconds: 2),
+    );
+  }
 }
