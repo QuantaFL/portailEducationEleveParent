@@ -46,12 +46,12 @@ class ParentBottomNavBar extends GetView<ParentHomeController> {
             BottomNavigationBarItem(
               icon: Icon(Icons.notifications_outlined),
               activeIcon: Icon(Icons.notifications),
-              label: 'Notifications',
+              label: 'Historique',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outlined),
               activeIcon: Icon(Icons.person),
-              label: 'Profil',
+              label: 'Profile',
             ),
           ],
         ),
