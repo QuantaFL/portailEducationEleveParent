@@ -118,12 +118,13 @@ class PersonalInfoView extends StatelessWidget {
                             Icons.wc_rounded,
                             false,
                           ),
-                          _buildInfoItem(
-                            'Matricule',
-                            controller.getMatricule(),
-                            Icons.qr_code_rounded,
-                            false,
-                          ),
+                          if (controller.isStudent)
+                            _buildInfoItem(
+                              'Matricule',
+                              controller.getMatricule(),
+                              Icons.qr_code_rounded,
+                              false,
+                            ),
                         ],
                       ),
 
@@ -152,63 +153,90 @@ class PersonalInfoView extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      _buildSection(
-                        'Informations scolaires',
-                        Icons.school_rounded,
-                        [
-                          _buildInfoItem(
-                            'Établissement',
-                            'Groupe Scolaire Quanta',
-                            Icons.account_balance_rounded,
-                            false,
-                          ),
-                          _buildInfoItem(
-                            'Classe actuelle',
-                            controller.getCurrentClass(),
-                            Icons.class_rounded,
-                            false,
-                          ),
-                          _buildInfoItem(
-                            'Année scolaire',
-                            controller.getAcademicYear(),
-                            Icons.calendar_today_rounded,
-                            false,
-                          ),
-                          _buildInfoItem(
-                            'Statut',
-                            controller.getStudentStatus(),
-                            Icons.verified_user_rounded,
-                            false,
-                          ),
-                        ],
-                      ),
+                      if (controller.isStudent) ...[
+                        _buildSection(
+                          'Informations scolaires',
+                          Icons.school_rounded,
+                          [
+                            _buildInfoItem(
+                              'Établissement',
+                              'Groupe Scolaire Quanta',
+                              Icons.account_balance_rounded,
+                              false,
+                            ),
+                            _buildInfoItem(
+                              'Classe actuelle',
+                              controller.getCurrentClass(),
+                              Icons.class_rounded,
+                              false,
+                            ),
+                            _buildInfoItem(
+                              'Année scolaire',
+                              controller.getAcademicYear(),
+                              Icons.calendar_today_rounded,
+                              false,
+                            ),
+                            _buildInfoItem(
+                              'Statut',
+                              controller.getStudentStatus(),
+                              Icons.verified_user_rounded,
+                              false,
+                            ),
+                          ],
+                        ),
 
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                      _buildSection(
-                        'Contact parent/tuteur',
-                        Icons.family_restroom_rounded,
-                        [
-                          _buildInfoItem(
-                            'Nom du parent',
-                            controller.getParentName(),
-                            Icons.person_outline_rounded,
-                            false,
-                          ),
-                          _buildInfoItem(
-                            'Email du parent',
-                            controller.getParentEmail(),
-                            Icons.email_outlined,
-                            false,
-                          ),
-                          _buildInfoItem(
-                            'Téléphone du parent',
-                            controller.getParentPhone(),
-                            Icons.phone_outlined,
-                            false,
-                          ),
-                        ],
-                      ),
+                        _buildSection(
+                          'Contact parent/tuteur',
+                          Icons.family_restroom_rounded,
+                          [
+                            _buildInfoItem(
+                              'Nom du parent',
+                              controller.getParentName(),
+                              Icons.person_outline_rounded,
+                              false,
+                            ),
+                            _buildInfoItem(
+                              'Email du parent',
+                              controller.getParentEmail(),
+                              Icons.email_outlined,
+                              true,
+                            ),
+                            _buildInfoItem(
+                              'Téléphone du parent',
+                              controller.getParentPhone(),
+                              Icons.phone_outlined,
+                              true,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+                      ],
+
+                      if (controller.isParent) ...[
+                        _buildSection(
+                          'Informations parentales',
+                          Icons.family_restroom_rounded,
+                          [
+                            _buildInfoItem(
+                              'Statut',
+                              'Parent/Tuteur',
+                              Icons.verified_user_rounded,
+                              false,
+                            ),
+                            _buildInfoItem(
+                              'Établissement',
+                              'Groupe Scolaire Quanta',
+                              Icons.account_balance_rounded,
+                              false,
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+                      ],
 
                       const SizedBox(height: 40),
                     ],
@@ -307,7 +335,9 @@ class PersonalInfoView extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  controller.getCurrentClass(),
+                  controller.isParent
+                      ? 'Parent/Tuteur'
+                      : controller.getCurrentClass(),
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -319,13 +349,15 @@ class PersonalInfoView extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    Icons.school_rounded,
+                    controller.isParent
+                        ? Icons.family_restroom_rounded
+                        : Icons.school_rounded,
                     color: Colors.white.withValues(alpha: 0.8),
                     size: 14,
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    controller.isStudent ? 'Élève actif' : 'Parent',
+                    controller.isStudent ? 'Élève actif' : 'Espace Parent',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
