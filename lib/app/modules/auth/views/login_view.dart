@@ -13,7 +13,7 @@ class LoginView extends GetView<AuthController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppDesignSystem.backgroundOf(context),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -53,11 +53,13 @@ class LoginView extends GetView<AuthController> {
                 width: AppDesignSystem.responsiveSize(context, 160),
                 height: AppDesignSystem.responsiveSize(context, 160),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppDesignSystem.cardOf(context),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppDesignSystem.primary.withOpacity(0.1),
+                      color: AppDesignSystem.primaryOf(
+                        context,
+                      ).withOpacity(0.1),
                       blurRadius: 30,
                       offset: const Offset(0, 15),
                     ),
@@ -79,7 +81,7 @@ class LoginView extends GetView<AuthController> {
                 style: AppDesignSystem.textTheme(context).displayLarge
                     ?.copyWith(
                       fontWeight: FontWeight.w900,
-                      color: AppDesignSystem.textPrimary,
+                      color: AppDesignSystem.textPrimaryOf(context),
                       letterSpacing: -1.0,
                     ),
               )
@@ -92,7 +94,7 @@ class LoginView extends GetView<AuthController> {
           Text(
                 'Accédez à vos bulletins scolaires\nen toute sécurité',
                 style: AppDesignSystem.textTheme(context).bodyLarge?.copyWith(
-                  color: AppDesignSystem.textSecondary,
+                  color: AppDesignSystem.textSecondaryOf(context),
                   fontWeight: FontWeight.w400,
                   height: 1.5,
                 ),
@@ -115,13 +117,13 @@ class LoginView extends GetView<AuthController> {
             vertical: 28,
           ),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppDesignSystem.cardOf(context),
             borderRadius: BorderRadius.circular(
               AppDesignSystem.responsiveRadius(context, 24),
             ),
             boxShadow: [
               BoxShadow(
-                color: AppDesignSystem.primary.withOpacity(0.08),
+                color: AppDesignSystem.primaryOf(context).withOpacity(0.08),
                 blurRadius: 30,
                 offset: const Offset(0, 15),
               ),
@@ -140,7 +142,7 @@ class LoginView extends GetView<AuthController> {
                     style: AppDesignSystem.textTheme(context).headlineLarge
                         ?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: AppDesignSystem.textPrimary,
+                          color: AppDesignSystem.textPrimaryOf(context),
                           letterSpacing: -0.5,
                         ),
                     textAlign: TextAlign.center,
@@ -155,7 +157,7 @@ class LoginView extends GetView<AuthController> {
                     'Connectez-vous à votre espace personnel',
                     style: AppDesignSystem.textTheme(context).bodyLarge
                         ?.copyWith(
-                          color: AppDesignSystem.textSecondary,
+                          color: AppDesignSystem.textSecondaryOf(context),
                           fontWeight: FontWeight.w400,
                         ),
                     textAlign: TextAlign.center,
@@ -164,34 +166,26 @@ class LoginView extends GetView<AuthController> {
                   .fadeIn(duration: 600.ms, delay: 700.ms)
                   .slideX(begin: 0.3, end: 0),
 
-              SizedBox(
-                height: AppDesignSystem.spacing(context, 28),
-              ), // Reduced from 40
+              SizedBox(height: AppDesignSystem.spacing(context, 28)),
               // Email Field
               _buildEmailField(context)
                   .animate()
                   .fadeIn(duration: 600.ms, delay: 800.ms)
                   .slideY(begin: 0.2, end: 0),
 
-              SizedBox(
-                height: AppDesignSystem.spacing(context, 20),
-              ), // Reduced from 24
+              SizedBox(height: AppDesignSystem.spacing(context, 20)),
               _buildPasswordField(context)
                   .animate()
                   .fadeIn(duration: 600.ms, delay: 900.ms)
                   .slideY(begin: 0.2, end: 0),
 
-              SizedBox(
-                height: AppDesignSystem.spacing(context, 28),
-              ), // Reduced from
+              SizedBox(height: AppDesignSystem.spacing(context, 28)),
               _buildLoginButton(context)
                   .animate()
                   .fadeIn(duration: 600.ms, delay: 1000.ms)
                   .slideY(begin: 0.2, end: 0),
 
-              SizedBox(
-                height: AppDesignSystem.spacing(context, 18),
-              ), // Reduced from 24
+              SizedBox(height: AppDesignSystem.spacing(context, 18)),
               _buildForgotPasswordButton(context)
                   .animate()
                   .fadeIn(duration: 600.ms, delay: 1100.ms)
@@ -212,7 +206,7 @@ class LoginView extends GetView<AuthController> {
           'Adresse email',
           style: AppDesignSystem.textTheme(context).labelLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppDesignSystem.textPrimary,
+            color: AppDesignSystem.textPrimaryOf(context),
           ),
         ),
         SizedBox(height: AppDesignSystem.spacing(context, 8)),
@@ -245,7 +239,7 @@ class LoginView extends GetView<AuthController> {
                   ),
                   child: Icon(
                     Icons.email_outlined,
-                    color: AppDesignSystem.primary,
+                    color: AppDesignSystem.primaryOf(context),
                     size: AppDesignSystem.responsiveSize(context, 20),
                   ),
                 ),
@@ -265,7 +259,10 @@ class LoginView extends GetView<AuthController> {
                   vertical: 16,
                 ),
               ),
-              style: AppDesignSystem.textTheme(context).bodyMedium,
+              style: AppDesignSystem.textTheme(context).bodyMedium?.copyWith(
+                color: AppDesignSystem.textFieldOf(context),
+                backgroundColor: Colors.transparent,
+              ),
             ),
           ),
         ),
@@ -281,7 +278,7 @@ class LoginView extends GetView<AuthController> {
           'Mot de passe',
           style: AppDesignSystem.textTheme(context).labelLarge?.copyWith(
             fontWeight: FontWeight.w600,
-            color: AppDesignSystem.textPrimary,
+            color: AppDesignSystem.textPrimaryOf(context),
           ),
         ),
         SizedBox(height: AppDesignSystem.spacing(context, 8)),
@@ -316,7 +313,7 @@ class LoginView extends GetView<AuthController> {
                   ),
                   child: Icon(
                     Icons.lock_outline,
-                    color: AppDesignSystem.primary,
+                    color: AppDesignSystem.primaryOf(context),
                     size: AppDesignSystem.responsiveSize(context, 20),
                   ),
                 ),
@@ -326,7 +323,7 @@ class LoginView extends GetView<AuthController> {
                     controller.isPasswordVisible.value
                         ? Icons.visibility_off
                         : Icons.visibility,
-                    color: AppDesignSystem.textSecondary,
+                    color: AppDesignSystem.textSecondaryOf(context),
                     size: AppDesignSystem.responsiveSize(context, 20),
                   ),
                 ),
@@ -337,7 +334,10 @@ class LoginView extends GetView<AuthController> {
                   vertical: 16,
                 ),
               ),
-              style: AppDesignSystem.textTheme(context).bodyMedium,
+              style: AppDesignSystem.textTheme(context).bodyMedium?.copyWith(
+                color: AppDesignSystem.textFieldOf(context),
+                backgroundColor: Colors.transparent,
+              ),
             ),
           ),
         ),
@@ -359,7 +359,7 @@ class LoginView extends GetView<AuthController> {
           padding: AppDesignSystem.responsivePadding(context, vertical: 24),
           decoration: BoxDecoration(
             color: controller.isFormValid.value
-                ? AppDesignSystem.primary
+                ? AppDesignSystem.primaryOf(context)
                 : AppDesignSystem.surfaceVariant,
             borderRadius: BorderRadius.circular(
               AppDesignSystem.responsiveRadius(context, 20),
@@ -367,12 +367,16 @@ class LoginView extends GetView<AuthController> {
             boxShadow: controller.isFormValid.value
                 ? [
                     BoxShadow(
-                      color: AppDesignSystem.primary.withOpacity(0.4),
+                      color: AppDesignSystem.primaryOf(
+                        context,
+                      ).withOpacity(0.4),
                       blurRadius: 20,
                       offset: const Offset(0, 10),
                     ),
                     BoxShadow(
-                      color: AppDesignSystem.primary.withOpacity(0.2),
+                      color: AppDesignSystem.primaryOf(
+                        context,
+                      ).withOpacity(0.2),
                       blurRadius: 40,
                       offset: const Offset(0, 20),
                     ),
@@ -442,13 +446,13 @@ class LoginView extends GetView<AuthController> {
     return TextButton(
       onPressed: controller.forgotPassword,
       style: TextButton.styleFrom(
-        foregroundColor: AppDesignSystem.primary,
+        foregroundColor: AppDesignSystem.primaryOf(context),
         padding: AppDesignSystem.responsivePadding(context, vertical: 12),
       ),
       child: Text(
         'Mot de passe oublié ?',
         style: AppDesignSystem.textTheme(context).bodyMedium?.copyWith(
-          color: AppDesignSystem.primary,
+          color: AppDesignSystem.primaryOf(context),
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -466,7 +470,7 @@ class LoginView extends GetView<AuthController> {
         '© 2025 Espace Scolaire - Tous droits réservés',
         style: AppDesignSystem.textTheme(
           context,
-        ).bodySmall?.copyWith(color: AppDesignSystem.textTertiary),
+        ).bodySmall?.copyWith(color: AppDesignSystem.textSecondaryOf(context)),
         textAlign: TextAlign.center,
       ).animate().fadeIn(duration: 600.ms, delay: 1000.ms),
     );

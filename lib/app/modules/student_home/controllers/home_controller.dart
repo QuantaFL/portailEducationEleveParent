@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
 import 'package:portail_eleve/app/core/api/api_client.dart';
@@ -13,6 +14,7 @@ import 'package:portail_eleve/app/core/data/repositories/student_repository.dart
 import 'package:portail_eleve/app/modules/student_home/data/useCases/bulletin_debug_service.dart';
 import 'package:portail_eleve/app/modules/student_home/data/useCases/poll_latest_bulletins.dart';
 import 'package:portail_eleve/app/routes/app_pages.dart';
+import 'package:portail_eleve/app/services/hive_service.dart';
 
 class HomeController extends GetxController {
   final BulletinRepository bulletinRepository;
@@ -389,21 +391,12 @@ class HomeController extends GetxController {
 
   Future<void> _clearUserData() async {
     FlutterSecureStorage storage = const FlutterSecureStorage();
-    // Clear local data
     currentIndex.value = 0;
     recentBulletins.clear();
     await storage.deleteAll();
-
-    // Here you would typically:
-    // 1. Clear SharedPreferences
-    // 2. Clear secure storage (tokens, etc.)
-    // 3. Clear any cached data
-    // 4. Reset any other controllers
-
-    // Example (you'll need to implement these based on your storage solution):
-    // await SharedPreferences.getInstance().then((prefs) => prefs.clear());
-    // await FlutterSecureStorage().deleteAll();
-    // Get.delete<AuthController>(); // Clear auth controller if exists
+    await Hive.deleteFromDisk();
+    await FlutterSecureStorage().deleteAll();
+    await HiveService().init();
   }
 
   /// Fetches the next 3 classes for the current student.

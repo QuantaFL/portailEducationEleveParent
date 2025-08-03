@@ -19,11 +19,8 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppDesignSystem.surface,
+      backgroundColor: AppDesignSystem.backgroundOf(context),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppDesignSystem.surfaceGradient,
-        ),
         child: Obx(
           () => IndexedStack(
             index: controller.currentIndex.value,
@@ -43,8 +40,8 @@ class HomeView extends GetView<HomeController> {
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: controller.loadDashboardData,
-        color: const Color(0xFF6366F1),
-        backgroundColor: Colors.white,
+        color: AppDesignSystem.primaryOf(context),
+        backgroundColor: AppDesignSystem.backgroundOf(context),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: Padding(
@@ -68,7 +65,7 @@ class HomeView extends GetView<HomeController> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SizedBox(
-                    height: 490,
+                    height: 520,
                     child: NextClassesTimetable(
                       getNextClasses: controller.getNextClasses,
                     ),
@@ -116,10 +113,10 @@ class HomeView extends GetView<HomeController> {
             return _buildLoadingShimmer(context);
           }
           if (controller.recentBulletins.isEmpty) {
-            return _buildEmptyState();
+            return _buildEmptyState(context);
           }
           return SizedBox(
-            height: 180, // Adjust height for the new card design
+            height: 180,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -140,7 +137,7 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       child: Center(
@@ -150,7 +147,7 @@ class HomeView extends GetView<HomeController> {
             Icon(
               Icons.folder_off_outlined,
               size: 60,
-              color: Colors.grey.shade400,
+              color: AppDesignSystem.primaryOf(context),
             ),
             const SizedBox(height: 16),
             Text(
@@ -177,7 +174,7 @@ class HomeView extends GetView<HomeController> {
             margin: const EdgeInsets.only(bottom: 12),
             height: 120,
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              color: AppDesignSystem.backgroundOf(context),
               borderRadius: BorderRadius.circular(16),
             ),
           );
@@ -208,7 +205,7 @@ class HomeView extends GetView<HomeController> {
                   return _buildLoadingShimmer(context);
                 }
                 if (controller.allBulletins.isEmpty) {
-                  return _buildEmptyState();
+                  return _buildEmptyState(context);
                 }
                 return ListView.builder(
                   itemCount: controller.allBulletins.length,
@@ -245,7 +242,7 @@ class HomeView extends GetView<HomeController> {
               style: GoogleFonts.inter(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: AppDesignSystem.textPrimary,
+                color: AppDesignSystem.textPrimaryOf(context),
               ),
             ),
             const SizedBox(height: 24),
@@ -296,7 +293,7 @@ class HomeView extends GetView<HomeController> {
   Widget _buildBottomNavBar(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppDesignSystem.cardOf(context),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -316,9 +313,9 @@ class HomeView extends GetView<HomeController> {
             () => Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(0, Icons.home, 'Accueil'),
-                _buildNavItem(1, Icons.history, 'Historique'),
-                _buildNavItem(2, Icons.person, 'Profil'),
+                _buildNavItem(0, Icons.home, 'Accueil', context),
+                _buildNavItem(1, Icons.history, 'Historique', context),
+                _buildNavItem(2, Icons.person, 'Profil', context),
               ],
             ),
           ),
@@ -327,7 +324,12 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
+  Widget _buildNavItem(
+    int index,
+    IconData icon,
+    String label,
+    BuildContext context,
+  ) {
     final isSelected = controller.currentIndex.value == index;
     return GestureDetector(
       onTap: () => controller.changeTab(index),
@@ -335,7 +337,9 @@ class HomeView extends GetView<HomeController> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF6366F1) : Colors.transparent,
+          color: isSelected
+              ? AppDesignSystem.primaryOf(context)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(25),
         ),
         child: Row(
@@ -393,7 +397,9 @@ class ProfileListItem extends StatelessWidget {
             Icon(
               icon,
               size: 24,
-              color: isDestructive ? Colors.red : AppDesignSystem.textPrimary,
+              color: isDestructive
+                  ? Colors.red
+                  : AppDesignSystem.textPrimaryOf(context),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -404,7 +410,7 @@ class ProfileListItem extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                   color: isDestructive
                       ? Colors.red
-                      : AppDesignSystem.textPrimary,
+                      : AppDesignSystem.textPrimaryOf(context),
                 ),
               ),
             ),
