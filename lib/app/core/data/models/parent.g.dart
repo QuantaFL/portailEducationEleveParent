@@ -18,15 +18,18 @@ class ParentAdapter extends TypeAdapter<Parent> {
     };
     return Parent(
       id: fields[0] as int?,
+      userModel: fields[1] as UserModel?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Parent obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.id);
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.userModel);
   }
 
   @override
@@ -46,8 +49,12 @@ class ParentAdapter extends TypeAdapter<Parent> {
 
 Parent _$ParentFromJson(Map<String, dynamic> json) => Parent(
       id: (json['id'] as num?)?.toInt(),
+      userModel: json['user_model'] == null
+          ? null
+          : UserModel.fromJson(json['user_model'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ParentToJson(Parent instance) => <String, dynamic>{
       'id': instance.id,
+      'user_model': instance.userModel?.toJson(),
     };
