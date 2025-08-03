@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:portail_eleve/app/themes/palette_system.dart';
 
 class ContactCard extends StatelessWidget {
   final IconData icon;
@@ -22,7 +23,7 @@ class ContactCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppDesignSystem.cardOf(context),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.grey.shade200, width: 1),
           boxShadow: [
@@ -35,11 +36,7 @@ class ContactCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 28,
-              color: const Color(0xFF6366F1),
-            ),
+            Icon(icon, size: 28, color: const Color(0xFF6366F1)),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -50,7 +47,7 @@ class ContactCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1E293B),
+                      color: AppDesignSystem.primaryOf(context),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -58,7 +55,7 @@ class ContactCard extends StatelessWidget {
                     subtitle,
                     style: GoogleFonts.inter(
                       fontSize: 13,
-                      color: Colors.grey.shade600,
+                      color: AppDesignSystem.textPrimaryOf(context),
                     ),
                   ),
                 ],

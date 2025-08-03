@@ -16,7 +16,7 @@ class BulletinCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 280, // Constrained width for horizontal scrolling
+      width: 280,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),

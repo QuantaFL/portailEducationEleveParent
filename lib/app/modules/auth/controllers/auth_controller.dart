@@ -8,6 +8,7 @@ import 'package:portail_eleve/app/core/api/api_client.dart';
 import 'package:portail_eleve/app/core/data/models/login_response.dart';
 import 'package:portail_eleve/app/modules/auth/data/useCases/auth_login.dart';
 import 'package:portail_eleve/app/routes/app_pages.dart';
+import 'package:portail_eleve/app/services/hive_service.dart';
 
 import '../../../core/data/models/user.dart';
 
@@ -126,7 +127,6 @@ class AuthController extends GetxController {
     final token = loginResponse.token;
     final user = loginResponse.user;
 
-    // Determine user type based on roleId
     String userType = '';
     if (user.roleId == 3) {
       userType = 'student';
@@ -136,28 +136,29 @@ class AuthController extends GetxController {
       log.e(
         'Unauthorized roleId: \'${user.roleId}\'. Only student (3) and parent (4) are allowed.',
       );
-      // Optionally show error to user and return
       return;
     }
 
     log.d(
-      'Login success: userId=${user.id}, roleId=${user.roleId}, userType=$userType, token=${token != null ? '***' : 'null'}',
+      'Login success: userId=${user.id}, roleId=${user.roleId}, userType=$userType, token=${token.isNotEmpty ? '***' : 'empty'}',
     );
 
-    // Save token and user info securely
     try {
       await _storage.write(key: 'auth_token', value: token);
       await _storage.write(key: 'user_type', value: userType);
       await _storage.write(key: 'user_id', value: user.id.toString());
-      await _storage.write(key: 'user_email', value: user.email ?? '');
+      await _storage.write(key: 'user_email', value: user.email);
+
+      if (userType == 'student') {
+        await _fetchAndStoreStudentId(user.id, token);
+      }
+
       log.d('Token, userType, and userId saved to secure storage.');
     } catch (e) {
       log.e('Error saving to secure storage: \'${e.toString()}\'');
-      // Optionally show error to user
       return;
     }
 
-    // Navigate to the correct home screen based on userType
     if (userType == 'student') {
       Get.offAllNamed(Routes.HOME);
       _showSnackbar(
@@ -172,6 +173,33 @@ class AuthController extends GetxController {
         'Bienvenue, ${user.firstName}!',
         Colors.green,
       );
+    }
+  }
+
+  /// Fetches the actual student ID from the API based on user model ID
+  Future<void> _fetchAndStoreStudentId(int userModelId, String token) async {
+    final Logger log = Logger();
+    try {
+      final apiClient = Get.find<ApiClient>();
+
+      final response = await apiClient.dio.get(
+        '/students/$userModelId/details',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final studentId = response.data['id'];
+        await _storage.write(key: 'studentId', value: studentId.toString());
+        log.d(
+          '✅ Actual student ID ($studentId) saved to secure storage (user_model_id: $userModelId)',
+        );
+      } else {
+        log.e('❌ Failed to fetch student ID from API');
+        await _storage.delete(key: 'studentId');
+      }
+    } catch (e) {
+      log.e('❌ Error fetching student ID: ${e.toString()}');
+      await _storage.delete(key: 'studentId');
     }
   }
 
@@ -232,6 +260,7 @@ class AuthController extends GetxController {
 
   Future<void> clearHiveData() async {
     await Hive.deleteFromDisk();
+    await HiveService().init();
   }
 
   Future<void> clearStorage() async {
