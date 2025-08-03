@@ -20,6 +20,7 @@ class AppDesignSystem {
   // Couleurs primaires (bleu académique)
   /// Bleu marine riche pour les surfaces sombres.
   static const Color primaryDark = Color(0xFF0F172A);
+  static const Color cardDark = Color(0xFF1F2937);
 
   /// Bleu institutionnel principal.
   static const Color primary = Color(0xFF1E40AF);
@@ -47,7 +48,7 @@ class AppDesignSystem {
   static const Color infoLight = Color(0xFFDBEAFE);
 
   // Neutres — gris professionnels
-  static const Color surfaceDark = Color(0xFF0F172A);
+  static const Color surfaceDark = Color(0xFF111827);
   static const Color surface = Color(0xFFFAFAFA);
   static const Color surfaceContainer = Color(0xFFFFFFFF);
   static const Color surfaceVariant = Color(0xFFF1F5F9);
@@ -308,6 +309,47 @@ class AppDesignSystem {
 
   static bool isDesktop(BuildContext c) =>
       MediaQuery.of(c).size.width >= desktopBreakpoint;
+
+  /// Returns the primary color based on the current theme (light/dark).
+  static Color primaryOf(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark ? primaryLight : primary;
+  }
+
+  /// Returns the background color based on the current theme (light/dark).
+  static Color backgroundOf(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark ? surfaceDark : surface;
+  }
+
+  /// Returns the surface color based on the current theme (light/dark).
+  static Color surfaceOf(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark ? surfaceDark : surface;
+  }
+
+  /// Returns the text primary color based on the current theme (light/dark).
+  static Color textPrimaryOf(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark ? textInverse : textPrimary;
+  }
+
+  /// Returns the text secondary color based on the current theme (light/dark).
+  static Color textSecondaryOf(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark ? textTertiary : textSecondary;
+  }
+
+  static Color textFieldOf(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark ? Colors.black : Colors.black;
+  }
+
+  /// Returns the card color based on the current theme (light/dark).
+  static Color cardOf(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    return brightness == Brightness.dark ? cardDark : surfaceContainer;
+  }
 }
 
 /// Thème clair basé sur [AppDesignSystem].

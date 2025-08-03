@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
 import 'package:portail_eleve/app/core/services/parent_service.dart';
@@ -199,6 +200,7 @@ class ParentHomeController extends GetxController {
 
       // Clear secure storage
       await _storage.deleteAll();
+      await Hive.deleteFromDisk();
 
       // Navigate to login
       Get.offAllNamed(Routes.LOGIN);
