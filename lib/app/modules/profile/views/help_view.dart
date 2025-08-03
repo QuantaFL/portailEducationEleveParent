@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:portail_eleve/app/themes/palette_system.dart';
 
 class HelpView extends StatelessWidget {
   const HelpView({Key? key}) : super(key: key);
@@ -7,7 +8,7 @@ class HelpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppDesignSystem.backgroundOf(context),
       body: SafeArea(
         child: Column(
           children: [
@@ -15,7 +16,7 @@ class HelpView extends StatelessWidget {
               margin: const EdgeInsets.all(20),
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppDesignSystem.cardOf(context),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -44,12 +45,12 @@ class HelpView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Text(
+                  Text(
                     'Aide & Support',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF0F172A),
+                      color: AppDesignSystem.textPrimaryOf(context),
                     ),
                   ),
                 ],
@@ -67,12 +68,12 @@ class HelpView extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const Text(
+                  Text(
                     'Besoin d\'aide ?',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: AppDesignSystem.textPrimaryOf(context),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -118,6 +119,7 @@ class HelpView extends StatelessWidget {
                     'Trouvez des réponses aux questions les plus courantes',
                     Icons.quiz_rounded,
                     Colors.blue,
+                    context,
                     _faqItems,
                   ),
                   _buildHelpCategory(
@@ -125,6 +127,7 @@ class HelpView extends StatelessWidget {
                     'Guides pas à pas pour utiliser l\'application',
                     Icons.school_rounded,
                     Colors.green,
+                    context,
                     _tutorialItems,
                   ),
                   _buildHelpCategory(
@@ -132,6 +135,7 @@ class HelpView extends StatelessWidget {
                     'Résolvez les problèmes techniques courants',
                     Icons.build_rounded,
                     Colors.orange,
+                    context,
                     _technicalItems,
                   ),
                   _buildHelpCategory(
@@ -139,6 +143,7 @@ class HelpView extends StatelessWidget {
                     'Différentes façons de nous contacter',
                     Icons.contact_support_rounded,
                     Colors.purple,
+                    context,
                     _contactItems,
                   ),
                   const SizedBox(height: 20),
@@ -187,14 +192,14 @@ class HelpView extends StatelessWidget {
     String subtitle,
     IconData icon,
     Color color,
+    BuildContext context,
     List<Map<String, String>> items,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppDesignSystem.cardOf(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade100),
       ),
       child: ExpansionTile(
         leading: Container(
@@ -208,15 +213,18 @@ class HelpView extends StatelessWidget {
         ),
         title: Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1E293B),
+            color: AppDesignSystem.textPrimaryOf(context),
           ),
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+          style: TextStyle(
+            fontSize: 12,
+            color: AppDesignSystem.textSecondaryOf(context),
+          ),
         ),
         children: items
             .map(
