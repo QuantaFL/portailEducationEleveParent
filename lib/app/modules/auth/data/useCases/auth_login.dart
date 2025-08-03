@@ -48,10 +48,8 @@ class AuthLogin {
           print(response.statusCode);
         } else {
           print("ddddddddddddddddddddddd");
-          // Parse the response as a List of students
           log.d(response.data);
           final student = Student.fromJson(response.data);
-          // Save all students in Hive and store the first student's id in secure storage
           studentBox.put(student.id, student);
           await storage.write(key: 'studentId', value: student.id.toString());
         }
@@ -62,7 +60,22 @@ class AuthLogin {
         if (response.statusCode != 200) {
           throw Exception('Failed to fetch parent data');
         } else {
+          Response response = await apiClient.get(
+            "/users/${loginResponse.user.id}/parents",
+          );
+          if (response.statusCode != 200) {
+            throw Exception('Failed to fetch student data for parent');
+          }
           Parent parent = Parent.fromJson(response.data);
+          Response childrenResponse = await apiClient.get(
+            "/parents/${parent.id}/children",
+          );
+          if (childrenResponse.statusCode != 200) {
+            throw Exception('Failed to fetch children data for parent');
+          }
+          parent.children = (childrenResponse.data as List)
+              .map((child) => Student.fromJson(child))
+              .toList();
           parentBox.put(parent.id, parent);
           await storage.write(key: 'parentId', value: parent.id.toString());
         }

@@ -31,4 +31,6 @@ class BulletinRepository {
       throw Exception('Failed to load bulletins: ${response.statusCode}');
     }
   }
+
+  Future<void> downloadBulletin(int bulletinId, String downloadPath) async {}
 }
