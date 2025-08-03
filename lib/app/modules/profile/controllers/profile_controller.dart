@@ -22,7 +22,56 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadUserData();
+
+    // Check if parent data was passed as argument
+    final arguments = Get.arguments;
+    if (arguments != null && arguments['parentUser'] != null) {
+      _loadParentUserFromArguments(arguments['parentUser'] as UserModel);
+    } else if (arguments != null && arguments['parent'] != null) {
+      _loadParentFromArguments(arguments['parent'] as Parent);
+    } else {
+      _loadUserData();
+    }
+  }
+
+  /// Load parent user data from arguments (when navigated from parent home)
+  void _loadParentUserFromArguments(UserModel parentUser) {
+    try {
+      isLoading.value = true;
+
+      currentUser.value = parentUser;
+      userType.value = 'parent';
+
+      _logger.d(
+        'Parent user data loaded from arguments: ${parentUser.firstName} ${parentUser.lastName}',
+      );
+      _logger.d('Parent email: ${parentUser.email}');
+      _logger.d('Parent phone: ${parentUser.phone}');
+      _logger.d('Parent address: ${parentUser.adress}');
+    } catch (e) {
+      _logger.e('Error loading parent user from arguments: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Load parent data from arguments (when navigated from parent home)
+  void _loadParentFromArguments(Parent parent) {
+    try {
+      isLoading.value = true;
+
+      currentParent.value = parent;
+      currentUser.value = parent.userModel;
+      userType.value = 'parent';
+
+      _logger.d(
+        'Parent data loaded from arguments: ${parent.userModel?.firstName} ${parent.userModel?.lastName}',
+      );
+    } catch (e) {
+      _logger.e('Error loading parent from arguments: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   /// Loads user data from storage and Hive database
