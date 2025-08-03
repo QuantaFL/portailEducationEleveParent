@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/data/models/user_model.dart';
-import '../../../shared/widgets/child_info_card.dart';
-import '../../../shared/widgets/dashboard_layout.dart';
-import '../../../shared/widgets/user_profile_header.dart';
-import '../../../themes/palette_system.dart';
 import '../../profile/views/about_view.dart';
 import '../../profile/views/help_view.dart';
 import '../../profile/views/personal_info_view.dart';
@@ -14,23 +10,26 @@ import '../../student_home/widgets/bulletin_card.dart';
 import '../controllers/parent_home_controller.dart';
 import '../widgets/parent_bottom_nav_bar.dart';
 
-/// Clean and simple parent home view
 class ParentHomeView extends GetView<ParentHomeController> {
   const ParentHomeView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppDesignSystem.surface,
+      backgroundColor: const Color(0xFFF8FAFC),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppDesignSystem.surfaceGradient,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFF8FAFC), Color(0xFFFFFFFF)],
+          ),
         ),
         child: Obx(
           () => IndexedStack(
             index: controller.currentIndex.value,
             children: [
-              _buildDashboard(context),
+              _buildModernDashboard(context),
               _buildBulletinsHistory(context),
               _buildProfile(context),
             ],
@@ -41,50 +40,179 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  /// Clean dashboard focused on parent, children, and bulletins
-  Widget _buildDashboard(BuildContext context) {
+  Widget _buildModernDashboard(BuildContext context) {
     return Obx(() {
       final parent = controller.currentParent.value;
       final children = controller.children;
 
-      return DashboardLayout(
-        header: parent != null
-            ? UserProfileHeader(
-                user: parent,
-                subtitle: children.isNotEmpty
-                    ? '${children.length} enfant${children.length > 1 ? 's' : ''}'
-                    : 'Espace Parent',
-                role: 'Parent',
-              )
-            : _buildLoadingHeader(context),
-        selector: children.isNotEmpty ? _buildChildSelector(context) : null,
-        cards: _buildDashboardCards(context),
-        onRefresh: controller.loadParentDashboardData,
-        isLoading: controller.isLoading.value && children.isEmpty,
+      return SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            // Modern header
+            SliverToBoxAdapter(
+              child: _buildModernHeader(context, parent, children),
+            ),
+
+            // Child selector if has children
+            if (children.isNotEmpty)
+              SliverToBoxAdapter(child: _buildModernChildSelector(context)),
+
+            // Dashboard content
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(children: _buildDashboardCards(context)),
+              ),
+            ),
+          ],
+        ),
       );
     });
   }
 
-  /// Loading header placeholder
-  Widget _buildLoadingHeader(BuildContext context) {
+  Widget _buildModernHeader(
+    BuildContext context,
+    UserModel? parent,
+    List children,
+  ) {
     return Container(
-      height: 120,
+      margin: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: AppDesignSystem.primaryGradient,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(
-            AppDesignSystem.textInverse,
+        gradient: const LinearGradient(
+          colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF6366F1).withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.2),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      parent != null ? _getInitials(parent) : 'P',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        parent != null
+                            ? '${parent.firstName} ${parent.lastName}'
+                            : 'Parent',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        children.isNotEmpty
+                            ? '${children.length} enfant${children.length > 1 ? 's' : ''}'
+                            : 'Espace Parent',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.notifications_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ],
+            ),
+
+            if (children.isNotEmpty) ...[
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.2),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.school_rounded,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Suivi de la scolarité',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white.withValues(alpha: 0.95),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );
   }
 
-  /// Beautiful child selector with enhanced design
-  Widget _buildChildSelector(BuildContext context) {
+  Widget _buildModernChildSelector(BuildContext context) {
     return Obx(() {
       final children = controller.children;
       final childrenUsers = controller.childrenUsers;
@@ -93,10 +221,7 @@ class ParentHomeView extends GetView<ParentHomeController> {
 
       return Container(
         height: 140,
-        margin: EdgeInsets.symmetric(
-          horizontal: AppDesignSystem.spacing(context, 16),
-          vertical: AppDesignSystem.spacing(context, 8),
-        ),
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: children.length,
@@ -115,146 +240,102 @@ class ParentHomeView extends GetView<ParentHomeController> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 width: 120,
-                margin: EdgeInsets.only(
-                  right: AppDesignSystem.spacing(context, 16),
-                ),
-                padding: AppDesignSystem.responsivePadding(context, all: 16),
+                margin: const EdgeInsets.only(right: 16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   gradient: isSelected
-                      ? AppDesignSystem.primaryGradient
-                      : LinearGradient(
+                      ? const LinearGradient(
+                          colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [
-                            AppDesignSystem.surfaceContainer,
-                            AppDesignSystem.surfaceContainer.withValues(
-                              alpha: 0.8,
-                            ),
-                          ],
+                        )
+                      : LinearGradient(
+                          colors: [Colors.white, Colors.grey.shade50],
                         ),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: AppDesignSystem.primary.withValues(
-                              alpha: 0.3,
-                            ),
+                            color: const Color(
+                              0xFF6366F1,
+                            ).withValues(alpha: 0.3),
                             blurRadius: 15,
                             offset: const Offset(0, 5),
                           ),
                         ]
-                      : AppDesignSystem.elevation(2),
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                   border: isSelected
                       ? null
-                      : Border.all(
-                          color: AppDesignSystem.primary.withValues(alpha: 0.1),
-                          width: 1,
-                        ),
+                      : Border.all(color: Colors.grey.shade200, width: 1),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Child Avatar with beautiful design
                     Container(
-                      width: 60,
-                      height: 60,
+                      width: 50,
+                      height: 50,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: isSelected
-                            ? LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Colors.white.withValues(alpha: 0.3),
-                                  Colors.white.withValues(alpha: 0.1),
-                                ],
-                              )
-                            : LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  AppDesignSystem.primary.withValues(
-                                    alpha: 0.2,
-                                  ),
-                                  AppDesignSystem.primary.withValues(
-                                    alpha: 0.1,
-                                  ),
-                                ],
-                              ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: isSelected
-                                ? Colors.white.withValues(alpha: 0.2)
-                                : AppDesignSystem.primary.withValues(
-                                    alpha: 0.1,
-                                  ),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                        color: isSelected
+                            ? Colors.white.withValues(alpha: 0.2)
+                            : const Color(0xFF6366F1).withValues(alpha: 0.1),
+                        border: Border.all(
+                          color: isSelected
+                              ? Colors.white.withValues(alpha: 0.3)
+                              : const Color(0xFF6366F1).withValues(alpha: 0.2),
+                          width: 2,
+                        ),
                       ),
                       child: Center(
                         child: Text(
-                          _getChildInitials(
-                            childUser.firstName,
-                            childUser.lastName,
-                          ),
+                          _getInitials(childUser),
                           style: TextStyle(
                             color: isSelected
-                                ? AppDesignSystem.textInverse
-                                : AppDesignSystem.primary,
+                                ? Colors.white
+                                : const Color(0xFF6366F1),
+                            fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            fontSize: 20,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: AppDesignSystem.spacing(context, 8)),
-
-                    // Child Name
+                    const SizedBox(height: 12),
                     Text(
-                      childUser.firstName ?? 'Enfant ${index + 1}',
+                      childUser.firstName ?? 'Enfant',
                       style: TextStyle(
-                        color: isSelected
-                            ? AppDesignSystem.textInverse
-                            : AppDesignSystem.textPrimary,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                        color: isSelected
+                            ? Colors.white
+                            : const Color(0xFF1E293B),
                       ),
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-
-                    // Child Grade/Class indicator (if available)
-                    if (child.latestStudentSession != null)
-                      Container(
-                        margin: EdgeInsets.only(
-                          top: AppDesignSystem.spacing(context, 4),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppDesignSystem.spacing(context, 6),
-                          vertical: AppDesignSystem.spacing(context, 2),
-                        ),
-                        decoration: BoxDecoration(
+                    if (child.latestStudentSession?.classModel?.name !=
+                        null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        child.latestStudentSession!.classModel!.name!,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
                           color: isSelected
-                              ? Colors.white.withValues(alpha: 0.2)
-                              : AppDesignSystem.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
+                              ? Colors.white.withValues(alpha: 0.8)
+                              : Colors.grey.shade600,
                         ),
-                        child: Text(
-                          'Classe ${child.latestStudentSession!.classModelId}',
-                          style: TextStyle(
-                            color: isSelected
-                                ? AppDesignSystem.textInverse.withValues(
-                                    alpha: 0.9,
-                                  )
-                                : AppDesignSystem.primary,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                    ],
                   ],
                 ),
               ),
@@ -265,21 +346,11 @@ class ParentHomeView extends GetView<ParentHomeController> {
     });
   }
 
-  /// Get child initials for avatar
-  String _getChildInitials(String? firstName, String? lastName) {
-    final first = firstName?.isNotEmpty == true
-        ? firstName![0].toUpperCase()
-        : '';
-    final last = lastName?.isNotEmpty == true ? lastName![0].toUpperCase() : '';
-    return '$first$last'.isEmpty ? '👶' : '$first$last';
-  }
-
-  /// Dashboard cards showing child info and bulletins
   List<Widget> _buildDashboardCards(BuildContext context) {
     final children = controller.children;
 
     if (children.isEmpty) {
-      return [_buildNoChildrenCard(context)];
+      return [_buildModernNoChildrenCard(context)];
     }
 
     final selectedChildUser = controller.selectedChildUser;
@@ -288,108 +359,305 @@ class ParentHomeView extends GetView<ParentHomeController> {
     return [
       // Selected child info card
       if (selectedChildUser != null)
-        ChildInfoCard(
-          child: selectedChildUser,
-          studentData: children[controller.selectedChildIndex.value],
+        _buildModernChildInfoCard(
+          selectedChildUser,
+          children[controller.selectedChildIndex.value],
         ),
 
+      const SizedBox(height: 20),
+
       // Recent bulletins section
-      _buildBulletinsSection(context, recentBulletins),
+      _buildModernBulletinsSection(context, recentBulletins),
     ];
   }
 
-  /// No children placeholder
-  Widget _buildNoChildrenCard(BuildContext context) {
+  Widget _buildModernNoChildrenCard(BuildContext context) {
     return Container(
-      padding: AppDesignSystem.responsivePadding(context, all: 32),
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: AppDesignSystem.surfaceContainer,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppDesignSystem.elevation(1),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.family_restroom,
-            size: 64,
-            color: AppDesignSystem.primary.withValues(alpha: 0.5),
-          ),
-          SizedBox(height: AppDesignSystem.spacing(context, 16)),
-          Text(
-            'Aucun enfant trouvé',
-            style: AppDesignSystem.textTheme(context).titleLarge?.copyWith(
-              color: AppDesignSystem.textPrimary,
-              fontWeight: FontWeight.w600,
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Icon(
+              Icons.family_restroom,
+              size: 40,
+              color: Colors.white,
             ),
           ),
-          SizedBox(height: AppDesignSystem.spacing(context, 8)),
+          const SizedBox(height: 24),
+          const Text(
+            'Aucun enfant trouvé',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Color(0xFF1E293B),
+            ),
+          ),
+          const SizedBox(height: 8),
           Text(
-            'Contactez l\'administration pour ajouter vos enfants.',
-            style: AppDesignSystem.textTheme(
-              context,
-            ).bodyMedium?.copyWith(color: AppDesignSystem.textSecondary),
+            'Contactez l\'administration pour ajouter vos enfants à votre compte.',
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
             textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              'Contacter l\'administration',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  /// Bulletins section
-  Widget _buildBulletinsSection(BuildContext context, List bulletins) {
+  Widget _buildModernChildInfoCard(UserModel child, dynamic studentData) {
     return Container(
-      padding: AppDesignSystem.responsivePadding(context, all: 16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppDesignSystem.surfaceContainer,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: AppDesignSystem.elevation(1),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.description, color: AppDesignSystem.primary, size: 20),
-              SizedBox(width: AppDesignSystem.spacing(context, 8)),
-              Text(
-                'Bulletins récents',
-                style: AppDesignSystem.textTheme(context).titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppDesignSystem.textPrimary,
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Center(
+                  child: Text(
+                    _getInitials(child),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${child.firstName} ${child.lastName}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1E293B),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    if (studentData.latestStudentSession?.classModel?.name !=
+                        null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF6366F1).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          studentData.latestStudentSession!.classModel!.name!,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF6366F1),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(
+                  Icons.check_circle_rounded,
+                  color: Color(0xFF10B981),
+                  size: 20,
                 ),
               ),
             ],
           ),
-          SizedBox(height: AppDesignSystem.spacing(context, 16)),
-          if (bulletins.isEmpty)
-            Center(
-              child: Padding(
-                padding: AppDesignSystem.responsivePadding(context, all: 32),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.inbox,
-                      size: 48,
-                      color: AppDesignSystem.textSecondary.withValues(
-                        alpha: 0.5,
-                      ),
-                    ),
-                    SizedBox(height: AppDesignSystem.spacing(context, 12)),
-                    Text(
-                      'Aucun bulletin disponible',
-                      style: AppDesignSystem.textTheme(context).bodyLarge
-                          ?.copyWith(color: AppDesignSystem.textSecondary),
-                    ),
-                  ],
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              _buildInfoChip(Icons.school_rounded, 'Élève actif'),
+              const SizedBox(width: 12),
+              if (studentData.matricule != null)
+                _buildInfoChip(Icons.badge_rounded, studentData.matricule!),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoChip(IconData icon, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: Colors.grey.shade600),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModernBulletinsSection(BuildContext context, List bulletins) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
                 ),
+                child: const Icon(
+                  Icons.description_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Text(
+                  'Bulletins récents',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () => controller.currentIndex.value = 1,
+                child: const Text(
+                  'Voir tout',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6366F1),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (bulletins.isEmpty)
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.inbox_rounded,
+                    size: 48,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Aucun bulletin disponible',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
               ),
             )
           else
             ...bulletins.map(
               (bulletin) => Padding(
-                padding: EdgeInsets.only(
-                  bottom: AppDesignSystem.spacing(context, 12),
-                ),
+                padding: const EdgeInsets.only(bottom: 12),
                 child: BulletinCard(
                   bulletin: bulletin,
                   onDownload: () => controller.downloadBulletin(bulletin.id!),
@@ -401,45 +669,115 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  /// Bulletins history view
+  String _getInitials(UserModel user) {
+    final firstName = user.firstName ?? '';
+    final lastName = user.lastName ?? '';
+    return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'
+        .toUpperCase();
+  }
+
   Widget _buildBulletinsHistory(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: AppDesignSystem.responsivePadding(
-          context,
-          horizontal: 16,
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Historique des bulletins',
-              style: AppDesignSystem.textTheme(context).headlineMedium
-                  ?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppDesignSystem.textPrimary,
-                  ),
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF1E293B),
+                letterSpacing: -0.5,
+              ),
             ),
-            SizedBox(height: AppDesignSystem.spacing(context, 20)),
+            const SizedBox(height: 24),
             Expanded(
-              child: ListView.builder(
-                itemCount: controller.bulletinsHistory.length,
-                itemBuilder: (context, index) {
-                  final bulletin = controller.bulletinsHistory[index];
+              child: Obx(() {
+                final bulletins = controller.bulletinsHistory;
 
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: AppDesignSystem.spacing(context, 12),
+                if (bulletins.isEmpty) {
+                  return Container(
+                    padding: const EdgeInsets.all(32),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
                     ),
-                    child: BulletinCard(
-                      bulletin: bulletin,
-                      onDownload: () =>
-                          controller.downloadBulletin(bulletin.id!),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Icon(
+                            Icons.description_rounded,
+                            size: 40,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        const Text(
+                          'Aucun bulletin disponible',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1E293B),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Les bulletins de vos enfants apparaîtront ici une fois disponibles.',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
                   );
-                },
-              ),
+                }
+
+                return ListView.builder(
+                  itemCount: bulletins.length,
+                  itemBuilder: (context, index) {
+                    final bulletin = bulletins[index];
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: BulletinCard(
+                        bulletin: bulletin,
+                        onDownload: () =>
+                            controller.downloadBulletin(bulletin.id!),
+                      ),
+                    );
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -447,59 +785,67 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  /// Profile view using existing ProfileListItem pattern from student home
   Widget _buildProfile(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: AppDesignSystem.responsivePadding(
-          context,
-          horizontal: 16,
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Profil',
-              style: AppDesignSystem.textTheme(context).headlineMedium
-                  ?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppDesignSystem.textPrimary,
-                  ),
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF1E293B),
+                letterSpacing: -0.5,
+              ),
             ),
-            SizedBox(height: AppDesignSystem.spacing(context, 24)),
+            const SizedBox(height: 24),
             Expanded(
               child: ListView(
                 children: [
-                  ProfileListItem(
-                    icon: Icons.person_outline,
+                  _buildModernProfileItem(
+                    icon: Icons.person_rounded,
                     title: 'Informations Personnelles',
-                    onTap: () => Get.to(() => const PersonalInfoView()),
+                    subtitle: 'Gérer vos informations personnelles',
+                    onTap: () => _navigateToParentProfile(),
                   ),
-                  ProfileListItem(
-                    icon: Icons.lock_outline,
+                  _buildModernProfileItem(
+                    icon: Icons.family_restroom_rounded,
+                    title: 'Historique des bulletins',
+                    subtitle: 'Consulter tous les bulletins de vos enfants',
+                    onTap: () => controller.currentIndex.value = 1,
+                  ),
+                  _buildModernProfileItem(
+                    icon: Icons.lock_rounded,
                     title: 'Sécurité',
+                    subtitle: 'Modifier votre mot de passe',
                     onTap: () => Get.to(() => const SecurityView()),
                   ),
-                  ProfileListItem(
-                    icon: Icons.notifications_outlined,
+                  _buildModernProfileItem(
+                    icon: Icons.notifications_rounded,
                     title: 'Notifications',
-                    onTap: () => Get.snackbar('Info', 'Notifications'),
+                    subtitle: 'Gérer vos préférences de notifications',
+                    onTap: () => Get.snackbar('Info', 'Notifications à venir'),
                   ),
-                  ProfileListItem(
-                    icon: Icons.help_outline,
+                  _buildModernProfileItem(
+                    icon: Icons.help_rounded,
                     title: 'Aide et Support',
+                    subtitle: 'Besoin d\'aide ? Contactez-nous',
                     onTap: () => Get.to(() => const HelpView()),
                   ),
-                  ProfileListItem(
-                    icon: Icons.info_outline,
+                  _buildModernProfileItem(
+                    icon: Icons.info_rounded,
                     title: 'À Propos',
+                    subtitle: 'En savoir plus sur l\'application',
                     onTap: () => Get.to(() => const AboutView()),
                   ),
-                  SizedBox(height: AppDesignSystem.spacing(context, 20)),
-                  ProfileListItem(
-                    icon: Icons.logout,
+                  const SizedBox(height: 20),
+                  _buildModernProfileItem(
+                    icon: Icons.logout_rounded,
                     title: 'Déconnexion',
+                    subtitle: 'Se déconnecter de votre compte',
                     onTap: () => controller.logout(),
                     isDestructive: true,
                   ),
@@ -511,62 +857,76 @@ class ParentHomeView extends GetView<ParentHomeController> {
       ),
     );
   }
-}
 
-/// ProfileListItem widget - copied from student home
-class ProfileListItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback onTap;
-  final bool isDestructive;
-
-  const ProfileListItem({
-    Key? key,
-    required this.icon,
-    required this.title,
-    required this.onTap,
-    this.isDestructive = false,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildModernProfileItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
     return Container(
-      margin: EdgeInsets.only(bottom: AppDesignSystem.spacing(context, 12)),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppDesignSystem.surfaceContainer,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: AppDesignSystem.elevation(1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: ListTile(
+        onTap: onTap,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         leading: Container(
-          width: 44,
-          height: 44,
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
-            color: (isDestructive ? Colors.red : AppDesignSystem.primary)
-                .withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+            gradient: isDestructive
+                ? const LinearGradient(
+                    colors: [Color(0xFFEF4444), Color(0xFFF87171)],
+                  )
+                : const LinearGradient(
+                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  ),
+            borderRadius: BorderRadius.circular(14),
           ),
-          child: Icon(
-            icon,
-            color: isDestructive ? Colors.red : AppDesignSystem.primary,
-            size: 20,
-          ),
+          child: Icon(icon, color: Colors.white, size: 22),
         ),
         title: Text(
           title,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: isDestructive ? Colors.red : AppDesignSystem.textPrimary,
+            color: isDestructive
+                ? const Color(0xFFEF4444)
+                : const Color(0xFF1E293B),
           ),
         ),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: AppDesignSystem.textSecondary.withValues(alpha: 0.5),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
         ),
-        onTap: onTap,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        trailing: Icon(
+          Icons.arrow_forward_ios_rounded,
+          size: 16,
+          color: Colors.grey.shade400,
+        ),
       ),
     );
+  }
+
+  void _navigateToParentProfile() {
+    final parent = controller.currentParent.value;
+
+    if (parent != null) {
+      Get.to(
+        () => const PersonalInfoView(),
+        arguments: {'parentUser': parent}, // Pass UserModel directly
+      );
+    }
   }
 }
