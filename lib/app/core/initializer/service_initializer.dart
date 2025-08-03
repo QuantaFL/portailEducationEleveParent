@@ -3,12 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:portail_eleve/app/core/api/api_client.dart';
 import 'package:portail_eleve/app/core/data/repositories/bulletin_repository.dart';
 import 'package:portail_eleve/app/core/data/repositories/student_repository.dart';
+import 'package:portail_eleve/app/core/services/parent_service.dart';
+import 'package:portail_eleve/app/services/connectivity_controller.dart';
 import 'package:portail_eleve/app/services/hive_service.dart';
-
-import '../../services/connectivity_controller.dart';
-import '../api/api_client.dart';
 
 class ServiceInitializer {
   final Logger logger = Logger();
@@ -39,6 +39,7 @@ class ServiceInitializer {
   /// - Ouvre les boîtes Hive correspondantes.
   /// - Instancie et enregistre le contrôleur de connectivité avec GetX.
   /// - Instancie et enregistre le client API avec ses dépendances.
+  /// - Enregistre le service ParentService.
   Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
     await HiveService().init();
@@ -53,7 +54,8 @@ class ServiceInitializer {
       ),
       permanent: true,
     );
-    Get.lazyPut(() => BulletinRepository(apiClient: apiClient));
     Get.lazyPut(() => StudentRepository(apiClient: apiClient));
+    Get.lazyPut(() => BulletinRepository(apiClient: apiClient));
+    Get.put<ParentService>(ParentService(), permanent: true);
   }
 }
