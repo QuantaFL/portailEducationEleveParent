@@ -108,4 +108,46 @@ class ApiClient {
   Future<Response<T>> delete<T>(String path, {CancelToken? cancelToken}) {
     return dio.delete<T>(path, cancelToken: cancelToken);
   }
+
+  /// Télécharge un fichier depuis une URL complète (externe).
+  /// [url] : URL complète du fichier à télécharger.
+  /// [savePath] : chemin local où sauvegarder le fichier.
+  /// [onReceiveProgress] : callback facultatif pour suivre le progrès du téléchargement.
+  /// [cancelToken] : un jeton permettant d'annuler la requête si nécessaire.
+  ///
+  /// Retourne une réponse de type [Response].
+  Future<Response> downloadFromUrl(
+    String url,
+    String savePath, {
+    ProgressCallback? onReceiveProgress,
+    CancelToken? cancelToken,
+  }) {
+    return dio.download(
+      url,
+      savePath,
+      onReceiveProgress: onReceiveProgress,
+      cancelToken: cancelToken,
+    );
+  }
+
+  /// Télécharge un fichier depuis un chemin relatif au serveur API.
+  /// [path] : chemin relatif du fichier à télécharger.
+  /// [savePath] : chemin local où sauvegarder le fichier.
+  /// [onReceiveProgress] : callback facultatif pour suivre le progrès du téléchargement.
+  /// [cancelToken] : un jeton permettant d'annuler la requête si nécessaire.
+  ///
+  /// Retourne une réponse de type [Response].
+  Future<Response> download(
+    String path,
+    String savePath, {
+    ProgressCallback? onReceiveProgress,
+    CancelToken? cancelToken,
+  }) {
+    return dio.download(
+      path,
+      savePath,
+      onReceiveProgress: onReceiveProgress,
+      cancelToken: cancelToken,
+    );
+  }
 }
