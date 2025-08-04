@@ -42,7 +42,7 @@ class AuthLogin {
       if (loginResponse.user.roleId == 3) {
         print("Fetching student data");
         Response response = await apiClient.get(
-          "/students/${loginResponse.user.id}/details",
+          "/students/${loginResponse.user.id}/users",
         );
         if (response.statusCode != 200) {
           print(response.statusCode);

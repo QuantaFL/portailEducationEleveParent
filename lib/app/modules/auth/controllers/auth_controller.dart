@@ -183,7 +183,7 @@ class AuthController extends GetxController {
       final apiClient = Get.find<ApiClient>();
 
       final response = await apiClient.dio.get(
-        '/students/$userModelId/details',
+        '/students/$userModelId/users',
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
 
