@@ -19,7 +19,6 @@ class OnboardingController extends GetxController {
   void _checkFirstTime() async {
     final hasSeenOnboarding = await _storage.read(key: 'hasSeenOnboarding');
     if (hasSeenOnboarding == 'true') {
-      // Skip onboarding and go to login
       Get.offAllNamed('/login');
     }
   }
