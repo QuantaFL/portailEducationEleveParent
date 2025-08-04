@@ -205,7 +205,7 @@ class ParentHomeController extends GetxController {
     }
   }
 
-  /// Download and open a bulletin PDF
+  /// Download and open a bulletin PDF using the polling service
   Future<void> downloadBulletin(int bulletinId) async {
     try {
       isLoading.value = true;
@@ -216,13 +216,9 @@ class ParentHomeController extends GetxController {
         orElse: () => throw Exception('Bulletin non trouvé'),
       );
 
-      // Get child information for naming
+      // Get child information
       final selectedChild = children[selectedChildIndex.value];
-      final childUser = childrenUsers.firstWhere(
-        (u) => u.id == selectedChild.userModelId,
-        orElse: () => UserModel(firstName: 'Enfant'),
-      );
-      final studentName = childUser.firstName ?? 'Enfant';
+      final childId = selectedChild.id!;
 
       // Show download progress
       Get.snackbar(
@@ -233,10 +229,10 @@ class ParentHomeController extends GetxController {
         duration: const Duration(seconds: 2),
       );
 
-      // Download using parent service
-      final downloadPath = await _parentService.downloadBulletin(
-        bulletinId,
-        studentName,
+      // Use the polling service download method (same as student)
+      final downloadPath = await _pollService.downloadBulletin(
+        childId,
+        bulletin,
       );
 
       if (downloadPath != null) {
@@ -251,6 +247,8 @@ class ParentHomeController extends GetxController {
 
         // Try to open the file
         await OpenFile.open(downloadPath);
+      } else {
+        throw Exception('Échec du téléchargement');
       }
     } catch (e) {
       _logger.e('❌ Erreur téléchargement bulletin: $e');
