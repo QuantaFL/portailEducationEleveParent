@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
 import 'package:portail_eleve/app/core/services/parent_service.dart';
 import 'package:portail_eleve/app/modules/parent_home/data/useCases/parent_poll_latest_bulletins.dart';
 import 'package:portail_eleve/app/routes/app_pages.dart';
-import 'package:portail_eleve/app/services/hive_service.dart';
 
 import '../../../core/data/models/report_card.dart';
 import '../../../core/data/models/student.dart';
@@ -279,8 +277,6 @@ class ParentHomeController extends GetxController {
       _logger.d('🚪 Déconnexion...');
 
       await _storage.deleteAll();
-      await Hive.deleteFromDisk();
-      await HiveService().init();
 
       Get.offAllNamed(Routes.LOGIN);
 
