@@ -12,7 +12,6 @@ class NotificationsView extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header Section
             Container(
               margin: const EdgeInsets.all(20),
               padding: const EdgeInsets.all(24),
