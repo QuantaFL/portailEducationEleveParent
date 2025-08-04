@@ -43,7 +43,6 @@ class HomeController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    // Démarre le polling une fois que la vue est prête
     _startBulletinPolling();
   }
 
@@ -57,8 +56,6 @@ class HomeController extends GetxController {
     currentIndex.value = index;
   }
 
-  /// Loads the latest student details from the backend using the new details endpoint.
-  /// Falls back to Hive if the network call fails.
   Future<void> loadDashboardData() async {
     try {
       isLoading.value = true;
@@ -72,7 +69,6 @@ class HomeController extends GetxController {
           student.value = detailedStudent;
           await studentRepository.saveStudentToHive(detailedStudent);
 
-          // Load bulletins after student data is loaded
           await _loadBulletins(int.parse(studentId));
         } catch (e) {
           Logger logger = Logger();
@@ -80,7 +76,6 @@ class HomeController extends GetxController {
           await studentRepository.getStudentFromHive(int.parse(studentId));
           student.value = studentRepository.student;
 
-          // Still try to load bulletins even if student details failed
           try {
             await _loadBulletins(int.parse(studentId));
           } catch (bulletinError) {
@@ -100,7 +95,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Loads bulletins for the specified student
   Future<void> _loadBulletins(int studentId) async {
     try {
       final Logger logger = Logger();
@@ -109,14 +103,12 @@ class HomeController extends GetxController {
       final bulletins = await bulletinRepository.getBulletins(studentId);
       allBulletins.value = bulletins;
 
-      // Sort by creation date (most recent first) and take the latest ones
       final sortedBulletins = List<ReportCard>.from(bulletins);
       sortedBulletins.sort((a, b) {
         if (a.createdAt == null || b.createdAt == null) return 0;
         return b.createdAt!.compareTo(a.createdAt!);
       });
 
-      // Show the 3 most recent bulletins
       recentBulletins.value = sortedBulletins.take(3).toList();
 
       logger.i(
@@ -131,11 +123,9 @@ class HomeController extends GetxController {
     } catch (e) {
       final Logger logger = Logger();
       logger.e('❌ Erreur lors du chargement des bulletins: $e');
-      // Don't show error to user for bulletins, just log it
     }
   }
 
-  /// Downloads and opens a bulletin PDF
   Future<void> downloadBulletin(int bulletinId) async {
     try {
       isLoading.value = true;
@@ -168,7 +158,6 @@ class HomeController extends GetxController {
       );
 
       if (downloadPath != null) {
-        // Success - show completion and open file
         Get.snackbar(
           'Téléchargement terminé',
           'Bulletin de $studentName téléchargé avec succès',
@@ -177,7 +166,6 @@ class HomeController extends GetxController {
           duration: const Duration(seconds: 3),
         );
 
-        // Open the downloaded PDF
         await _openPdfFile(downloadPath);
       } else {
         throw Exception('Échec du téléchargement');
@@ -196,7 +184,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Opens a PDF file using the default system application
   Future<void> _openPdfFile(String filePath) async {
     try {
       Logger().d('🔍 Tentative d\'ouverture du fichier: $filePath');
@@ -222,7 +209,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Shows fallback message when PDF can't be opened automatically
   void _showFileLocationFallback(String filePath) {
     final fileName = filePath.split('/').last;
 
@@ -278,7 +264,6 @@ class HomeController extends GetxController {
           ElevatedButton(
             onPressed: () {
               Get.back();
-              // Could add future functionality to show file location or retry opening
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF6366F1),
@@ -292,7 +277,6 @@ class HomeController extends GetxController {
   }
 
   void viewBulletin(int bulletinId) {
-    // TODO: Implement bulletin view
     Get.snackbar(
       'Bulletin',
       'Ouverture du bulletin...',
@@ -399,24 +383,19 @@ class HomeController extends GetxController {
     await HiveService().init();
   }
 
-  /// Fetches the next 3 classes for the current student.
-  /// Uses the enhanced repository method with API-first approach and Hive fallback.
   Future<List<NextClass>> getNextClasses() async {
     try {
       return await studentRepository.fetchNextClasses();
     } catch (e) {
       Logger().e('Error fetching next classes in controller: $e');
-      // Return empty list on error to prevent UI crashes
       return [];
     }
   }
 
-  /// Initialise le service de polling des bulletins.
   void _initializeBulletinPolling() {
     try {
       final apiClient = Get.find<ApiClient>();
 
-      // Try to get notifications plugin, create one if not found
       FlutterLocalNotificationsPlugin notifications;
       try {
         notifications = Get.find<FlutterLocalNotificationsPlugin>();
@@ -426,7 +405,6 @@ class HomeController extends GetxController {
         );
         notifications = FlutterLocalNotificationsPlugin();
 
-        // Initialize the notifications plugin
         const AndroidInitializationSettings initializationSettingsAndroid =
             AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -435,7 +413,6 @@ class HomeController extends GetxController {
 
         notifications.initialize(initializationSettings);
 
-        // Register it in GetX for future use
         Get.put(notifications);
       }
 
@@ -447,13 +424,10 @@ class HomeController extends GetxController {
       print('✅ Polling des bulletins initialisé pour l\'étudiant');
     } catch (e) {
       print('❌ Erreur initialisation polling étudiant: $e');
-      // Don't set _pollService if initialization fails
     }
   }
 
-  /// Démarre le polling automatique des bulletins.
   void _startBulletinPolling() {
-    // Only start polling if the service was successfully initialized
     if (_pollService != null) {
       _pollService.startPolling();
       print('🚀 Polling automatique des bulletins démarré pour l\'étudiant');
@@ -462,7 +436,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Force une vérification immédiate des nouveaux bulletins.
   Future<void> checkForNewBulletins() async {
     if (_pollService == null) {
       print('⚠️ Polling service not available');
@@ -480,7 +453,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Active le mode debug pour tester le polling (développement uniquement).
   void enableDebugMode() {
     if (_pollService == null) {
       print('⚠️ Polling service not available');
@@ -492,7 +464,6 @@ class HomeController extends GetxController {
     print('🐛 Mode debug activé - Polling fréquent');
   }
 
-  /// Teste le polling immédiatement avec logs détaillés.
   Future<void> testPolling() async {
     if (_pollService == null) {
       print('⚠️ Polling service not available - trying to reinitialize...');
@@ -507,7 +478,6 @@ class HomeController extends GetxController {
     await BulletinDebugService.testPollingNow();
   }
 
-  /// Affiche le statut du service de polling.
   Future<void> showPollingStatus() async {
     if (_pollService == null) {
       print('❌ Polling service not initialized');
@@ -518,7 +488,6 @@ class HomeController extends GetxController {
     await BulletinDebugService.showStatus();
   }
 
-  /// Nettoie les données de test du polling.
   Future<void> clearPollingData() async {
     if (_pollService == null) {
       print('⚠️ Polling service not available');
@@ -530,7 +499,6 @@ class HomeController extends GetxController {
     print('🗑️ Données de polling nettoyées');
   }
 
-  /// Récupère les bulletins téléchargés localement.
   Future<void> getDownloadedBulletins() async {
     if (_pollService == null) {
       print('⚠️ Polling service not available');
@@ -545,7 +513,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Nettoie les anciens bulletins téléchargés.
   Future<void> cleanupOldBulletins() async {
     if (_pollService == null) {
       print('⚠️ Polling service not available');
@@ -560,7 +527,6 @@ class HomeController extends GetxController {
     }
   }
 
-  /// Refreshes bulletin data
   Future<void> refreshBulletins() async {
     const storage = FlutterSecureStorage();
     final studentId = await storage.read(key: 'studentId');
