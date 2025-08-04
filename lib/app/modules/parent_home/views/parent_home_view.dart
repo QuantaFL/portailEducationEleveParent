@@ -29,9 +29,9 @@ class ParentHomeView extends GetView<ParentHomeController> {
           () => IndexedStack(
             index: controller.currentIndex.value,
             children: [
-              _buildModernDashboard(context),
-              _buildBulletinsHistory(context),
-              _buildProfile(context),
+              _buildModernDashboard(context, controller),
+              _buildBulletinsHistory(context, controller),
+              _buildProfile(context, controller),
             ],
           ),
         ),
@@ -40,31 +40,40 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  Widget _buildModernDashboard(BuildContext context) {
+  Widget _buildModernDashboard(
+    BuildContext context,
+    ParentHomeController controller,
+  ) {
     return Obx(() {
       final parent = controller.currentParent.value;
       final children = controller.children;
 
       return SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            // Modern header
-            SliverToBoxAdapter(
-              child: _buildModernHeader(context, parent, children),
-            ),
-
-            // Child selector if has children
-            if (children.isNotEmpty)
-              SliverToBoxAdapter(child: _buildModernChildSelector(context)),
-
-            // Dashboard content
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(children: _buildDashboardCards(context)),
+        child: RefreshIndicator(
+          onRefresh: controller.refreshData,
+          color: const Color(0xFF6366F1),
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: _buildModernHeader(context, parent, children),
               ),
-            ),
-          ],
+
+              if (children.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: _buildModernChildSelector(context, controller),
+                ),
+
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: _buildDashboardCards(context, controller),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     });
@@ -112,7 +121,7 @@ class ParentHomeView extends GetView<ParentHomeController> {
                   ),
                   child: Center(
                     child: Text(
-                      parent != null ? _getInitials(parent) : 'P',
+                      parent != null ? _getInitials(parent, controller) : 'P',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -212,7 +221,10 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  Widget _buildModernChildSelector(BuildContext context) {
+  Widget _buildModernChildSelector(
+    BuildContext context,
+    ParentHomeController controller,
+  ) {
     return Obx(() {
       final children = controller.children;
       final childrenUsers = controller.childrenUsers;
@@ -294,7 +306,7 @@ class ParentHomeView extends GetView<ParentHomeController> {
                       ),
                       child: Center(
                         child: Text(
-                          _getInitials(childUser),
+                          _getInitials(childUser, controller),
                           style: TextStyle(
                             color: isSelected
                                 ? Colors.white
@@ -346,32 +358,37 @@ class ParentHomeView extends GetView<ParentHomeController> {
     });
   }
 
-  List<Widget> _buildDashboardCards(BuildContext context) {
+  List<Widget> _buildDashboardCards(
+    BuildContext context,
+    ParentHomeController controller,
+  ) {
     final children = controller.children;
 
     if (children.isEmpty) {
-      return [_buildModernNoChildrenCard(context)];
+      return [_buildModernNoChildrenCard(context, controller)];
     }
 
     final selectedChildUser = controller.selectedChildUser;
     final recentBulletins = controller.recentBulletins;
 
     return [
-      // Selected child info card
       if (selectedChildUser != null)
         _buildModernChildInfoCard(
           selectedChildUser,
           children[controller.selectedChildIndex.value],
+          controller,
         ),
 
       const SizedBox(height: 20),
 
-      // Recent bulletins section
-      _buildModernBulletinsSection(context, recentBulletins),
+      _buildModernBulletinsSection(context, recentBulletins, controller),
     ];
   }
 
-  Widget _buildModernNoChildrenCard(BuildContext context) {
+  Widget _buildModernNoChildrenCard(
+    BuildContext context,
+    ParentHomeController controller,
+  ) {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
@@ -440,7 +457,11 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  Widget _buildModernChildInfoCard(UserModel child, dynamic studentData) {
+  Widget _buildModernChildInfoCard(
+    UserModel child,
+    dynamic studentData,
+    ParentHomeController controller,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -470,7 +491,7 @@ class ParentHomeView extends GetView<ParentHomeController> {
                 ),
                 child: Center(
                   child: Text(
-                    _getInitials(child),
+                    _getInitials(child, controller),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -533,10 +554,14 @@ class ParentHomeView extends GetView<ParentHomeController> {
           const SizedBox(height: 16),
           Row(
             children: [
-              _buildInfoChip(Icons.school_rounded, 'Élève actif'),
+              _buildInfoChip(Icons.school_rounded, 'Élève actif', controller),
               const SizedBox(width: 12),
               if (studentData.matricule != null)
-                _buildInfoChip(Icons.badge_rounded, studentData.matricule!),
+                _buildInfoChip(
+                  Icons.badge_rounded,
+                  studentData.matricule!,
+                  controller,
+                ),
             ],
           ),
         ],
@@ -544,7 +569,11 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  Widget _buildInfoChip(IconData icon, String label) {
+  Widget _buildInfoChip(
+    IconData icon,
+    String label,
+    ParentHomeController controller,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -569,7 +598,11 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  Widget _buildModernBulletinsSection(BuildContext context, List bulletins) {
+  Widget _buildModernBulletinsSection(
+    BuildContext context,
+    List bulletins,
+    ParentHomeController controller,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -669,14 +702,17 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  String _getInitials(UserModel user) {
+  String _getInitials(UserModel user, ParentHomeController controller) {
     final firstName = user.firstName ?? '';
     final lastName = user.lastName ?? '';
     return '${firstName.isNotEmpty ? firstName[0] : ''}${lastName.isNotEmpty ? lastName[0] : ''}'
         .toUpperCase();
   }
 
-  Widget _buildBulletinsHistory(BuildContext context) {
+  Widget _buildBulletinsHistory(
+    BuildContext context,
+    ParentHomeController controller,
+  ) {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -785,7 +821,7 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  Widget _buildProfile(BuildContext context) {
+  Widget _buildProfile(BuildContext context, ParentHomeController controller) {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -809,37 +845,43 @@ class ParentHomeView extends GetView<ParentHomeController> {
                     icon: Icons.person_rounded,
                     title: 'Informations Personnelles',
                     subtitle: 'Gérer vos informations personnelles',
-                    onTap: () => _navigateToParentProfile(),
+                    onTap: () => _navigateToParentProfile(controller),
+                    controller: controller,
                   ),
                   _buildModernProfileItem(
                     icon: Icons.family_restroom_rounded,
                     title: 'Historique des bulletins',
                     subtitle: 'Consulter tous les bulletins de vos enfants',
                     onTap: () => controller.currentIndex.value = 1,
+                    controller: controller,
                   ),
                   _buildModernProfileItem(
                     icon: Icons.lock_rounded,
                     title: 'Sécurité',
                     subtitle: 'Modifier votre mot de passe',
                     onTap: () => Get.to(() => const SecurityView()),
+                    controller: controller,
                   ),
                   _buildModernProfileItem(
                     icon: Icons.notifications_rounded,
                     title: 'Notifications',
                     subtitle: 'Gérer vos préférences de notifications',
                     onTap: () => Get.snackbar('Info', 'Notifications à venir'),
+                    controller: controller,
                   ),
                   _buildModernProfileItem(
                     icon: Icons.help_rounded,
                     title: 'Aide et Support',
                     subtitle: 'Besoin d\'aide ? Contactez-nous',
                     onTap: () => Get.to(() => const HelpView()),
+                    controller: controller,
                   ),
                   _buildModernProfileItem(
                     icon: Icons.info_rounded,
                     title: 'À Propos',
                     subtitle: 'En savoir plus sur l\'application',
                     onTap: () => Get.to(() => const AboutView()),
+                    controller: controller,
                   ),
                   const SizedBox(height: 20),
                   _buildModernProfileItem(
@@ -848,6 +890,7 @@ class ParentHomeView extends GetView<ParentHomeController> {
                     subtitle: 'Se déconnecter de votre compte',
                     onTap: () => controller.logout(),
                     isDestructive: true,
+                    controller: controller,
                   ),
                 ],
               ),
@@ -863,6 +906,7 @@ class ParentHomeView extends GetView<ParentHomeController> {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    required ParentHomeController controller,
     bool isDestructive = false,
   }) {
     return Container(
@@ -919,7 +963,7 @@ class ParentHomeView extends GetView<ParentHomeController> {
     );
   }
 
-  void _navigateToParentProfile() {
+  void _navigateToParentProfile(ParentHomeController controller) {
     final parent = controller.currentParent.value;
 
     if (parent != null) {

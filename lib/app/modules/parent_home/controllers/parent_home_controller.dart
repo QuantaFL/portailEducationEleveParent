@@ -5,17 +5,20 @@ import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
 import 'package:portail_eleve/app/core/services/parent_service.dart';
+import 'package:portail_eleve/app/modules/parent_home/data/useCases/parent_poll_latest_bulletins.dart';
 import 'package:portail_eleve/app/routes/app_pages.dart';
+import 'package:portail_eleve/app/services/hive_service.dart';
 
 import '../../../core/data/models/report_card.dart';
 import '../../../core/data/models/student.dart';
 import '../../../core/data/models/user_model.dart';
 
-/// Clean parent home controller with Hive caching support
+/// Clean parent home controller with Hive caching support and bulletin polling
 class ParentHomeController extends GetxController {
   var currentIndex = 0.obs;
   var isLoading = false.obs;
   var selectedChildIndex = 0.obs;
+  var isRefreshing = false.obs;
 
   // Parent and children data
   var currentParent = Rx<UserModel?>(null);
@@ -30,6 +33,7 @@ class ParentHomeController extends GetxController {
   var bulletinsHistory = <ReportCard>[].obs;
 
   late ParentService _parentService;
+  late ParentPollLatestBulletins _pollService;
   final Logger _logger = Logger();
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
 
@@ -37,7 +41,21 @@ class ParentHomeController extends GetxController {
   Future<void> onInit() async {
     super.onInit();
     _parentService = Get.find<ParentService>();
+    _pollService = Get.find<ParentPollLatestBulletins>();
     await loadParentDashboardData();
+    _startBulletinPolling();
+  }
+
+  @override
+  void onClose() {
+    _pollService.stopPolling();
+    super.onClose();
+  }
+
+  /// Démarre le polling automatique des bulletins
+  void _startBulletinPolling() {
+    _logger.i('🚀 Démarrage du polling des bulletins pour les enfants');
+    _pollService.startPolling();
   }
 
   /// Change bottom navigation tab (no external navigation needed)
@@ -74,6 +92,9 @@ class ParentHomeController extends GetxController {
 
         // Load bulletins for first child by default
         await _loadSelectedChildBulletins();
+
+        // Initialize bulletin tracking for polling service
+        await _initializeBulletinTracking();
       }
 
       _logger.i('🎉 Tableau de bord parent chargé avec succès!');
@@ -88,6 +109,68 @@ class ParentHomeController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// Initialize bulletin tracking for all children
+  Future<void> _initializeBulletinTracking() async {
+    // The polling service will automatically track bulletins when it starts
+    // No manual initialization needed - just log that children are ready
+    _logger.i(
+      '📋 Bulletin tracking initialized for ${children.length} children',
+    );
+  }
+
+  /// Manual refresh with pull-to-refresh and bulletin polling
+  Future<void> refreshData() async {
+    if (isRefreshing.value) return;
+
+    try {
+      isRefreshing.value = true;
+      _logger.d('🔄 Manual refresh triggered');
+
+      await loadParentDashboardData();
+      await _pollService.pollNow(); // Force bulletin check
+
+      Get.snackbar(
+        'Actualisation',
+        'Données mises à jour',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+    } catch (e) {
+      _logger.e('❌ Error during manual refresh: $e');
+      Get.snackbar(
+        'Erreur',
+        'Erreur lors de l\'actualisation',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isRefreshing.value = false;
+    }
+  }
+
+  /// Force refresh all bulletins (marks all as new)
+  Future<void> forceRefreshBulletins() async {
+    try {
+      _logger.d('🔄 Force refresh bulletins triggered');
+      await _pollService.forceRefreshBulletins();
+      await loadParentDashboardData();
+    } catch (e) {
+      _logger.e('❌ Error during force refresh bulletins: $e');
+    }
+  }
+
+  /// Enable debug mode for bulletin polling (30-second intervals)
+  void enableBulletinDebugMode() {
+    _pollService.enableDebugMode();
+    Get.snackbar(
+      'Mode Debug',
+      'Polling des bulletins activé en mode debug (30s)',
+      backgroundColor: Colors.orange,
+      colorText: Colors.white,
+    );
   }
 
   /// Load bulletins for the currently selected child
@@ -193,16 +276,14 @@ class ParentHomeController extends GetxController {
     );
   }
 
-  /// Logout function
   Future<void> logout() async {
     try {
       _logger.d('🚪 Déconnexion...');
 
-      // Clear secure storage
       await _storage.deleteAll();
       await Hive.deleteFromDisk();
+      await HiveService().init();
 
-      // Navigate to login
       Get.offAllNamed(Routes.LOGIN);
 
       Get.snackbar(
