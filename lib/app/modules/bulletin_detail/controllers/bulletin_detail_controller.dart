@@ -9,8 +9,6 @@ class BulletinDetailController extends GetxController {
   final RxList<Map<String, dynamic>> subjects = <Map<String, dynamic>>[].obs;
   final RxString pdfUrl = ''.obs;
 
-  
-
   String? bulletinId;
 
   @override
@@ -26,10 +24,8 @@ class BulletinDetailController extends GetxController {
     try {
       isLoading.value = true;
 
-      // Simulate API call
       await Future.delayed(const Duration(seconds: 1));
 
-      // Mock bulletin data
       bulletinData.value = {
         'id': bulletinId,
         'title': 'Bulletin du 1er Trimestre',
@@ -46,7 +42,6 @@ class BulletinDetailController extends GetxController {
         'date_edition': '18/01/2025',
       };
 
-      // Mock subjects data
       subjects.value = [
         {
           'nom': 'Mathématiques',
@@ -160,7 +155,6 @@ class BulletinDetailController extends GetxController {
     try {
       isDownloading.value = true;
 
-      // Simulate download
       await Future.delayed(const Duration(seconds: 2));
 
       Get.snackbar(
