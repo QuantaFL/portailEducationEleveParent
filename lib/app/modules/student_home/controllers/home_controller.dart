@@ -112,7 +112,7 @@ class HomeController extends GetxController {
       recentBulletins.value = sortedBulletins.take(3).toList();
 
       logger.i(
-        '✅ Chargé ${bulletins.length} bulletins (${recentBulletins.length} récents)',
+        'Chargé ${bulletins.length} bulletins (${recentBulletins.length} récents)',
       );
 
       if (bulletins.isNotEmpty) {
@@ -200,11 +200,11 @@ class HomeController extends GetxController {
           duration: const Duration(seconds: 2),
         );
       } else {
-        Logger().w('⚠️ Erreur ouverture fichier: ${result.message}');
+        Logger().w(' Erreur ouverture fichier: ${result.message}');
         _showFileLocationFallback(filePath);
       }
     } catch (e) {
-      Logger().e('❌ Erreur ouverture fichier: $e');
+      Logger().e('Erreur ouverture fichier: $e');
       _showFileLocationFallback(filePath);
     }
   }
@@ -443,9 +443,9 @@ class HomeController extends GetxController {
     isLoading.value = true;
     try {
       await _pollService.pollNow();
-      print('🔄 Vérification manuelle des bulletins effectuée');
+      print('Vérification manuelle des bulletins effectuée');
     } catch (e) {
-      print('❌ Erreur lors de la vérification manuelle: $e');
+      print('Erreur lors de la vérification manuelle: $e');
     } finally {
       isLoading.value = false;
     }
@@ -453,7 +453,7 @@ class HomeController extends GetxController {
 
   void enableDebugMode() {
     if (_pollService == null) {
-      print('⚠️ Polling service not available');
+      print('Polling service not available');
       return;
     }
 
