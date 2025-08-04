@@ -7,12 +7,10 @@ import 'package:portail_eleve/app/core/data/models/parent.dart';
 import 'package:portail_eleve/app/core/data/models/student.dart';
 import 'package:portail_eleve/app/core/data/models/user_model.dart';
 
-/// Controller for managing profile data and operations
 class ProfileController extends GetxController {
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
   final Logger _logger = Logger();
 
-  // Reactive variables
   final RxBool isLoading = false.obs;
   final Rx<Student?> currentStudent = Rx<Student?>(null);
   final Rx<Parent?> currentParent = Rx<Parent?>(null);
@@ -23,7 +21,6 @@ class ProfileController extends GetxController {
   void onInit() {
     super.onInit();
 
-    // Check if parent data was passed as argument
     final arguments = Get.arguments;
     if (arguments != null && arguments['parentUser'] != null) {
       _loadParentUserFromArguments(arguments['parentUser'] as UserModel);
@@ -34,7 +31,6 @@ class ProfileController extends GetxController {
     }
   }
 
-  /// Load parent user data from arguments (when navigated from parent home)
   void _loadParentUserFromArguments(UserModel parentUser) {
     try {
       isLoading.value = true;
@@ -55,7 +51,6 @@ class ProfileController extends GetxController {
     }
   }
 
-  /// Load parent data from arguments (when navigated from parent home)
   void _loadParentFromArguments(Parent parent) {
     try {
       isLoading.value = true;
@@ -74,12 +69,10 @@ class ProfileController extends GetxController {
     }
   }
 
-  /// Loads user data from storage and Hive database
   Future<void> _loadUserData() async {
     try {
       isLoading.value = true;
 
-      // Get user info from secure storage
       final storedUserType = await _storage.read(key: 'user_type');
       final storedUserId = await _storage.read(key: 'user_id');
 
@@ -91,7 +84,6 @@ class ProfileController extends GetxController {
       userType.value = storedUserType;
       final userId = int.parse(storedUserId);
 
-      // Load data based on user type
       if (storedUserType == 'student') {
         await _loadStudentData(userId);
       } else if (storedUserType == 'parent') {
@@ -106,7 +98,6 @@ class ProfileController extends GetxController {
     }
   }
 
-  /// Loads student data from Hive database
   Future<void> _loadStudentData(int userId) async {
     try {
       final studentsBox = await Hive.openBox<Student>('students');
@@ -114,7 +105,6 @@ class ProfileController extends GetxController {
       _logger.d('Loading student data for userId: $userId');
       _logger.d('Students box length: ${studentsBox.length}');
 
-      // Log all students in the box for debugging
       for (var student in studentsBox.values) {
         _logger.d(
           'Student ID: ${student.id}, UserModelId: ${student.userModelId}, User: ${student.userModel?.firstName} ${student.userModel?.lastName}',
@@ -124,7 +114,6 @@ class ProfileController extends GetxController {
         );
       }
 
-      // Find student by user model ID
       final students = studentsBox.values.where((s) => s.userModelId == userId);
 
       if (students.isNotEmpty) {
@@ -143,7 +132,6 @@ class ProfileController extends GetxController {
         _logger.d('- Parent Email: ${student.parentModel?.userModel?.email}');
         _logger.d('- Class: ${student.latestStudentSession?.classModel?.name}');
 
-        // Force UI update
         update();
       } else {
         _logger.w('No student found with user ID: $userId');
@@ -157,13 +145,10 @@ class ProfileController extends GetxController {
     }
   }
 
-  /// Loads parent data from Hive database
   Future<void> _loadParentData(int userId) async {
     try {
       final parentsBox = await Hive.openBox<Parent>('parents');
 
-      // Find parent by user model ID - Parent doesn't have userModelId directly
-      // We need to check the userModel's id instead
       final parents = parentsBox.values.where((p) => p.userModel?.id == userId);
 
       if (parents.isNotEmpty) {
@@ -181,12 +166,10 @@ class ProfileController extends GetxController {
     }
   }
 
-  /// Refreshes user data from storage and database
   Future<void> refreshUserData() async {
     await _loadUserData();
   }
 
-  /// Gets the current user's full name
   String getFullName() {
     final user = currentUser.value;
     if (user?.firstName != null && user?.lastName != null) {
@@ -195,17 +178,14 @@ class ProfileController extends GetxController {
     return 'Non défini';
   }
 
-  /// Gets the current user's email
   String getEmail() {
     return currentUser.value?.email ?? 'Non défini';
   }
 
-  /// Gets the current user's phone number
   String getPhoneNumber() {
     return currentUser.value?.phone ?? 'Non défini';
   }
 
-  /// Gets the student's matricule (student ID)
   String getMatricule() {
     if (userType.value == 'student') {
       return currentStudent.value?.matricule ?? 'Non défini';
@@ -213,7 +193,6 @@ class ProfileController extends GetxController {
     return 'Non applicable';
   }
 
-  /// Gets the current user's birth date
   String getBirthDate() {
     final birthDate = currentUser.value?.birthday;
     if (birthDate != null) {
@@ -222,7 +201,6 @@ class ProfileController extends GetxController {
     return 'Non défini';
   }
 
-  /// Gets the current user's gender
   String getGender() {
     final gender = currentUser.value?.gender;
     if (gender != null) {
@@ -242,12 +220,10 @@ class ProfileController extends GetxController {
     return 'Non défini';
   }
 
-  /// Gets the current user's address
   String getAddress() {
     return currentUser.value?.adress ?? 'Non défini';
   }
 
-  /// Gets the current class information
   String getCurrentClass() {
     if (userType.value == 'student') {
       return currentStudent.value?.latestStudentSession?.classModel?.name ??
@@ -256,7 +232,6 @@ class ProfileController extends GetxController {
     return 'Non applicable';
   }
 
-  /// Gets the academic year
   String getAcademicYear() {
     if (userType.value == 'student') {
       return currentStudent.value?.latestStudentSession?.academicYear?.label ??
@@ -265,7 +240,6 @@ class ProfileController extends GetxController {
     return 'Non applicable';
   }
 
-  /// Gets the student status
   String getStudentStatus() {
     if (userType.value == 'student') {
       return currentStudent.value?.id != null
@@ -275,7 +249,6 @@ class ProfileController extends GetxController {
     return 'Non applicable';
   }
 
-  /// Gets the parent's name
   String getParentName() {
     if (userType.value == 'student') {
       final parent = currentStudent.value?.parentModel?.userModel;
@@ -286,7 +259,6 @@ class ProfileController extends GetxController {
     return 'Non défini';
   }
 
-  /// Gets the parent's email
   String getParentEmail() {
     if (userType.value == 'student') {
       return currentStudent.value?.parentModel?.userModel?.email ??
@@ -295,7 +267,6 @@ class ProfileController extends GetxController {
     return 'Non applicable';
   }
 
-  /// Gets the parent's phone
   String getParentPhone() {
     if (userType.value == 'student') {
       return currentStudent.value?.parentModel?.userModel?.phone ??
@@ -304,7 +275,6 @@ class ProfileController extends GetxController {
     return 'Non applicable';
   }
 
-  /// Gets user initials for avatar
   String getInitials() {
     final user = currentUser.value;
     if (user?.firstName != null && user?.lastName != null) {
@@ -313,15 +283,11 @@ class ProfileController extends GetxController {
     return 'ÉT';
   }
 
-  /// Checks if current user is a student
   bool get isStudent => userType.value == 'student';
 
-  /// Checks if current user is a parent
   bool get isParent => userType.value == 'parent';
 
-  /// Handles profile editing action
   void editProfile() {
-    // TODO: Navigate to profile editing screen
     Get.snackbar(
       'Modification',
       'Fonctionnalité de modification en cours de développement',
