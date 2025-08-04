@@ -117,10 +117,6 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
   }
-
-  /// Handles successful login by storing user data and navigating to the appropriate home screen.
-  /// Shows a success snackbar and persists authentication info securely.
-  /// Only allows users with roleId 3 (student) or 4 (parent) to proceed.
   Future<void> _handleLoginSuccess(LoginResponse loginResponse) async {
     final Logger log = Logger();
     log.d('Login success: userId=${loginResponse}');
