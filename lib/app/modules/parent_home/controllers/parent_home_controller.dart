@@ -11,23 +11,19 @@ import '../../../core/data/models/report_card.dart';
 import '../../../core/data/models/student.dart';
 import '../../../core/data/models/user_model.dart';
 
-/// Clean parent home controller with Hive caching support and bulletin polling
 class ParentHomeController extends GetxController {
   var currentIndex = 0.obs;
   var isLoading = false.obs;
   var selectedChildIndex = 0.obs;
   var isRefreshing = false.obs;
 
-  // Parent and children data
   var currentParent = Rx<UserModel?>(null);
   var children = <Student>[].obs;
   var childrenUsers = <UserModel>[].obs;
 
-  // Bulletin data for selected child
   var recentBulletins = <ReportCard>[].obs;
   var allBulletins = <ReportCard>[].obs;
 
-  // All bulletins from all children for history view
   var bulletinsHistory = <ReportCard>[].obs;
 
   late ParentService _parentService;
@@ -50,18 +46,15 @@ class ParentHomeController extends GetxController {
     super.onClose();
   }
 
-  /// Démarre le polling automatique des bulletins
   void _startBulletinPolling() {
     _logger.i('🚀 Démarrage du polling des bulletins pour les enfants');
     _pollService.startPolling();
   }
 
-  /// Change bottom navigation tab (no external navigation needed)
   void changeTab(int index) {
     currentIndex.value = index;
   }
 
-  /// Select a child and load their bulletins
   void selectChild(int index) {
     if (index >= 0 && index < children.length) {
       selectedChildIndex.value = index;
@@ -69,29 +62,23 @@ class ParentHomeController extends GetxController {
     }
   }
 
-  /// Load all parent dashboard data with Hive fallback
   Future<void> loadParentDashboardData() async {
     try {
       isLoading.value = true;
       _logger.d('🔄 Chargement du tableau de bord parent...');
 
-      // Load parent profile from service (with Hive fallback)
       currentParent.value = await _parentService.getCurrentParent();
       _logger.i('✅ Profil parent chargé: ${currentParent.value?.firstName}');
 
-      // Load children (with Hive fallback)
       children.value = await _parentService.getChildren();
       _logger.i('✅ ${children.length} enfants chargés');
 
-      // Load children user data (with Hive fallback)
       if (children.isNotEmpty) {
         childrenUsers.value = await _parentService.getChildrenUsers();
         _logger.i('✅ ${childrenUsers.length} profils d\'enfants chargés');
 
-        // Load bulletins for first child by default
         await _loadSelectedChildBulletins();
 
-        // Initialize bulletin tracking for polling service
         await _initializeBulletinTracking();
       }
 
@@ -109,16 +96,12 @@ class ParentHomeController extends GetxController {
     }
   }
 
-  /// Initialize bulletin tracking for all children
   Future<void> _initializeBulletinTracking() async {
-    // The polling service will automatically track bulletins when it starts
-    // No manual initialization needed - just log that children are ready
     _logger.i(
       '📋 Bulletin tracking initialized for ${children.length} children',
     );
   }
 
-  /// Manual refresh with pull-to-refresh and bulletin polling
   Future<void> refreshData() async {
     if (isRefreshing.value) return;
 
@@ -127,7 +110,7 @@ class ParentHomeController extends GetxController {
       _logger.d('🔄 Manual refresh triggered');
 
       await loadParentDashboardData();
-      await _pollService.pollNow(); // Force bulletin check
+      await _pollService.pollNow();
 
       Get.snackbar(
         'Actualisation',
@@ -149,7 +132,6 @@ class ParentHomeController extends GetxController {
     }
   }
 
-  /// Force refresh all bulletins (marks all as new)
   Future<void> forceRefreshBulletins() async {
     try {
       _logger.d('🔄 Force refresh bulletins triggered');
@@ -160,7 +142,6 @@ class ParentHomeController extends GetxController {
     }
   }
 
-  /// Enable debug mode for bulletin polling (30-second intervals)
   void enableBulletinDebugMode() {
     _pollService.enableDebugMode();
     Get.snackbar(
@@ -171,7 +152,6 @@ class ParentHomeController extends GetxController {
     );
   }
 
-  /// Load bulletins for the currently selected child
   Future<void> _loadSelectedChildBulletins() async {
     if (children.isEmpty) return;
 
@@ -184,14 +164,12 @@ class ParentHomeController extends GetxController {
       );
       allBulletins.value = bulletins;
 
-      // Sort by creation date (most recent first) - same as student home
       final sortedBulletins = List<ReportCard>.from(bulletins);
       sortedBulletins.sort((a, b) {
         if (a.createdAt == null || b.createdAt == null) return 0;
         return b.createdAt!.compareTo(a.createdAt!);
       });
 
-      // Show the 3 most recent bulletins - same as student home
       recentBulletins.value = sortedBulletins.take(3).toList();
 
       _logger.i(
@@ -199,26 +177,21 @@ class ParentHomeController extends GetxController {
       );
     } catch (e) {
       _logger.e('❌ Erreur chargement bulletins: $e');
-      // Don't show error to user for bulletins, just log it - same as student
     }
   }
 
-  /// Download and open a bulletin PDF using the polling service
   Future<void> downloadBulletin(int bulletinId) async {
     try {
       isLoading.value = true;
 
-      // Find the bulletin by ID
       final bulletin = [...allBulletins, ...recentBulletins].firstWhere(
         (b) => b.id == bulletinId,
         orElse: () => throw Exception('Bulletin non trouvé'),
       );
 
-      // Get child information
       final selectedChild = children[selectedChildIndex.value];
       final childId = selectedChild.id!;
 
-      // Show download progress
       Get.snackbar(
         'Téléchargement',
         'Téléchargement du bulletin en cours...',
@@ -227,14 +200,12 @@ class ParentHomeController extends GetxController {
         duration: const Duration(seconds: 2),
       );
 
-      // Use the polling service download method (same as student)
       final downloadPath = await _pollService.downloadBulletin(
         childId,
         bulletin,
       );
 
       if (downloadPath != null) {
-        // Success notification
         Get.snackbar(
           'Succès',
           'Bulletin téléchargé avec succès',
@@ -243,7 +214,6 @@ class ParentHomeController extends GetxController {
           duration: const Duration(seconds: 3),
         );
 
-        // Try to open the file
         await OpenFile.open(downloadPath);
       } else {
         throw Exception('Échec du téléchargement');
@@ -261,7 +231,6 @@ class ParentHomeController extends GetxController {
     }
   }
 
-  /// Get the currently selected child user data
   UserModel? get selectedChildUser {
     if (children.isEmpty || childrenUsers.isEmpty) return null;
 
