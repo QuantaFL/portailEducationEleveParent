@@ -15,10 +15,7 @@ class HistoryController extends GetxController {
   Future<void> loadBulletinHistory() async {
     isLoading.value = true;
     try {
-      // Simulate API call
       await Future.delayed(const Duration(seconds: 1));
-
-      // Mock data for bulletin history
       bulletinHistory.value = [
         {
           'id': 1,
