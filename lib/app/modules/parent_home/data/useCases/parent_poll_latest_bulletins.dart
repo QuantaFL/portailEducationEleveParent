@@ -31,7 +31,7 @@ class ParentPollLatestBulletins extends GetxService {
   final String _channelName = 'Bulletins des enfants';
   Timer? _timer;
 
-  static const Duration _pollInterval = Duration(minutes: 2);
+  static const Duration _pollInterval = Duration(seconds: 15);
   static const String _lastCheckedKey = 'lastCheckedBulletinTimestamp';
 
   ParentPollLatestBulletins({
