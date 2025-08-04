@@ -122,7 +122,7 @@ class HomeController extends GetxController {
       }
     } catch (e) {
       final Logger logger = Logger();
-      logger.e('❌ Erreur lors du chargement des bulletins: $e');
+      logger.e('Erreur lors du chargement des bulletins: $e');
     }
   }
 
@@ -191,7 +191,7 @@ class HomeController extends GetxController {
       final result = await OpenFile.open(filePath);
 
       if (result.type == ResultType.done) {
-        Logger().i('✅ Fichier PDF ouvert avec succès');
+        Logger().i(' Fichier PDF ouvert avec succès');
         Get.snackbar(
           'Fichier ouvert',
           'Le bulletin a été ouvert dans votre lecteur PDF',
@@ -401,7 +401,7 @@ class HomeController extends GetxController {
         notifications = Get.find<FlutterLocalNotificationsPlugin>();
       } catch (e) {
         print(
-          '⚠️ FlutterLocalNotificationsPlugin not found in GetX, creating new instance...',
+          'FlutterLocalNotificationsPlugin not found in GetX, creating new instance...',
         );
         notifications = FlutterLocalNotificationsPlugin();
 
@@ -420,10 +420,8 @@ class HomeController extends GetxController {
         apiClient: apiClient,
         notifications: notifications,
       );
-
-      print('✅ Polling des bulletins initialisé pour l\'étudiant');
     } catch (e) {
-      print('❌ Erreur initialisation polling étudiant: $e');
+      print('Erreur initialisation polling étudiant: $e');
     }
   }
 
@@ -461,15 +459,15 @@ class HomeController extends GetxController {
 
     BulletinDebugService.initialize();
     _pollService.enableDebugMode();
-    print('🐛 Mode debug activé - Polling fréquent');
+    print('Mode debug activé - Polling fréquent');
   }
 
   Future<void> testPolling() async {
     if (_pollService == null) {
-      print('⚠️ Polling service not available - trying to reinitialize...');
+      print('Polling service not available - trying to reinitialize...');
       _initializeBulletinPolling();
       if (_pollService == null) {
-        print('❌ Failed to initialize polling service');
+        print('Failed to initialize polling service');
         return;
       }
     }
@@ -480,7 +478,7 @@ class HomeController extends GetxController {
 
   Future<void> showPollingStatus() async {
     if (_pollService == null) {
-      print('❌ Polling service not initialized');
+      print('Polling service not initialized');
       return;
     }
 
@@ -490,40 +488,40 @@ class HomeController extends GetxController {
 
   Future<void> clearPollingData() async {
     if (_pollService == null) {
-      print('⚠️ Polling service not available');
+      print('Polling service not available');
       return;
     }
 
     BulletinDebugService.initialize();
     await BulletinDebugService.clearTestData();
-    print('🗑️ Données de polling nettoyées');
+    print('Données de polling nettoyées');
   }
 
   Future<void> getDownloadedBulletins() async {
     if (_pollService == null) {
-      print('⚠️ Polling service not available');
+      print('Polling service not available');
       return;
     }
 
     try {
       final bulletins = await _pollService.getDownloadedBulletins();
-      print('📁 ${bulletins.length} bulletin(s) téléchargé(s) localement');
+      print('${bulletins.length} bulletin(s) téléchargé(s) localement');
     } catch (e) {
-      print('❌ Erreur récupération bulletins: $e');
+      print('Erreur récupération bulletins: $e');
     }
   }
 
   Future<void> cleanupOldBulletins() async {
     if (_pollService == null) {
-      print('⚠️ Polling service not available');
+      print(' Polling service not available');
       return;
     }
 
     try {
       await _pollService.cleanupOldBulletins();
-      print('🗑️ Anciens bulletins nettoyés');
+      print('Anciens bulletins nettoyés');
     } catch (e) {
-      print('❌ Erreur nettoyage bulletins: $e');
+      print(' Erreur nettoyage bulletins: $e');
     }
   }
 
